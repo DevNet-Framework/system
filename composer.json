@@ -1,0 +1,26 @@
+{
+    "name": "devnet/core",
+    "description": "The DevNet Core Library",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mohammed Moussaoui",
+            "email": "m.moussaoui@outlook.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=7.4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Artister\\System\\"                : "src/Library/",
+            "Artister\\System\\Runtime\\"       : "src/Runtime/",
+            "Artister\\System\\Compiler\\"      : "src/Compiler/"
+        },
+        "files": [
+            "src/Library/Helpers.php"
+        ]
+    }
+}

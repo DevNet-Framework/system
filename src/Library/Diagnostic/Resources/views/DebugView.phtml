@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="../vendor/Artister/Debugger/src/resources/css/Template.css">
+    <style><?= $this->includeStyle() ?></style>
+    <title><?= $error['error'] ?></title>
+</head>
+<body>
+   <main>
+      <div class="error-card">
+         <div class="error-header">
+            <h3><?= "{$error['error']} ! {$error['message']}"?></h3>
+         </div>
+         <div class="error-body">
+            <div class="error-content">
+            <!-- <= "Description : {$error['message']}" ?><br><br> -->
+                <h4 class="error-title">Uncaught <?= "{$error['class']} {$error['code']}" ?></h4>
+                <?= "in {$error['file']}" ?> <span><?= "line {$error['line']}" ?></span><br><br>
+                <h4 class="error-title">Stack Trace</h4>
+                <div class="error-content">
+                    <ol>
+                    <?php foreach ($trace as $frame) : ?>
+                    <?php
+                        $class = $frame['class'] ?? '';
+                        $type = $frame['type'] ?? '';
+                        $function = $frame['function'] ?? '';
+                        $file = $frame['file'] ?? '';
+                        $line = $frame['line'] ?? '';
+                    ?>
+                    <li><hr>
+                        <div class="error-trace">
+                           <?= "at {$class}{$type}{$function}()" ?><br>
+                           <?= "in {$file}" ?> <span><?= "line {$line}" ?></span>
+                        </div>
+                    </li>
+                    <?php endforeach; ?>
+                  </ol>
+               </div>
+            </div>
+         </div>
+      </div>
+    </main>
+</body>
+</html>
