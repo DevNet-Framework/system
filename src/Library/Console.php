@@ -13,34 +13,34 @@ if(!defined('STDOUT')) define('STDOUT', fopen('php://stdout', 'w'));
 
 class Console
 {
-    private static $fgColors = [
-        'black'         => '0;30',
-        'dark grey'     => '1;30',
-        'red'           => '0;31',
-        'light red'     => '1;31',
-        'green'         => '0;32',
-        'light green'   => '1;32',
-        'brawon'        => '0;33',
-        'yellow'        => '1;33',
-        'blue'          => '0;34',
-        'light blue'    => '1;34',
-        'magenta'       => '0;35',
-        'light magenta' => '1;35',
-        'cyan'          => '0;36',
-        'light cyan'    => '1;36',
-        'light grey'    => '0;37',
-        'white'         => '1;37'
+    private const FGCOLORS = [
+        0   => '0;30',
+        1   => '1;30',
+        2   => '1;31',
+        3   => '1;35',
+        4   => '0;34',
+        5   => '0;36',
+        6   => '0;32',
+        7   => '0;33',
+        8   => '0;37',
+        9   => '0;31',
+        10  => '0;35',
+        11  => '1;34',
+        12  => '1;36',
+        13  => '1;32',
+        14  => '1;33',
+        15  => '1;37'
     ];
 
-    private static $bgColors = [
-        'black'         => '40',
-        'red'           => '41',
-        'green'         => '42',
-        'yellow'        => '43',
-        'blue'          => '44',
-        'magenta'       => '45',
-        'cyan'          => '46',
-        'light grey'    => '47'
+    private const BGCOLORS = [
+        0   => '40',
+        2   => '41',
+        3   => '45',
+        4   => '44',
+        5   => '46',
+        6   => '42',
+        7   => '43',
+        15  => '47'
     ];
 
     public static function read(string $string = null)
@@ -63,18 +63,25 @@ class Console
         fwrite(STDOUT, $string);
     }
 
-    public static function foregroundColor(string $fgColor)
+    public static function foregroundColor(int $fgColor)
     {
-        $fgColor = strtolower($fgColor);
-        $fgColor = self::$fgColors[$fgColor];
-        fwrite(STDOUT, "\e[${fgColor}m");
+        $color = self::FGCOLORS[$fgColor] ?? null;
+
+        if ($color != null)
+        {
+            fwrite(STDOUT, "\e[${color}m");
+        }
+        
     }
 
-    public static function backgroundColor(string $bgColor)
+    public static function backgroundColor(int $bgColor)
     {
-        $bgColor = strtolower($bgColor);
-        $bgColor = self::$bgColors[$bgColor];
-        fwrite(STDOUT, "\e[${bgColor}m");
+        $color = self::BGCOLORS[$bgColor] ?? null;
+
+        if ($color != null)
+        {
+            fwrite(STDOUT, "\e[${color}m");
+        }
     }
 
     public static function resetColor()
