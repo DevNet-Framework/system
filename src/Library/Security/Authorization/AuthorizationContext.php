@@ -17,7 +17,7 @@ class AuthorizationContext
     private bool $FailCalled = false;
     private bool $SuccessCalled = false;
 
-    public function __construct(array $requirements = [], ?ClaimsPrincipal $user)
+    public function __construct(array $requirements = [], ?ClaimsPrincipal $user = null)
     {
         $this->User         = $user;
         $this->Requirements = $requirements;
