@@ -17,34 +17,10 @@ class ExtensionProvider
         $trace = debug_backtrace();
         $runtimeFile = $trace[2]["file"];
         $contents = file_get_contents($runtimeFile);
-        $tokens = token_get_all($contents);
-        $getting_namespace = false;
-        $namespace = '';
-        $namespaces = [];
 
-        foreach ($tokens as $token)
-        {
-            if (is_array($token) && $token[0] == T_USE)
-            {
-                $getting_namespace = true;
-            }
+        preg_match_all("%(?i)use\s+([A-Za-z_\\\]+);%", $contents, $matches);
 
-            if ($getting_namespace)
-            {
-                if (is_array($token) && in_array($token[0], [T_STRING, T_NS_SEPARATOR]))
-                {
-                    $namespace .= $token[1];
-                }
-                else if ($token == ';' || $token == ',' || $token == 'as')
-                {
-                    $getting_namespace = false;
-                    $namespaces[] = $namespace;
-                    $namespace = '';
-                }
-            }
-        }
-
-        return $namespaces;
+        return $matches[1];
     }
 
     static function addExtension(object $target, string $extenssionType)
