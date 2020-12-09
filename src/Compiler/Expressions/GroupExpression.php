@@ -6,21 +6,23 @@
  * @link        https://github.com/artister
  */
 
-namespace Artister\System\Linq\Expressions;
+namespace Artister\System\Compiler\Expressions;
 
-class UnaryExpression extends Expression
+use Artister\System\Compiler\ExpressionVisitor;
+
+class GroupExpression extends Expression
 {
     public string $Name;
-    public Expression $Operand;
+    public expression $Expression;
 
-    public function __construct(string $name, Expression $operand)
+    public function __construct(string $name, expression $expression)
     {
         $this->Name = $name;
-        $this->Operand = $operand;
+        $this->Expression = $expression;
     }
 
     public function accept(ExpressionVisitor $visitor)
     {
-        $visitor->visitUnary($this);
+        $visitor->visitGroup($this);
     }
 }

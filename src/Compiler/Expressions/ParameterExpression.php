@@ -6,21 +6,25 @@
  * @link        https://github.com/artister
  */
 
-namespace Artister\System\Linq\Expressions;
+namespace Artister\System\Compiler\Expressions;
 
-class ConstantExpression extends Expression
+use Artister\System\Compiler\ExpressionVisitor;
+
+class ParameterExpression extends Expression
 {
-    public $value;
+    public string $Name;
     public ?string $Type;
+    public $value;
 
-    public function __construct($value, ?string $type = null)
+    public function __construct(string $name, ?string $type = null, $value = null)
     {
-        $this->Value = $value;
+        $this->Name = $name;
         $this->Type = $type;
+        $this->Value = $value;
     }
 
     public function accept(ExpressionVisitor $visitor)
     {
-        $visitor->visitConstant($this);
+        $visitor->visitParameter($this);
     }
 }

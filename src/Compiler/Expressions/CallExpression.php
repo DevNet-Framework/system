@@ -6,21 +6,25 @@
  * @link        https://github.com/artister
  */
 
-namespace Artister\System\Linq\Expressions;
+namespace Artister\System\Compiler\Expressions;
 
-class ArrayExpression extends Expression
+use Artister\System\Compiler\ExpressionVisitor;
+
+class CallExpression extends Expression
 {
-    public ParameterExpression $Parameter;
+    public ?ParameterExpression $Object;
+    public string $Method;
     public array $Arguments;
 
-    public function __construct(ParameterExpression $parameter, array $arguments)
+    public function __construct(?ParameterExpression $object, string $method, array $arguments = [])
     {
-        $this->Parameter = $parameter;
+        $this->Object = $object;
+        $this->Method = $method;
         $this->Arguments = $arguments;
     }
 
     public function accept(ExpressionVisitor $visitor)
     {
-        $visitor->visitArray($this);
+        $visitor->visitCall($this);
     }
 }

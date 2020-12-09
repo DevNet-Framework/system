@@ -6,8 +6,9 @@
  * @link        https://github.com/artister
  */
 
-namespace Artister\System\Linq\Expressions;
+namespace Artister\System\Compiler;
 
+use Artister\System\Compiler\Expressions\Expression;
 use Artister\System\Compiler\Lexer\LexerBuilder;
 use Artister\System\Compiler\Parser\ParserBuilder;
 use Artister\System\Compiler\Parser\Stack;

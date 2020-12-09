@@ -6,8 +6,10 @@
  * @link        https://github.com/artister
  */
 
-namespace Artister\System\Linq\Expressions;
+namespace Artister\System\Compiler\Expressions;
 
+use Artister\System\Compiler\ExpressionParser;
+use Artister\System\Compiler\ExpressionVisitor;
 use Closure;
 
 class LambdaExpression extends Expression

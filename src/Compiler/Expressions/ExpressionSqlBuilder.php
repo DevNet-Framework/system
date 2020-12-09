@@ -6,7 +6,7 @@
  * @link        https://github.com/artister
  */
 
-namespace Artister\System\Linq\Expressions;
+namespace Artister\System\Compiler\Expressions;
 
 use Artister\System\Linq\Expressions\ExpressionVisitor;
 use Artister\System\Linq\Expressions\ExpressionStringBuilder;

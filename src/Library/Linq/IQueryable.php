@@ -9,7 +9,6 @@
 namespace Artister\System\Linq;
 
 use Artister\System\Collections\IEnumerable;
-use Closure;
 
 interface IQueryable extends IEnumerable
 {

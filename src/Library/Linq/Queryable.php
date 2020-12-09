@@ -9,7 +9,7 @@
 namespace Artister\System\Linq;
 
 use Artister\System\Linq\IQueryable;
-use Artister\System\Linq\Expressions\Expression;
+use Artister\System\Compiler\Expressions\Expression;
 use Closure;
 
 abstract class Queryable

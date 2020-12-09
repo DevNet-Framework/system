@@ -6,7 +6,11 @@
  * @link        https://github.com/artister
  */
 
-namespace Artister\System\Linq\Expressions;
+namespace Artister\System\Compiler;
+
+use Artister\System\Compiler\Expressions\Expression;
+use Artister\System\Compiler\Expressions\ConstantExpression;
+use Artister\System\Compiler\Expressions\ParameterExpression;
 
 class ExpressionStringBuilder extends ExpressionVisitor
 {
@@ -55,6 +59,11 @@ class ExpressionStringBuilder extends ExpressionVisitor
         }
         $this->Out .=")";
         return $expression;
+    }
+
+    public function visitArray(Expression $expression)
+    {
+        # code...
     }
 
     public function visitGroup(Expression $expression)

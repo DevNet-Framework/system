@@ -6,23 +6,25 @@
  * @link        https://github.com/artister
  */
 
-namespace Artister\System\Linq\Expressions;
+namespace Artister\System\Compiler\Expressions;
 
-class ParameterExpression extends Expression
+use Artister\System\Compiler\ExpressionVisitor;
+
+class BinaryExpression extends Expression
 {
     public string $Name;
-    public ?string $Type;
-    public $value;
+    public Expression $Left;
+    public Expression $Right;
 
-    public function __construct(string $name, ?string $type = null, $value = null)
+    public function __construct(string $name, Expression $left, Expression $right)
     {
         $this->Name = $name;
-        $this->Type = $type;
-        $this->Value = $value;
+        $this->Left = $left;
+        $this->Right = $right;
     }
 
     public function accept(ExpressionVisitor $visitor)
     {
-        $visitor->visitParameter($this);
+        $visitor->visitBinary($this);
     }
 }

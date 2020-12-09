@@ -8,12 +8,12 @@
 
 namespace Artister\System\Linq;
 
-use Artister\System\Linq\Expressions\Expression;
+use Artister\System\Compiler\Expressions\Expression;
 use Artister\System\Linq\IQueryable;
 
 interface IQueryProvider
 {
-    public function createQuery(string $resultType, Expression $expression);
+    public function createQuery(string $resultType, Expression $expression) : IQueryable;
 
     public function execute(string $resultType, Expression $expression);
 }

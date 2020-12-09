@@ -6,7 +6,9 @@
  * @link        https://github.com/artister
  */
 
-namespace Artister\System\Linq\Expressions;
+namespace Artister\System\Compiler;
+
+use Artister\System\Compiler\Expressions\Expression;
 
 abstract class ExpressionVisitor
 {
@@ -20,6 +22,8 @@ abstract class ExpressionVisitor
     abstract public function visitLambda(Expression $expression);
     
     abstract public function visitCall(Expression $expression);
+
+    abstract public function visitArray(Expression $expression);
 
     abstract public function visitGroup(Expression $expression);
 
