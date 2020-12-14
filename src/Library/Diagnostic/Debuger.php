@@ -15,7 +15,7 @@ use Artister\System\Diagnostic\Internal\DisableHandler;
 class Debuger
 {
     private DebugInspector $Inspector;
-    private DebugHandler $Handler;
+    private IDebugHandler $Handler;
 
     public function __construct()
     {
