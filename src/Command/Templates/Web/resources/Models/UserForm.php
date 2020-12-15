@@ -20,7 +20,7 @@ class UserForm
 
     public function isValide() : bool
     {
-        if (isset($this->Username) && isset($this->Password))
+        if (!empty($this->Username) && !empty($this->Password))
         {
             return true;
         }

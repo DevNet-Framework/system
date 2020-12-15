@@ -28,7 +28,7 @@ class Startup
 
     public function configure(IApplicationBuilder $app)
     {
-        $app->UseDeveloperExceptionHandler();
+        $app->UseExceptionHandler();
 
         $app->useRouter();
 
