@@ -16,15 +16,15 @@ class Console
     private const FGCOLORS = [
         0   => '0;30',
         1   => '1;30',
-        2   => '1;31',
-        3   => '1;35',
+        2   => '0;31',
+        3   => '0;35',
         4   => '0;34',
         5   => '0;36',
         6   => '0;32',
         7   => '0;33',
         8   => '0;37',
-        9   => '0;31',
-        10  => '0;35',
+        9   => '1;31',
+        10  => '1;35',
         11  => '1;34',
         12  => '1;36',
         13  => '1;32',
@@ -43,12 +43,13 @@ class Console
         15  => '47'
     ];
 
-    public static function read(string $string = null)
+    public static function readLine(string $string = null)
     {
         if ($string != null) {
             fwrite(STDOUT, $string);
         }
-        return fgets(STDIN);
+
+        return str_replace(PHP_EOL, '', fgets(STDIN));
     }
 
     public static function write(...$parameters)
