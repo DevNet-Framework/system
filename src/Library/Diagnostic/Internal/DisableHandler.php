@@ -9,7 +9,6 @@
 namespace Artister\System\Diagnostic\Internal;
 
 use Artister\System\Diagnostic\IDebugHandler;
-use ErrorException;
 use Throwable;
 
 class DisableHandler implements IDebugHandler
@@ -19,7 +18,8 @@ class DisableHandler implements IDebugHandler
         $code = $error->getCode();
         $message = $error->getMessage();
 
-        if ($code == 0) {
+        if ($code < 400 || $code > 599)
+        {
             $code = 500;
         }
         
