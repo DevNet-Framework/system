@@ -13,15 +13,11 @@
     "require": {
         "php": ">=7.4.0"
     },
-    "bin": [
-        "bin/devnet"
-    ],
     "autoload": {
         "psr-4": {
-            "Artister\\System\\"                : "src/Library/",
-            "Artister\\System\\Command\\"       : "src/Command/",
-            "Artister\\System\\Runtime\\"       : "src/Runtime/",
-            "Artister\\System\\Compiler\\"      : "src/Compiler/"
+            "Artister\\System\\"            : "src/Library/",
+            "Artister\\System\\Runtime\\"   : "src/Runtime/",
+            "Artister\\System\\Compiler\\"  : "src/Compiler/"
         },
         "files": [
             "src/Library/Helpers.php"
