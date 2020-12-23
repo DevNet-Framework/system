@@ -6,9 +6,7 @@
  * @link        https://github.com/artister
  */
 
-namespace Artister\System\Runtime\Boot;
-
-use Composer\Autoload\ClassLoader;
+namespace Artister\System\Boot;
 
 class Launcher extends LauncherProperties
 {
@@ -24,19 +22,14 @@ class Launcher extends LauncherProperties
         return self::$Instance;
     }
 
-    public function setLoader(ClassLoader $loader) : void
-    {
-        self::$Loader = new Loader($loader);
-    }
-
     public function workspace(string $workspace) : void
     {
         self::$Workspace = $workspace;
     }
 
-    public function namespace(string $namespace) : void
+    public function namespaces(array $namespaces) : void
     {
-        self::$Namespace = $namespace;
+        self::$Namespaces = $namespaces;
     }
 
     public function entryPoint(string $entryPoint) : void
@@ -51,11 +44,14 @@ class Launcher extends LauncherProperties
 
     public function environmoment(string $env) : void
     {
-        self::$Env = $env;
+        self::$Envirement = $env;
     }
     
     public function Launch() : void
     {
+        self::$Loader = new ClassLoader(self::$Workspace, self::$Namespaces);
+        self::$Loader->register();
+
         $inputArgs = $GLOBALS['argv'] ?? [];
         array_shift($inputArgs);
         $inputArgs = $inputArgs + self::$Arguments;

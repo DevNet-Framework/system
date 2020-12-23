@@ -6,7 +6,7 @@
  * @link        https://github.com/artister
  */
 
-namespace Artister\System\Runtime\Boot;
+namespace Artister\System\Boot;
 
 class MainClassRunner
 {

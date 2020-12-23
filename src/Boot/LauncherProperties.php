@@ -6,20 +6,20 @@
  * @link        https://github.com/artister
  */
 
-namespace Artister\System\Runtime\Boot;
+namespace Artister\System\Boot;
 
 class LauncherProperties
 {
-    protected static ?object $Loader = null;
-    protected static string $Workspace;
-    protected static string $Namespace = "Application";
-    protected static string $EntryPoint = 'Application\Program';
+    protected static ClassLoader $Loader;
+    protected static string $Workspace = __DIR__;
+    protected static array $Namespaces = ["Application" => "/"];
+    protected static string $EntryPoint = "Application\Program";
     protected static array $Arguments = [];
-    protected static string $Env;
+    protected static string $Envirement;
 
-    public static function getLoader() : ?object
+    public static function getLoader() : ?ClassLoader
     {
-        return self::$Loader;
+        return self::$Loader ?? null;
     }
 
     public static function getWorkspace() : string
@@ -27,9 +27,9 @@ class LauncherProperties
         return self::$Workspace;
     }
 
-    public static function getNamespace() : string
+    public static function getNamespaces() : array
     {
-        return self::$Namespace;
+        return self::$Namespaces;
     }
 
     public function getEntryPoint() : string
@@ -44,6 +44,6 @@ class LauncherProperties
 
     public function getEnvironmoment() : string
     {
-        return self::$Env;
+        return self::$Envirement;
     }
 }

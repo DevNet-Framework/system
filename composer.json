@@ -16,7 +16,7 @@
     "autoload": {
         "psr-4": {
             "Artister\\System\\"            : "src/Library/",
-            "Artister\\System\\Runtime\\"   : "src/Runtime/",
+            "Artister\\System\\Boot\\"      : "src/Boot/",
             "Artister\\System\\Compiler\\"  : "src/Compiler/"
         },
         "files": [
