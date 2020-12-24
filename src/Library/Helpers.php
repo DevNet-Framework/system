@@ -33,18 +33,24 @@ function Url(string $path = '/') : string
 /**
  * add some PHP 8 features to PHP 7.
  */
-if(PHP_MAJOR_VERSION < 8)
+if(!function_exists("str_contains"))
 {
     function str_contains(string $string, string $needle) : bool
     {
         return strpos($string, $needle) !== false ? true : false;
     }
-    
+}
+
+if(!function_exists("str_starts_with"))
+{
     function str_starts_with(string $string, string $needle) : bool
     {
         return strpos($string, $needle) === 0 ? true : false;
     }
+}
 
+if(!function_exists("str_ends_with"))
+{
     function str_ends_with(string $string, string $needle) : bool
     {
         return strpos(strrev($string), strrev($needle)) === 0 ? true : false;
