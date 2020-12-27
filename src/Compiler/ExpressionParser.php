@@ -131,10 +131,6 @@ class ExpressionParser
             eval($buffer.'?>');
         }
 
-        /* if (!is_array($variables)) {
-            $variables = [];  check it later whay this code has been created
-        } */
-
         $this->OuterVariables = $variables;
         $this->FunctionReflector = new \ReflectionFunction($function);
 
@@ -163,6 +159,7 @@ class ExpressionParser
     
     public function getBody() : ?Expression
     {
+        $list = [];
         $expression = null;
         $stack = new Stack();
         do {
@@ -182,7 +179,7 @@ class ExpressionParser
 
                 switch ($ruleId) {
                     case 39: // one item list
-                    case 37 : // nested list
+                    case 38 : // nested list
                         $list[] = $stack->pop();
                         break;
                     case 36 : // call with arguments
@@ -223,7 +220,7 @@ class ExpressionParser
                         $value = null;
                         if (isset($this->OuterVariables[$name])) {
                             if (is_array($this->OuterVariables[$name]) || is_object($this->OuterVariables[$name])) {
-                                throw new \Exception("Insuported outer variable type, only scalar types are supported.");
+                                throw new \Exception("Unsupported outer variable type, only scalar types are supported.");
                             }
                             $value = $this->OuterVariables[$name];
                         }
@@ -283,6 +280,7 @@ class ExpressionParser
 
     public function getOuterVariables()
     {
+        $outerVariables = [];
         $function = $this->FunctionReflector->getClosure();
         ob_start();
         var_dump($function);
