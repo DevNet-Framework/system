@@ -79,9 +79,9 @@ class ExpressionParser
         $parserBuilder->define('expression', ['term']); //13
         $parserBuilder->define('term', ['term', 'times', 'factor']); //14
         $parserBuilder->define('term', ['factor']); //15
-        $parserBuilder->define('factor', ['number']); //16
-        $parserBuilder->define('factor', ['string']); //17
-        $parserBuilder->define('factor', ['bool']); //18
+        $parserBuilder->define('factor', ['bool']); //16
+        $parserBuilder->define('factor', ['number']); //17
+        $parserBuilder->define('factor', ['string']); //18
         $parserBuilder->define('factor', ['variable']); //19
         $parserBuilder->define('factor', ['identifier']); //20
         $parserBuilder->define('factor', ['unary']); //21
@@ -227,10 +227,21 @@ class ExpressionParser
                         $expression = Expression::parameter($name, null, $value);
                         $stack->push($expression);
                         break;
-                    case 18 : // bool
-                    case 17 : // string
-                    case 16 : // number
-                        $expression = Expression::constant($items[0]->getValue(), $items[0]->getName());
+                    case 18 : // string (remove double quotes quotes & escaping slashes)
+                        $value = $items[0]->getValue();
+                        $value = preg_replace("%^\"+|\"+$|^\'+|\'+$%", "", $value);
+                        $value = stripslashes($value);
+                        $expression = Expression::constant($value, $items[0]->getName());
+                        $stack->push($expression);
+                        break;
+                    case 17 : // number (convert string to number)
+                        $value = $items[0]->getValue() + 0;
+                        $expression = Expression::constant($value, $items[0]->getName());
+                        $stack->push($expression);
+                        break;
+                    case 16 : // bool
+                        $value = strtolower($items[0]->getValue()) == "true" ? true : false;
+                        $expression = Expression::constant($value, $items[0]->getName());
                         $stack->push($expression);
                         break;
                     case 14 : // product
