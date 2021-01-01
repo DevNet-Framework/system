@@ -11,7 +11,7 @@ use PDO;
 
 class DbConnection
 {
-    private string $Datasource;
+    private string $DataSource;
     private string $Username;
     private string $Password;
     private ?PDO $DataProvider;
