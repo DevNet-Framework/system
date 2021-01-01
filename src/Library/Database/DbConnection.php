@@ -11,25 +11,27 @@ use PDO;
 
 class DbConnection
 {
-    private string $DataSource;
+    private string $Datasource;
     private string $Username;
     private string $Password;
-    private int $State = 0;
     private ?PDO $DataProvider;
+    private int $State = 0;
 
     public function __construct(string $connection)
     {
-        $driver     = parse_url($connection, PHP_URL_SCHEME);
-        $host       = parse_url($connection, PHP_URL_HOST);
-        $dbname     = parse_url($connection, PHP_URL_PATH);
-        $port       = parse_url($connection, PHP_URL_PORT);
+        preg_match("%user\s*=((\\.|[^;])*)%", $connection, $user);
+        if ($user)
+        {
+            $this->Username = $user[1];
+        }
 
-        $dbname = ltrim($dbname, '/');
-        $port = $port ? ":{$port}" : null;
-        
-        $this->DataSource = "{$driver}:host={$host}{$port};dbname={$dbname}";
-        $this->Username   = parse_url($connection, PHP_URL_USER);
-        $this->Password   = parse_url($connection, PHP_URL_PASS);
+        preg_match("%password\s*=((\\.|[^;])*)%", $connection, $password);
+        if ($password)
+        {
+            $this->Password = $password[1];
+        }
+
+        $this->DataSource = preg_replace("%user\s*=(\\.|[^;])*;|password\s*=(\\.|[^;])*;%", "", $connection);
     }
 
     public function open()
