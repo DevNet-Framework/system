@@ -20,16 +20,10 @@ class DbConnection
     public function __construct(string $connection)
     {
         preg_match("%user\s*=((\\.|[^;])*)%", $connection, $user);
-        if ($user)
-        {
-            $this->Username = $user[1];
-        }
+        $this->Username = $user[1] ?? "";
 
         preg_match("%password\s*=((\\.|[^;])*)%", $connection, $password);
-        if ($password)
-        {
-            $this->Password = $password[1];
-        }
+        $this->Password = $password[1] ?? "";
 
         $this->DataSource = preg_replace("%user\s*=(\\.|[^;])*;|password\s*=(\\.|[^;])*;%", "", $connection);
     }
