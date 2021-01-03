@@ -8,10 +8,10 @@
 
 namespace Artister\System\Compiler\Expressions;
 
-use Artister\System\Linq\Expressions\ExpressionVisitor;
-use Artister\System\Linq\Expressions\ExpressionStringBuilder;
-use Artister\System\Linq\Expressions\Expression;
 use Artister\System\Linq\IQueryable;
+use Artister\System\Compiler\Expressions\Expression;
+use Artister\System\Compiler\ExpressionStringBuilder;
+use Artister\System\Compiler\ExpressionVisitor;
 
 
 class ExpressionSqlBuilder extends ExpressionVisitor
@@ -73,6 +73,11 @@ class ExpressionSqlBuilder extends ExpressionVisitor
 
     }
 
+    public function visitArray(Expression $expression)
+    {
+        # code...
+    }
+
     public function visitGroup(Expression $expression)
     {
         $this->Out .= "(";
@@ -131,7 +136,7 @@ class ExpressionSqlBuilder extends ExpressionVisitor
     public function visitConstant(Expression $expression)
     {
         if ($expression->Value instanceof IQueryable) {
-            $this->Out .= "SELECT * FROM {$expression->Value->ResultType}";
+            $this->Out .= "SELECT * FROM {$expression->Value->EntityType}";
         } else {
             $this->Out .= $expression->Value;
         }

@@ -14,7 +14,7 @@ interface IQueryable extends IEnumerable
 {
     /**
      * This method must retun the value of following properites
-     * @return string $ResultType
+     * @return object $EntityType
      * @return IQueryProvider $Provider
      * @return Expression $Expression
      */

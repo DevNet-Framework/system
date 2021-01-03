@@ -18,34 +18,34 @@ abstract class Queryable
     {
         $lambda = Expression::Lambda($predicate);
         $expression = Expression::call(null, 'Where', [$queryable->Expression, $lambda]);
-        return $queryable->Provider->createQuery($queryable->ResultType, $expression);
+        return $queryable->Provider->createQuery($queryable->EntityType, $expression);
     }
 
     public static function orderBy(IQueryable $queryable, Closure $predicate) : IQueryable
     {
         $lambda = Expression::Lambda($predicate);
         $expression = Expression::call(null, 'OrderBy', [$queryable->Expression, $lambda]);
-        return $queryable->Provider->createQuery($queryable->ResultType, $expression);
+        return $queryable->Provider->createQuery($queryable->EntityType, $expression);
     }
 
     public static function orderByDescending(IQueryable $queryable, Closure $predicate) : IQueryable
     {
         $lambda = Expression::Lambda($predicate);
         $expression = Expression::call(null, 'OrderByDescending', [$queryable->Expression, $lambda]);
-        return $queryable->Provider->createQuery($queryable->ResultType, $expression);
+        return $queryable->Provider->createQuery($queryable->EntityType, $expression);
     }
 
     public static function thenBy(IQueryable $queryable, Closure $predicate) : IQueryable
     {
         $lambda = Expression::Lambda($predicate);
         $expression = Expression::call(null, 'ThenBy', [$queryable->Expression, $lambda]);
-        return $queryable->Provider->createQuery($queryable->ResultType, $expression);
+        return $queryable->Provider->createQuery($queryable->EntityType, $expression);
     }
 
     public static function thenByDescending(IQueryable $queryable, Closure $predicate) : IQueryable
     {
         $lambda = Expression::Lambda($predicate);
         $expression = Expression::call(null, 'ThenByDescending', [$queryable->Expression, $lambda]);
-        return $queryable->Provider->createQuery($queryable->ResultType, $expression);
+        return $queryable->Provider->createQuery($queryable->EntityType, $expression);
     }
 }

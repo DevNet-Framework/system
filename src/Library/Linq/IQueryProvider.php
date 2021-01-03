@@ -13,7 +13,7 @@ use Artister\System\Linq\IQueryable;
 
 interface IQueryProvider
 {
-    public function createQuery(string $resultType, Expression $expression) : IQueryable;
+    public function createQuery(object $entityType, Expression $expression) : IQueryable;
 
-    public function execute(string $resultType, Expression $expression);
+    public function execute(object $entityType, Expression $expression);
 }
