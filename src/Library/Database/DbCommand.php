@@ -36,11 +36,11 @@ class DbCommand
         }
 
         if ($this->Parameters) {
-            $statement = $this->Connection->getDataProvider()->prepare($this->Sql);
+            $statement = $this->Connection->getConnector()->prepare($this->Sql);
             $statement->execute($this->Parameters);
             return $statement->rowCount();
         } else {
-            return $this->Connection->getDataProvider()->exec($this->Sql);
+            return $this->Connection->getConnector()->exec($this->Sql);
         }
     }
 
@@ -51,10 +51,10 @@ class DbCommand
         }
 
         if ($this->Parameters) {
-            $statement = $this->Connection->getDataProvider()->prepare($this->Sql);
+            $statement = $this->Connection->getConnector()->prepare($this->Sql);
             $statement->execute($this->Parameters);
         } else {
-            $statement = $this->Connection->getDataProvider()->query($this->Sql);
+            $statement = $this->Connection->getConnector()->query($this->Sql);
         }
 
         if ($statement->rowCount() == 0) {

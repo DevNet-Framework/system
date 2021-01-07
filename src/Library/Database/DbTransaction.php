@@ -19,7 +19,7 @@ class DbTransaction
 
     public function commit()
     {
-        $poovider = $this->Connection->getDbProvider();
+        $poovider = $this->Connection->getConnector();
         if (!$poovider) {
             throw new \Exception("DB connection is closed");
         }
@@ -29,7 +29,7 @@ class DbTransaction
 
     public function rollBack()
     {
-        $poovider = $this->Connection->getDbProvider();
+        $poovider = $this->Connection->getConnector();
         if (!$poovider) {
             throw new \Exception("DB connection is closed");
         }

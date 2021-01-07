@@ -11,34 +11,30 @@ use PDO;
 
 class DbConnection
 {
-    private string $DataSource;
+    private string $Datasource;
     private string $Username;
     private string $Password;
-    private ?PDO $DataProvider;
+    private ?PDO $Connector;
     private int $State = 0;
 
-    public function __construct(string $connection)
+    public function __construct(string $datasource, string $username = "", string $password = "")
     {
-        preg_match("%user\s*=((\\.|[^;])*)%", $connection, $user);
-        $this->Username = $user[1] ?? "";
-
-        preg_match("%password\s*=((\\.|[^;])*)%", $connection, $password);
-        $this->Password = $password[1] ?? "";
-
-        $this->DataSource = preg_replace("%user\s*=(\\.|[^;])*;|password\s*=(\\.|[^;])*;%", "", $connection);
+        $this->Datasource   = $datasource;
+        $this->Username     = $username;
+        $this->Password     = $password;
     }
 
     public function open()
     {
         if ($this->State == 0) {
-            $this->DataProvider = new PDO($this->DataSource, $this->Username, $this->Password);
+            $this->Connector = new PDO($this->Datasource, $this->Username, $this->Password);
             $this->State = 1;
         }
     }
 
-    public function getDataProvider() : PDO
+    public function getConnector() : PDO
     {
-        return $this->DataProvider;
+        return $this->Connector;
     }
 
     public function getState() : int
@@ -58,7 +54,7 @@ class DbConnection
 
     public function close()
     {
-        $this->DataProvider = null;
+        $this->Connector = null;
         $this->State = 0;
     }
 }
