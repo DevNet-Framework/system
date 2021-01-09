@@ -57,6 +57,11 @@ class DbCommand
             $statement = $this->Connection->getConnector()->query($this->Sql);
         }
 
+        if (!$statement)
+        {
+            return null;
+        }
+
         if ($statement->rowCount() == 0) {
             return null;
         }
