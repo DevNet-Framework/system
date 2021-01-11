@@ -48,4 +48,18 @@ abstract class Queryable
         $expression = Expression::call(null, 'ThenByDescending', [$queryable->Expression, $lambda]);
         return $queryable->Provider->createQuery($queryable->EntityType, $expression);
     }
+
+    public static function first(IQueryable $queryable)
+    {
+        $array = reset($queryable->getIterator()->toArray());
+
+        return !$array ? null : $array;
+    }
+
+    public static function last(IQueryable $queryable)
+    {
+        $array = end($queryable->getIterator()->toArray());
+        
+        return !$array ? null : $array;
+    }
 }

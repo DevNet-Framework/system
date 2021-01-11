@@ -136,7 +136,7 @@ class Linq
         $interfaces = class_implements($enumerable);
         if (in_array(IQueryable::class, $interfaces))
         {
-            throw new \Exception("Queriable method not implemented yet, try it as Enumerable");
+            return Queryable::first($enumerable);
         }
 
         return Enumerable::first($enumerable);
@@ -147,7 +147,7 @@ class Linq
         $interfaces = class_implements($enumerable);
         if (in_array(IQueryable::class, $interfaces))
         {
-            throw new \Exception("Queriable method not implemented yet, try it as Enumerable");
+            return Queryable::last($enumerable);
         }
 
         return Enumerable::last($enumerable);
