@@ -49,6 +49,20 @@ abstract class Queryable
         return $queryable->Provider->createQuery($queryable->EntityType, $expression);
     }
 
+    public static function skip(IQueryable $queryable, int $offset) : IQueryable
+    {
+        $constant = Expression::constant($offset);
+        $expression = Expression::call(null, 'skip', [$queryable->Expression, $constant]);
+        return $queryable->Provider->createQuery($queryable->EntityType, $expression);
+    }
+
+    public static function take(IQueryable $queryable, int $limit) : IQueryable
+    {
+        $constant = Expression::constant($limit);
+        $expression = Expression::call(null, 'take', [$queryable->Expression, $constant]);
+        return $queryable->Provider->createQuery($queryable->EntityType, $expression);
+    }
+
     public static function first(IQueryable $queryable)
     {
         $array = reset($queryable->getIterator()->toArray());

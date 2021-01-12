@@ -54,6 +54,28 @@ class Linq
         return Enumerable::orderByDescending($enumerable, $predecate);
     }
 
+    public static function skip(IEnumerable $enumerable, int $offset)
+    {
+        $interfaces = class_implements($enumerable);
+        if (in_array(IQueryable::class, $interfaces))
+        {
+            return Queryable::skip($enumerable, $offset);
+        }
+
+        return Enumerable::skip($enumerable, $offset);
+    }
+
+    public static function take(IEnumerable $enumerable, int $limit)
+    {
+        $interfaces = class_implements($enumerable);
+        if (in_array(IQueryable::class, $interfaces))
+        {
+            return Queryable::take($enumerable, $limit);
+        }
+
+        return Enumerable::take($enumerable, $limit);
+    }
+
     public static function groupBy(IEnumerable $enumerable, Closure $predecate)
     {
         $interfaces = class_implements($enumerable);
@@ -107,28 +129,6 @@ class Linq
         }
 
         return Enumerable::min($enumerable, $predecate);
-    }
-
-    public static function take(IEnumerable $enumerable, int $limit)
-    {
-        $interfaces = class_implements($enumerable);
-        if (in_array(IQueryable::class, $interfaces))
-        {
-            throw new \Exception("Queriable method not implemented yet, try it as Enumerable");
-        }
-
-        return Enumerable::take($enumerable, $limit);
-    }
-
-    public static function skip(IEnumerable $enumerable, int $offset)
-    {
-        $interfaces = class_implements($enumerable);
-        if (in_array(IQueryable::class, $interfaces))
-        {
-            throw new \Exception("Queriable method not implemented yet, try it as Enumerable");
-        }
-
-        return Enumerable::skip($enumerable, $offset);
     }
 
     public static function first(IEnumerable $enumerable)
