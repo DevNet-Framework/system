@@ -9,10 +9,10 @@
 namespace Artister\System\Compiler;
 
 use Artister\System\Compiler\Expressions\Expression;
-use Artister\System\Compiler\Lexer\LexerBuilder;
-use Artister\System\Compiler\Parser\ParserBuilder;
-use Artister\System\Compiler\Parser\Stack;
-use Artister\System\Compiler\Parser;
+use Artister\System\Compiler\Lexing\LexerBuilder;
+use Artister\System\Compiler\Parsing\ParserBuilder;
+use Artister\System\Compiler\Parsing\Stack;
+use Artister\System\Compiler\Parsing\Parser;
 use Closure;
 
 class ExpressionParser

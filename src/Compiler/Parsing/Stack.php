@@ -6,7 +6,7 @@
  * @link        https://github.com/artister
  */
 
-namespace Artister\System\Compiler\Parser;
+namespace Artister\System\Compiler\Parsing;
 
 class Stack
 {

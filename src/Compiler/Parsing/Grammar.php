@@ -6,9 +6,9 @@
  * @link        https://github.com/artister
  */
 
-namespace Artister\System\Compiler\Parser;
+namespace Artister\System\Compiler\Parsing;
 
-use Artister\System\Compiler\ILexer;
+use Artister\System\Compiler\Lexing\ILexer;
 
 class Grammar
 {

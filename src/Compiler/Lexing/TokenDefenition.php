@@ -6,13 +6,16 @@
  * @link        https://github.com/artister
  */
 
-namespace Artister\System\Compiler;
+namespace Artister\System\Compiler\Lexing;
 
-interface IToken extends IComponent
+class TokenDefenition
 {
-    const SKIPPED = 'SKIPPED';
-    const UNKNOWN = 'UNKNOWN';
-    const EOI     = 'EOI';
-    
-    public function getValue() : string;
+    public string $name;
+    public string $pattern;
+
+    public function __construct(string $name, string $pattern)
+    {
+        $this->name = $name;
+        $this->pattern = $pattern;
+    }
 }

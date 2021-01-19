@@ -6,9 +6,7 @@
  * @link        https://github.com/artister
  */
 
-namespace Artister\System\Compiler;
-
-use Artister\System\Compiler\Lexer\Token;
+namespace Artister\System\Compiler\Lexing;
 
 class Lexer implements ILexer
 {

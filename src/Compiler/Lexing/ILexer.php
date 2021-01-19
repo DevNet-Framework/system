@@ -6,16 +6,13 @@
  * @link        https://github.com/artister
  */
 
-namespace Artister\System\Compiler\Lexer;
+namespace Artister\System\Compiler\Lexing;
 
-class TokenDefenition
+interface ILexer
 {
-    public string $name;
-    public string $pattern;
+    public function scan(string $text);
 
-    public function __construct(string $name, string $pattern)
-    {
-        $this->name = $name;
-        $this->pattern = $pattern;
-    }
+    public function advance();
+
+    public function getToken() : IToken;
 }

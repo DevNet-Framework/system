@@ -6,11 +6,7 @@
  * @link        https://github.com/artister
  */
 
-namespace Artister\System\Compiler;
-
-use Artister\System\Compiler\Parser\Grammar;
-use Artister\System\Compiler\Parser\Stack;
-use Artister\System\Compiler\Parser\Node;
+namespace Artister\System\Compiler\Parsing;
 
 class Parser
 {

@@ -6,13 +6,15 @@
  * @link        https://github.com/artister
  */
 
-namespace Artister\System\Compiler;
+namespace Artister\System\Compiler\Lexing;
 
-interface ILexer
+use Artister\System\Compiler\IComponent;
+
+interface IToken extends IComponent
 {
-    public function scan(string $text);
-
-    public function advance();
-
-    public function getToken() : IToken;
+    const SKIPPED = 'SKIPPED';
+    const UNKNOWN = 'UNKNOWN';
+    const EOI     = 'EOI';
+    
+    public function getValue() : string;
 }

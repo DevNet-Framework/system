@@ -6,9 +6,7 @@
  * @link        https://github.com/artister
  */
 
-namespace Artister\System\Compiler\Lexer;
-
-use Artister\System\Compiler\IToken;
+namespace Artister\System\Compiler\Lexing;
 
 class Token implements IToken
 {
