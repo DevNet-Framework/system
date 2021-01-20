@@ -68,7 +68,7 @@ abstract class Queryable
         $array      = $queryable->getIterator()->toArray();
         $element    = reset($array);
 
-        return $element ?? null;
+        return $element ? $element : null;
     }
 
     public static function last(IQueryable $queryable)
