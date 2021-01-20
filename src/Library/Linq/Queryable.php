@@ -76,6 +76,6 @@ abstract class Queryable
         $array      = $queryable->getIterator()->toArray();
         $element    = end($array);
         
-        return $element ?? null;
+        return $element ? $element : null;
     }
 }
