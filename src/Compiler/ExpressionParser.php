@@ -124,7 +124,7 @@ class ExpressionParser
             $buffer = preg_replace('/"(\w+)"(:\w+)/','"\\1\\2"', $buffer);
             $buffer = preg_replace('/object\([\w\\\\]+\)#\d+/','(object)array', $buffer);
             $buffer = preg_replace('/uninitialized\([\w\?\\\\]+\)/','NULL', $buffer);
-            $buffer = strtr($buffer, '"{}[]', "'(), ");
+            $buffer = strtr($buffer, '{}[]', "(), ");
             $buffer = str_replace('(,', '(', $buffer);
             $buffer = '$variables='.$buffer;
 
@@ -240,7 +240,7 @@ class ExpressionParser
                             }
                             $value = $this->OuterVariables[$name];
                         }
-                        $expression = Expression::parameter($name, null, $value);
+                        $expression = Expression::parameter($name, gettype($value), $value);
                         $stack->push($expression);
                         break;
                     case 18 : // string (remove double quotes quotes & escaping slashes)
