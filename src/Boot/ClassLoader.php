@@ -19,12 +19,17 @@ class ClassLoader
         $this->Map = $map;
     }
 
-    public function map(string $prefix, string $root)
+    public function setWorkspace(string $workspace) : void
+    {
+        $this->Workspace = $workspace;
+    }
+
+    public function map(string $prefix, string $root) : void
     {
         $this->Map[$prefix] = $root;
     }
 
-    public function load(string $type)
+    public function load(string $type) : void
     {
         $segmets    = explode("\\", $type);
         $name       = array_pop($segmets);
@@ -60,12 +65,12 @@ class ClassLoader
         }
     }
 
-    public function register()
+    public function register() : void
     {
         spl_autoload_register([$this, 'load']);
     }
 
-    public function unRegister()
+    public function unRegister() : void
     {
         spl_autoload_unregister([$this, 'load']);
     }
