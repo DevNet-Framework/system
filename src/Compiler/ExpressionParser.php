@@ -112,27 +112,8 @@ class ExpressionParser
 
     public function parse(Closure $function)
     {
-        $variables = [];
-        ob_start();
-        var_dump($function);
-        $buffer = ob_get_clean();
-        $buffer = preg_replace('/\s|(bool|int)\((\w+|\d+)\)|(string|)\(\d+\)|:"[\w\\\\]+"/','\\2', $buffer);
-        preg_match('/(\{(?:[^}{]+|(?R))*+\})\[/', $buffer, $matches); // keep onley the static values
-
-        if (isset($matches[1])) {
-            $buffer = 'array'.$matches[1];
-            $buffer = preg_replace('/"(\w+)"(:\w+)/','"\\1\\2"', $buffer);
-            $buffer = preg_replace('/object\([\w\\\\]+\)#\d+/','(object)array', $buffer);
-            $buffer = preg_replace('/uninitialized\([\w\?\\\\]+\)/','NULL', $buffer);
-            $buffer = strtr($buffer, '{}[]', "(), ");
-            $buffer = str_replace('(,', '(', $buffer);
-            $buffer = '$variables='.$buffer;
-
-            eval($buffer.'?>');
-        }
-
-        $this->OuterVariables = $variables;
         $this->FunctionReflector = new \ReflectionFunction($function);
+        $this->OuterVariables =  $this->FunctionReflector->getStaticVariables();
 
         $fileName = $this->FunctionReflector->getFileName();
         $startLine = $this->FunctionReflector->getStartLine() - 1; // adjustment by - 1, because line 1 is in inedx 0
