@@ -6,7 +6,7 @@
  * @link        https://github.com/artister
  */
 
-namespace Artister\System\Process;
+namespace Artister\System\Async;
 
 use Exception;
 
