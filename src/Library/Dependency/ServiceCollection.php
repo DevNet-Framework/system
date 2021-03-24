@@ -18,7 +18,7 @@ class ServiceCollection implements IServiceCollection
 
     public function add(ServiceDescriptor $serviceDescriptor) : void
     {
-        $this->Services[] =  $serviceDescriptor;
+        $this->Services[$serviceDescriptor->ServiceType] =  $serviceDescriptor;
     }
 
     public function addSingleton(string $serviceType, $service = null)
