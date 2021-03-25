@@ -19,7 +19,7 @@ class ExpressionParser
 {
     private static $Instance;
     private Parser $Parser;
-    private int $StartLine = 0;
+    private int $StartLine;
     private int $Position;
     private array $OuterVariables = [];
 
@@ -112,6 +112,8 @@ class ExpressionParser
 
     public function parse(Closure $function)
     {
+        $this->Position = 0;
+        $this->StartLine = 0;
         $this->FunctionReflector = new \ReflectionFunction($function);
         $this->OuterVariables =  $this->FunctionReflector->getStaticVariables();
 
@@ -123,11 +125,15 @@ class ExpressionParser
         $source = file($fileName, FILE_IGNORE_NEW_LINES);
         $lines = array_slice($source, $startLine, $length);
         $functionLine = implode("\n", $lines);
-        if ($this->StartLine == $startLine){
+
+        if ($this->StartLine == $startLine)
+        {
             $position = $this->Position;
-        } else {
+        } else
+        {
             $position = 0;
         }
+
         preg_match("/\((?:[^)(]+|(?R))*+\)/", $functionLine, $matches, PREG_OFFSET_CAPTURE, $position);
         if ($matches) {
             $this->Position = $matches[0][1] + strlen($matches[0][0]);
@@ -146,14 +152,16 @@ class ExpressionParser
         do {
             $this->Parser->advance();
 
-            if ($this->Parser->action == Parser::ERROR) {
+            if ($this->Parser->action == Parser::ERROR)
+            {
                 $node = $this->Parser->getNode();
                 if ($node->getName() == 'UNKNOWN') {
                     throw new \Exception("UNKNOWN Token");
                 }
             }
 
-            if ($this->Parser->action == Parser::REDUCE) {
+            if ($this->Parser->action == Parser::REDUCE)
+            {
                 $ruleId = $this->Parser->getReduceId();
                 $node = $this->Parser->getNode();
                 $items = $node->getValues();
@@ -177,11 +185,13 @@ class ExpressionParser
                         $parameter = Expression::parameter($name, $items[0]->getName());
                         $name = ltrim($items[2]->getValue(), '$');
                         
-                        if (!isset($this->OuterVariables[$name])) {
+                        if (!isset($this->OuterVariables[$name]))
+                        {
                             throw new \Exception("Undefined outer variable \${$name}");
                         }
 
-                        if (is_array($this->OuterVariables[$name]) || is_object($this->OuterVariables[$name])) {
+                        if (is_array($this->OuterVariables[$name]) || is_object($this->OuterVariables[$name]))
+                        {
                             throw new \Exception("Unsupported outer variable type, only scalar types are supported.");
                         }
 
@@ -215,8 +225,10 @@ class ExpressionParser
                     case 19 : // variable
                         $name = ltrim($items[0]->getValue(), '$');
                         $value = null;
-                        if (isset($this->OuterVariables[$name])) {
-                            if (is_array($this->OuterVariables[$name]) || is_object($this->OuterVariables[$name])) {
+                        if (isset($this->OuterVariables[$name]))
+                        {
+                            if (is_array($this->OuterVariables[$name]) || is_object($this->OuterVariables[$name]))
+                            {
                                 throw new \Exception("Unsupported outer variable type, only scalar types are supported.");
                             }
                             $value = $this->OuterVariables[$name];
@@ -274,10 +286,12 @@ class ExpressionParser
     public function getParameters()
     {
         $parameters = [];
-        foreach ($this->FunctionReflector->getParameters() as $paramReflector) {
+        foreach ($this->FunctionReflector->getParameters() as $paramReflector)
+        {
             $parameterName = $paramReflector->getName();
             $parameterType = null;
-            if ($paramReflector->getType()) {
+            if ($paramReflector->getType())
+            {
                 $parameterType = $paramReflector->getType()->getName();
             }
             $parameters[] = Expression::parameter($parameterName, $parameterType);
@@ -304,5 +318,4 @@ class ExpressionParser
 
         return $outerVariables;
     }
-
 }
