@@ -9,7 +9,6 @@
 namespace Artister\System\Database;
 
 use PDOStatement;
-use PDO;
 
 class DbCommand
 {
@@ -31,7 +30,7 @@ class DbCommand
 
     public function execute() : int
     {
-        if ($this->Connection->getState() == 0) {
+        if ($this->Connection->getState() === 0) {
             throw new \Exception("DB connection is closed");
         }
 
@@ -44,7 +43,7 @@ class DbCommand
         }
     }
 
-    public function executeReader(string $objectType = null, array $injection = []) : ?DbReader
+    public function executeReader() : ?DbReader
     {
         if ($this->Connection->getState() == 0) {
             throw new \Exception("DB connection is closed");
@@ -62,15 +61,11 @@ class DbCommand
             return null;
         }
 
-        if ($statement->rowCount() == 0) {
+        if ($statement->rowCount() === 0) {
             return null;
         }
 
         $this->Statement = $statement;
-
-        if ($objectType) {
-            $statement->setFetchMode(PDO::FETCH_CLASS, $objectType, $injection);
-        }
         
         return new DbReader($this);
     }

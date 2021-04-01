@@ -10,34 +10,57 @@ namespace Artister\System\Database;
 
 use Artister\System\Collections\Enumerator;
 use IteratorAggregate;
+use PDO;
 
 class DbReader implements IteratorAggregate
 {
     private DbCommand $Command;
+    private array $Row = [];
 
     public function __construct(DbCommand $command)
     {
         $this->Command = $command;
+        $this->Command->Statement->setFetchMode(PDO::FETCH_ASSOC);
     }
 
-    public function read()
+    public function read() : bool
     {
-        if ($this->Command->Connection->getState() == 1) {
-            return $this->Command->Statement->fetch();
+        if ($this->Command->Connection->getState() === 1)
+        {
+            $row = $this->Command->Statement->fetch();
+
+            if ($row)
+            {
+                $this->Row = $row;
+                return true;
+            }
         }
 
+        $this->Row = [];
         $this->Command->Statement->closeCursor();
-        return null;
+        return false;
+    }
 
+    public function getValue(string $name)
+    {
+        return $this->Row[$name] ?? null;
+    }
+
+    public function getName(int $ordinal) : ?string
+    {
+        $row = array_keys($this->Row);
+        return $row[$ordinal] ?? null;
     }
 
     public function reset()
     {
+        $this->Row = [];
         $this->Command->Statement->closeCursor();
     }
 
     public function close()
     {
+        $this->Row = [];
         $this->Command->Statement->closeCursor();
         $this->Command->Statement = null;
         $this->Command->Connection = null;
