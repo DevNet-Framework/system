@@ -10,100 +10,74 @@ namespace Artister\System\Async;
 
 use DateTime;
 use Closure;
-use Exception;
 
 class Task
 {
-    private static array $Tasks = [];
+    public const Created   = 0;
+    public const Started   = 1;
+    public const Completed = 2;
+    public const Faulted   = -1;
+    public const Canceled  = -2;
 
     private Closure $Action;
+    private TaskScheduler $Scheduler;
     private int $Id;
-    private int $Delay;
-    private int $Status = 0;
-    private Exception $Exception;
-    private array $Actions = [];
+    private int $Status;
     private $Result = null;
 
     public function __construct(Closure $action)
     {
         $this->Action = $action;
         $this->Id = spl_object_id ($this);
-        $this->Delay = 0;
+        $this->Status = Self::Created;
+        $this->Scheduler = TaskScheduler::getDefaultScheduler();
     }
 
     public function __get(string $name)
     {
-        if ($name == 'Result')
-        {
-            return $this->wait();
-        }
-
         return $this->$name;
     }
 
-    public function start(TaskScheduler $taskScheduler = null)
+    public function start(TaskScheduler $taskScheduler = null) : void
     {
-        self::$Tasks[$this->Id] = $this;
-    }
-
-    public function delay(int $delay)
-    {
-        $this->Delay = $delay;
-        return $this;
-    }
-
-    public function wait()
-    {
-        if (isset(self::$Tasks[$this->Id]))
+        if ($taskScheduler)
         {
-            unset(self::$Tasks[$this->Id]);
+            $this->Scheduler = $taskScheduler;
         }
+        
+        if ($this->Status === self::Created)
+        {
+            $this->Status = Self::Started;
+            $this->Scheduler->add($this);
+        }
+        
+    }
 
-        $action = $this->Action;
-        try {
-            $this->Result = $action();
-            $this->Status = 1;
-            foreach ($this->Actions as $action)
+    public function then(Closure $next) : Task
+    {
+        $previous = $this;
+        $next = function () use ($previous, $next)
+        {
+            if ($previous->Status !== self::Completed)
             {
-                $this->Result = $action($this->Result);
+                $previous->wait();
             }
-        }
-        catch (TaskException $exception)
-        {
-            $this->Exception = $exception;
-            $this->Status = -1;
-        }
 
-        return $this->Result;
+            return $next($previous);
+        };
+        
+        return new Task($next);
     }
 
-    public function continueWith(Closure $next)
+    public function wait() : void
     {
-        $this->Actions[] = $next;
-        return $this;
-    }
-
-    public function then(object $next)
-    {
-    
-        if (isset(self::$Tasks[$this->Id]))
+        if ($this->Status === self::Created || $this->Status === self::Started)
         {
-            unset(self::$Tasks[$this->Id]);
+            $action = $this->Action;
+            $this->Result = $action(null);
+            $this->Status = Self::Completed;
+            TaskScheduler::getDefaultScheduler()->remove($this);
         }
-
-        $action = $this->Action;
-        try
-        {
-            $this->Result = $action($next);
-            $this->Status = 1;
-        }
-        catch (TaskException $exception)
-        {
-            $this->Exception = $exception;
-            $this->Status = -1;
-        }
-
-        return $this->Result;
     }
 
     public static function completedTask()

@@ -13,39 +13,42 @@ use Closure;
 
 class TaskScheduler
 {
-    private static array $Tasks = [];
+    private static TaskScheduler $Scheduler;
+    private array $Tasks = [];
+
+    public static function getDefaultScheduler() : TaskScheduler
+    {
+        if (!isset(self::$Scheduler))
+        {
+            self::$Scheduler = new TaskScheduler();
+        }
+
+        return self::$Scheduler;
+    }
 
     public function add(Task $task)
     {
-        self::$Tasks[$task->Id] = $task;
+        $this->Tasks[$task->Id] = $task;
     }
 
-    public static function run()
+    public function remove(Task $task) : bool
     {
-        //set time out
-        $timeOut = [];
-        $currentTime = 1000 * microtime(true);
-        foreach (self::$Tasks as $key => $task)
+        if (isset($this->Tasks[$task->Id]))
         {
-            $timeOut[$key] = $currentTime + $task->Delay;
+            unset($this->Tasks[$task->Id]);
+            return true;
         }
+        
+        return false;
+    }
 
-        while (self::$Tasks)
+    public function execute()
+    {
+        while ($this->Tasks)
         {
-            foreach (self::$Tasks as $key => $task)
+            foreach ($this->Tasks as $key => $task)
             {
-                $currentTime = 1000 * microtime(true);
-                
-                if ($currentTime > $timeOut[$key])
-                {
-                    $action = $task->Action;
-                    $action($task);
-
-                    if ($task->Status == 1)
-                    {
-                        unset(self::$Tasks[$key]);
-                    }
-                }
+                $task->wait();
             }
         }
     }
