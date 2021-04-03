@@ -10,13 +10,16 @@ namespace Artister\System\Async;
 
 use DateTime;
 use Closure;
+use Exception;
 
 class TaskCompletion
 {
-    private static array $tasks = [];
-
     private Task $Task;
-    private $result = null;
+
+    public function __construct()
+    {
+        $this->Task = new Task(fn () => null);
+    }
 
     public function __get(string $name)
     {
@@ -25,16 +28,11 @@ class TaskCompletion
 
     public function setResult($result)
     {
-        $this->result = $result;
+        $this->Task = new Task(fn () => $result);
     }
 
-    public function setCancelled()
+    public function setExecption(string $exception)
     {
-        $this->state = 0;
-    }
-
-    public function complited()
-    {
-        $this->state = 1;
+        $this->Task = new Task(fn () => throw new TaskException($exception));
     }
 }
