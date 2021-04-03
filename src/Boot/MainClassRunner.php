@@ -8,6 +8,8 @@
 
 namespace Artister\System\Boot;
 
+use Artister\System\Async\TaskScheduler;
+
 class MainClassRunner
 {
     private string $MainClass;
@@ -32,5 +34,6 @@ class MainClassRunner
         }
 
         $this->MainClass::main($this->Args);
+        TaskScheduler::getDefaultScheduler()->execute();
     }
 }
