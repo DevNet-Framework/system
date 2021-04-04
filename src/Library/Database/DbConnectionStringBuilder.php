@@ -3,22 +3,22 @@
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
  * @license     MIT License. For full license information see LICENSE file in the project root.
- * @link        https://github.com/artister
+ * @link        https://github.com/DevNet-Framework
  */
 
-namespace Artister\System\Database;
+namespace DevNet\System\Database;
 
-use Artister\System\Exceptions\PropertyException;
+use DevNet\System\Exceptions\PropertyException;
 
 class DbConnectionStringBuilder
 {
-    private string $ConnectionString    = "";
-    public ?string $Driver              = null;
-    public ?string $Datasource          = null;
-    public ?string $Database            = null;
-    public ?string $Charset             = null;
-    public ?string $Username            = null;
-    public ?string $Password            = null;
+    private string $ConnectionString = "";
+    public ?string $Driver           = null;
+    public ?string $Datasource       = null;
+    public ?string $Database         = null;
+    public ?string $Charset          = null;
+    public ?string $Username         = null;
+    public ?string $Password         = null;
 
     public function __construct(string $connection = null)
     {
@@ -55,7 +55,8 @@ class DbConnectionStringBuilder
         $path               = parse_url($uri, PHP_URL_PATH);
         $query              = parse_url($uri, PHP_URL_QUERY);
 
-        if ($port != null) {
+        if ($port != null)
+        {
             $this->Datasource .= ":".$port;
         }
 
@@ -83,7 +84,8 @@ class DbConnectionStringBuilder
         $this->ConnectionString = "";
         $this->ConnectionString .= $this->Driver.":";
 
-        switch ($this->Driver) {
+        switch ($this->Driver)
+        {
             case 'sqlite':
                 $this->ConnectionString .= $this->Datasource;
                 break;

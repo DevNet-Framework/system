@@ -3,12 +3,12 @@
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
  * @license     MIT License. For full license information see LICENSE file in the project root.
- * @link        https://github.com/artister
+ * @link        https://github.com/DevNet-Framework
  */
 
-namespace Artister\System\Event;
+namespace DevNet\System\Event;
 
-use Artister\System\Exceptions\MethodException;
+use DevNet\System\Exceptions\MethodException;
 use ReflectionFunction;
 use ReflectionMethod;
 use Closure;
@@ -22,7 +22,7 @@ class Action
 
     public function __construct(object $target, string $actionName = '__invoke')
     {
-        $this->Target = $target;
+        $this->Target     = $target;
         $this->ActionName = $actionName;
 
         if ($target instanceof Closure)

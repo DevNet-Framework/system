@@ -3,18 +3,18 @@
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
  * @license     MIT License. For full license information see LICENSE file in the project root.
- * @link        https://github.com/artister
+ * @link        https://github.com/DevNet-Framework
  */
 
-namespace Artister\System\Linq\Enumerables;
+namespace DevNet\System\Linq\Enumerables;
 
-use Artister\System\Collections\Enumerator;
-use Artister\System\Collections\IEnumerable;
+use DevNet\System\Collections\Enumerator;
+use DevNet\System\Collections\IEnumerable;
 use Closure;
 
 class TakeEnumerable implements IEnumerable
 {
-    use \Artister\System\Extension\ExtensionTrait;
+    use \DevNet\System\Extension\ExtensionTrait;
 
     private array $Array = [];
 

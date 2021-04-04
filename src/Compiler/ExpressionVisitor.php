@@ -3,12 +3,12 @@
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
  * @license     MIT License. For full license information see LICENSE file in the project root.
- * @link        https://github.com/artister
+ * @link        https://github.com/DevNet-Framework
  */
 
-namespace Artister\System\Compiler;
+namespace DevNet\System\Compiler;
 
-use Artister\System\Compiler\Expressions\Expression;
+use DevNet\System\Compiler\Expressions\Expression;
 
 abstract class ExpressionVisitor
 {

@@ -3,23 +3,23 @@
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
  * @license     MIT License. For full license information see LICENSE file in the project root.
- * @link        https://github.com/artister
+ * @link        https://github.com/DevNet-Framework
  */
 
-namespace Artister\System\Linq\Enumerables;
+namespace DevNet\System\Linq\Enumerables;
 
-use Artister\System\Collections\Enumerator;
-use Artister\System\Collections\IEnumerable;
-use Artister\System\Linq\Enumerable;
+use DevNet\System\Collections\Enumerator;
+use DevNet\System\Collections\IEnumerable;
+use DevNet\System\Linq\Enumerable;
 use Closure;
 
 class OrderEnumerable implements IEnumerable
 {
-    use \Artister\System\Extension\ExtensionTrait;
+    use \DevNet\System\Extension\ExtensionTrait;
 
     private IEnumerable $Enumerable;
-    private array $Array    = [];
-    private array $Sort     = [];
+    private array $Array = [];
+    private array $Sort  = [];
 
     public function __construct(IEnumerable $enumerable)
     {
@@ -28,35 +28,35 @@ class OrderEnumerable implements IEnumerable
 
     public function orderBy(Closure $predecate)
     {
-        $array          = $this->Enumerable->getIterator()->toArray();
-        $this->Sort     = $this->sort($array, $predecate);
-        $list           = $this->list($this->Sort); 
-        $this->Array    = $list;
+        $array       = $this->Enumerable->getIterator()->toArray();
+        $this->Sort  = $this->sort($array, $predecate);
+        $list        = $this->list($this->Sort); 
+        $this->Array = $list;
         return $this;
     }
 
     public function orderByDescending(Closure $predecate)
     {
-        $array          = $this->Enumerable->getIterator()->toArray();
-        $this->Sort     = $this->sort($array, $predecate, true);
-        $list           = $this->list($this->Sort);
-        $this->Array    = $list;
+        $array       = $this->Enumerable->getIterator()->toArray();
+        $this->Sort  = $this->sort($array, $predecate, true);
+        $list        = $this->list($this->Sort);
+        $this->Array = $list;
         return $this;
     }
 
     public function thenBy(Closure $predecate)
     {
-        $map            = $this->sort($this->Sort, $predecate);
-        $list           = $this->list($map);
-        $this->Array    = $list;
+        $map         = $this->sort($this->Sort, $predecate);
+        $list        = $this->list($map);
+        $this->Array = $list;
         return $this;
     }
     
     public function thenByDescending(Closure $predecate)
     {
-        $map            = $this->sort($this->Sort, $predecate, true);
-        $list           = $this->list($map);
-        $this->Array    = $list;
+        $map         = $this->sort($this->Sort, $predecate, true);
+        $list        = $this->list($map);
+        $this->Array = $list;
         return $this;
     }
 
@@ -110,8 +110,8 @@ class OrderEnumerable implements IEnumerable
         {
             if (is_array($element))
             {
-                $element    = $this->list($element);
-                $list       = array_merge($list, $element);
+                $element = $this->list($element);
+                $list    = array_merge($list, $element);
             }
             else
             {

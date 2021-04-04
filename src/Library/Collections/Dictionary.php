@@ -3,19 +3,19 @@
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
  * @license     MIT License. For full license information see LICENSE file in the project root.
- * @link        https://github.com/artister
+ * @link        https://github.com/DevNet-Framework
  */
 
-namespace Artister\System\Collections;
+namespace DevNet\System\Collections;
 
 use ArrayAccess;
-use Artister\System\Type;
-use Artister\System\Exceptions\ArrayException;
+use DevNet\System\Type;
+use DevNet\System\Exceptions\ArrayException;
 
 class Dictionary implements ArrayAccess, IDictionary
 {
-    use \Artister\System\Collections\ArrayTrait;
-    use \Artister\System\Extension\ExtensionTrait;
+    use \DevNet\System\Collections\ArrayTrait;
+    use \DevNet\System\Extension\ExtensionTrait;
 
     public function __construct(string $keyType, string $valueType)
     {

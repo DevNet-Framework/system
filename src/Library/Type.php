@@ -3,19 +3,19 @@
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
  * @license     MIT License. For full license information see LICENSE file in the project root.
- * @link        https://github.com/artister
+ * @link        https://github.com/DevNet-Framework
  */
 
-namespace Artister\System;
+namespace DevNet\System;
 
 class Type
 {
-    const Boolean   = 'boolean';
-    const Integer   = 'integer';
-    const Float     = 'float';
-    const String    = 'string';
-    const Array     = 'array';
-    const Object    = 'object';
+    const Boolean = 'boolean';
+    const Integer = 'integer';
+    const Float   = 'float';
+    const String  = 'string';
+    const Array   = 'array';
+    const Object  = 'object';
 
     private string $Name;
     private array $GenericTypeArgs;

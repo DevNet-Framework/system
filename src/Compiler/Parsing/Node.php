@@ -3,12 +3,12 @@
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
  * @license     MIT License. For full license information see LICENSE file in the project root.
- * @link        https://github.com/artister
+ * @link        https://github.com/DevNet-Framework
  */
 
-namespace Artister\System\Compiler\Parsing;
+namespace DevNet\System\Compiler\Parsing;
 
-use Artister\System\Compiler\IComponent;
+use DevNet\System\Compiler\IComponent;
 use IteratorAggregate;
 
 class Node implements IComponent
@@ -34,7 +34,8 @@ class Node implements IComponent
 
     public function getValue(int $index)
     {
-        if ($this->Values[$index]) {
+        if ($this->Values[$index])
+        {
             return $this->Values[$index];
         }
     }
@@ -51,7 +52,8 @@ class Node implements IComponent
 
     public function getIterator()
     {
-        foreach ($this->Values as $value) {
+        foreach ($this->Values as $value)
+        {
             yield $value;
         }
     }

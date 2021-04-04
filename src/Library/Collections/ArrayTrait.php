@@ -3,19 +3,19 @@
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
  * @license     MIT License. For full license information see LICENSE file in the project root.
- * @link        https://github.com/artister
+ * @link        https://github.com/DevNet-Framework
  */
 
-namespace Artister\System\Collections;
+namespace DevNet\System\Collections;
 
-use Artister\System\Type;
-use Artister\System\StringBuilder;
-use Artister\System\Exceptions\ErrorMessageExtension;
-use Artister\System\Exceptions\TypeException;
+use DevNet\System\Type;
+use DevNet\System\StringBuilder;
+use DevNet\System\Exceptions\ErrorMessageExtension;
+use DevNet\System\Exceptions\TypeException;
 
 trait ArrayTrait
 {
-    protected array $Array  = [];
+    protected array $Array = [];
 
     abstract public function getType() : Type;
 

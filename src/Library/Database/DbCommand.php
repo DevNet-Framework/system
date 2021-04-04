@@ -3,10 +3,10 @@
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
  * @license     MIT License. For full license information see LICENSE file in the project root.
- * @link        https://github.com/artister
+ * @link        https://github.com/DevNet-Framework
  */
 
-namespace Artister\System\Database;
+namespace DevNet\System\Database;
 
 use PDOStatement;
 
@@ -30,29 +30,37 @@ class DbCommand
 
     public function execute() : int
     {
-        if ($this->Connection->getState() === 0) {
+        if ($this->Connection->getState() === 0)
+        {
             throw new \Exception("DB connection is closed");
         }
 
-        if ($this->Parameters) {
+        if ($this->Parameters)
+        {
             $statement = $this->Connection->getConnector()->prepare($this->Sql);
             $statement->execute($this->Parameters);
             return $statement->rowCount();
-        } else {
+        }
+        else
+        {
             return $this->Connection->getConnector()->exec($this->Sql);
         }
     }
 
     public function executeReader() : ?DbReader
     {
-        if ($this->Connection->getState() == 0) {
+        if ($this->Connection->getState() == 0)
+        {
             throw new \Exception("DB connection is closed");
         }
 
-        if ($this->Parameters) {
+        if ($this->Parameters)
+        {
             $statement = $this->Connection->getConnector()->prepare($this->Sql);
             $statement->execute($this->Parameters);
-        } else {
+        }
+        else
+        {
             $statement = $this->Connection->getConnector()->query($this->Sql);
         }
 
@@ -66,7 +74,6 @@ class DbCommand
         }
 
         $this->Statement = $statement;
-        
         return new DbReader($this);
     }
 }

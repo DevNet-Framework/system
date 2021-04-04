@@ -3,10 +3,10 @@
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
  * @license     MIT License. For full license information see LICENSE file in the project root.
- * @link        https://github.com/artister
+ * @link        https://github.com/DevNet-Framework
  */
 
-namespace Artister\System\Compiler\Lexing;
+namespace DevNet\System\Compiler\Lexing;
 
 class Token implements IToken
 {
@@ -15,7 +15,7 @@ class Token implements IToken
 
     public function __construct(string $name, string $value = null)
     {
-        $this->name = $name;
+        $this->name  = $name;
         $this->value = $value;
     }
 

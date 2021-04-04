@@ -3,21 +3,20 @@
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
  * @license     MIT License. For full license information see LICENSE file in the project root.
- * @link        https://github.com/artister
+ * @link        https://github.com/DevNet-Framework
  */
 
-namespace Artister\System\Compiler\Parsing;
+namespace DevNet\System\Compiler\Parsing;
 
 class Parser
 {
-    const ERROR     = 0;
-    const GOTO      = 1;
-    const SHIFT     = 2;
-    const REDUCE    = 3;
-    const ACCEPT    = 4;
+    const ERROR  = 0;
+    const GOTO   = 1;
+    const SHIFT  = 2;
+    const REDUCE = 3;
+    const ACCEPT = 4;
 
     public int $action = 0;
-
     private Grammar $grammar;
     public Stack $pointer;
     private Stack $state;
@@ -27,7 +26,7 @@ class Parser
 
     public function __construct(Grammar $grammar)
     {
-        $this->grammar  = $grammar;
+        $this->grammar = $grammar;
     }
 
     public function consume(string $input) {
@@ -35,7 +34,7 @@ class Parser
         $this->pointer  = new Stack();
         $this->state    = new Stack();
         $this->node     = new Stack();
-        $this->action = 0;
+        $this->action   = 0;
         $this->reduceId = 0;
         $this->pointer->push(0);
         $this->state->push([]);
@@ -44,42 +43,61 @@ class Parser
 
     public function advance()
     {
-        if ($this->reduceId == 1) {
+        if ($this->reduceId == 1)
+        {
             $this->action = self::ACCEPT;
-        } else {
+        }
+        else
+        {
             $itemName = $this->node->peek()->getName();
             $state = $this->state->peek();
             $position = $this->pointer->peek();
             $nextState = null;
             $state = $this->grammar->match($state, $position, $itemName);
 
-            if($state == true || $this->action == self::ERROR) {
+            if($state == true || $this->action == self::ERROR)
+            {
                 $nextState = $this->grammar->lookAhead($itemName);
-                if ($nextState == true && $nextState != $state) {
+                if ($nextState == true && $nextState != $state)
+                {
                     $this->action = self::GOTO;
-                } else {
+                }
+                else
+                {
                     $rule = $this->grammar->canReduce($state, $position, $itemName, $this->state, $this->pointer);
-                    if ($rule) {
+                    if ($rule)
+                    {
                             $this->action = self::REDUCE;
-                    } else {
+                    }
+                    else
+                    {
                         $this->action = self::SHIFT;
                     }
                 }
-            } else {
+            }
+            else
+            {
                 $newState = $this->grammar->goTo($itemName);
-                if ($newState) {
+                if ($newState)
+                {
                     $this->action = self::GOTO;
-                } else {
+                }
+                else
+                {
                     $this->action = self::ERROR;
                 }
             }
 
-            switch ($this->action) {
+            switch ($this->action)
+            {
                 case self::GOTO:
-                    if ($nextState) {
+                    if ($nextState)
+                    {
                         $this->pointer->push(1);
                         $this->state->push($nextState);
-                    } else {
+                    }
+                    else
+                    {
                         $this->pointer->push(1);
                         $this->state->push($newState);
                     }
@@ -93,20 +111,29 @@ class Parser
                 case self::REDUCE:
                     $size = $this->pointer->pop();
                     $items = [];
-                    for ($i = 0; $i < $size; $i++) {
+                    for ($i = 0; $i < $size; $i++)
+                    {
                         $items[] = $this->node->pop();
                     }
-                    if (count($items) == 1) {
+                    if (count($items) == 1)
+                    {
                         $item = $items[0];
-                        if (count($item->getValues()) == 1) {
+                        if (count($item->getValues()) == 1)
+                        {
                             $this->node->push(new Node($rule->name, $item->getValues()));
-                        } else {
+                        }
+                        else
+                        {
                             $this->node->push(new Node($rule->name, [$item]));
                         }
-                    } else {
-                        foreach ($items as &$item) {
+                    }
+                    else
+                    {
+                        foreach ($items as &$item)
+                        {
                             $values = $item->getValues();
-                            if (count($values) == 1) {
+                            if (count($values) == 1)
+                            {
                                 $item = $values[0];
                             }
                         }

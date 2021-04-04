@@ -3,16 +3,16 @@
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
  * @license     MIT License. For full license information see LICENSE file in the project root.
- * @link        https://github.com/artister
+ * @link        https://github.com/DevNet-Framework
  */
 
-namespace Artister\System\Dependency;
+namespace DevNet\System\Dependency;
 
 use ArrayIterator;
 
 class ServiceCollection implements IServiceCollection
 {
-    use \Artister\System\Extension\ExtensionTrait;
+    use \DevNet\System\Extension\ExtensionTrait;
 
     private array $Services = [];
 
@@ -23,7 +23,8 @@ class ServiceCollection implements IServiceCollection
 
     public function addSingleton(string $serviceType, $service = null)
     {
-        if (!$service) {
+        if (!$service)
+        {
             $service = $serviceType;
         } 
 
@@ -32,7 +33,8 @@ class ServiceCollection implements IServiceCollection
 
     public function AddTransient(string $serviceType, $service = null)
     {
-        if (!$service) {
+        if (!$service)
+        {
             $service = $serviceType;
         }
 

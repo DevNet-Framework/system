@@ -3,12 +3,12 @@
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
  * @license     MIT License. For full license information see LICENSE file in the project root.
- * @link        https://github.com/artister
+ * @link        https://github.com/DevNet-Framework
  */
 
-namespace Artister\System\Compiler\Parsing;
+namespace DevNet\System\Compiler\Parsing;
 
-use Artister\System\Compiler\Lexing\ILexer;
+use DevNet\System\Compiler\Lexing\ILexer;
 
 class ParserBuilder
 {

@@ -3,13 +3,13 @@
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
  * @license     MIT License. For full license information see LICENSE file in the project root.
- * @link        https://github.com/artister
+ * @link        https://github.com/DevNet-Framework
  */
 
-namespace Artister\System\Linq;
+namespace DevNet\System\Linq;
 
-use Artister\System\Linq\IQueryable;
-use Artister\System\Compiler\Expressions\Expression;
+use DevNet\System\Linq\IQueryable;
+use DevNet\System\Compiler\Expressions\Expression;
 use Closure;
 
 abstract class Queryable

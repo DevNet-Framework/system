@@ -3,19 +3,19 @@
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
  * @license     MIT License. For full license information see LICENSE file in the project root.
- * @link        https://github.com/artister
+ * @link        https://github.com/DevNet-Framework
  */
 
-namespace Artister\System\Linq;
+namespace DevNet\System\Linq;
 
-use Artister\System\Collections\IEnumerable;
-use Artister\System\Linq\Enumerables\GroupEnumerable;
-use Artister\System\Linq\Enumerables\JoinEnumerable;
-use Artister\System\Linq\Enumerables\OrderEnumerable;
-use Artister\System\Linq\Enumerables\SelectEnumerable;
-use Artister\System\Linq\Enumerables\WhereEnumerable;
-use Artister\System\Linq\Enumerables\CountEnumerable;
-use Artister\System\Linq\Enumerables\TakeEnumerable;
+use DevNet\System\Collections\IEnumerable;
+use DevNet\System\Linq\Enumerables\GroupEnumerable;
+use DevNet\System\Linq\Enumerables\JoinEnumerable;
+use DevNet\System\Linq\Enumerables\OrderEnumerable;
+use DevNet\System\Linq\Enumerables\SelectEnumerable;
+use DevNet\System\Linq\Enumerables\WhereEnumerable;
+use DevNet\System\Linq\Enumerables\CountEnumerable;
+use DevNet\System\Linq\Enumerables\TakeEnumerable;
 use Closure;
 
 class Enumerable

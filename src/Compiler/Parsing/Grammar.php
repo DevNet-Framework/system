@@ -3,12 +3,12 @@
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
  * @license     MIT License. For full license information see LICENSE file in the project root.
- * @link        https://github.com/artister
+ * @link        https://github.com/DevNet-Framework
  */
 
-namespace Artister\System\Compiler\Parsing;
+namespace DevNet\System\Compiler\Parsing;
 
-use Artister\System\Compiler\Lexing\ILexer;
+use DevNet\System\Compiler\Lexing\ILexer;
 
 class Grammar
 {
@@ -34,7 +34,6 @@ class Grammar
 
     public function match($state, int $position, string $itemName)
     {
-
         $this->position = $position--;
         $this->itemName = $itemName;
         $this->state = $state;
@@ -86,7 +85,6 @@ class Grammar
         }
 
         return $this->filterRules($matchedRules, 1, 0);
-
     }
 
     public function filterRules(array $state, int $position, $lookAhead)
@@ -205,7 +203,6 @@ class Grammar
                 return reset($rules);
                 break;
         }
-
     }
 
     public function shift()
@@ -230,7 +227,6 @@ class Grammar
         $token = $this->lexer->getToken();
         $this->tokens[] = $token;
         return $token;
-        
     }
 
     public function next()
@@ -244,10 +240,8 @@ class Grammar
         $token = $this->lexer->getToken();
         $this->tokens[] = $token;
         return $token;
-
     }
 
-    
     public function getRule($ruleIndex)
     {
         if (isset($this->rules[$ruleIndex])) {

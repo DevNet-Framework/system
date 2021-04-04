@@ -3,10 +3,10 @@
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
  * @license     MIT License. For full license information see LICENSE file in the project root.
- * @link        https://github.com/artister
+ * @link        https://github.com/DevNet-Framework
  */
 
-namespace Artister\System\Diagnostic\Internal;
+namespace DevNet\System\Diagnostic\Internal;
 
 use ErrorException;
 use Throwable;
@@ -59,13 +59,13 @@ class DebugParser
             $code = $exception->getCode();
         }
 
-        $data['error']      = $severity;
-        $data['message']    = $exception->getMessage();
-        $data['class']      = get_class($exception);
-        $data['code']       = $code;
-        $data['file']       = $exception->getFile();
-        $data['line']       = $exception->getLine();
-        $data['trace']      = $trace;
+        $data['error']   = $severity;
+        $data['message'] = $exception->getMessage();
+        $data['class']   = get_class($exception);
+        $data['code']    = $code;
+        $data['file']    = $exception->getFile();
+        $data['line']    = $exception->getLine();
+        $data['trace']   = $trace;
 
         return $data;
     }

@@ -3,10 +3,10 @@
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
  * @license     MIT License. For full license information see LICENSE file in the project root.
- * @link        https://github.com/artister
+ * @link        https://github.com/DevNet-Framework
  */
 
-namespace Artister\System\Dependency;
+namespace DevNet\System\Dependency;
 
 use Closure;
 
@@ -23,7 +23,8 @@ class ServiceDescriptor
 
     public function __construct(int $lifetime, string $serviceType, $service)
     {
-        switch ($service) {
+        switch ($service)
+        {
             case is_callable($service):
                 $this->describeFactory($lifetime, $serviceType, $service);
                 break;

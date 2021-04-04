@@ -3,14 +3,14 @@
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
  * @license     MIT License. For full license information see LICENSE file in the project root.
- * @link        https://github.com/artister
+ * @link        https://github.com/DevNet-Framework
  */
 
-namespace Artister\System\Event;
+namespace DevNet\System\Event;
 
-use Artister\System\Collections\IEnumerable;
-use Artister\System\Collections\Enumerator;
-use Artister\System\Exceptions\MethodException;
+use DevNet\System\Collections\IEnumerable;
+use DevNet\System\Collections\Enumerator;
+use DevNet\System\Exceptions\MethodException;
 use ReflectionFunctionAbstract;
 use ReflectionMethod;
 
@@ -18,7 +18,7 @@ abstract class Delegate implements IEnumerable
 {
     protected ReflectionMethod $MethodInfo;
     protected array $Parameters = [];
-    protected array $Actions = [];
+    protected array $Actions    = [];
 
     public function __construct(object $target = null, ?string $actionName = null)
     {

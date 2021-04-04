@@ -3,14 +3,14 @@
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
  * @license     MIT License. For full license information see LICENSE file in the project root.
- * @link        https://github.com/artister
+ * @link        https://github.com/DevNet-Framework
  */
 
-namespace Artister\System\Diagnostic;
+namespace DevNet\System\Diagnostic;
 
-use Artister\System\Diagnostic\Internal\DebugInspector;
-use Artister\System\Diagnostic\Internal\DebugHandler;
-use Artister\System\Diagnostic\Internal\DisableHandler;
+use DevNet\System\Diagnostic\Internal\DebugInspector;
+use DevNet\System\Diagnostic\Internal\DebugHandler;
+use DevNet\System\Diagnostic\Internal\DisableHandler;
 
 class Debuger
 {
@@ -19,8 +19,8 @@ class Debuger
 
     public function __construct()
     {
-        $this->Inspector    = new DebugInspector();
-        $this->Handler      = new DebugHandler();
+        $this->Inspector = new DebugInspector();
+        $this->Handler   = new DebugHandler();
     }
 
     public function setHandler(IDebugHandler $handler) : void

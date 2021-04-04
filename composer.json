@@ -15,9 +15,9 @@
     },
     "autoload": {
         "psr-4": {
-            "Artister\\System\\"            : "src/Library/",
-            "Artister\\System\\Boot\\"      : "src/Boot/",
-            "Artister\\System\\Compiler\\"  : "src/Compiler/"
+            "DevNet\\System\\"           : "src/Library/",
+            "DevNet\\System\\Boot\\"     : "src/Boot/",
+            "DevNet\\System\\Compiler\\" : "src/Compiler/"
         },
         "files": [
             "src/Library/Helpers.php"

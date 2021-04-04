@@ -3,10 +3,10 @@
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
  * @license     MIT License. For full license information see LICENSE file in the project root.
- * @link        https://github.com/artister
+ * @link        https://github.com/DevNet-Framework
  */
 
-namespace Artister\System\Async;
+namespace DevNet\System\Async;
 
 use DateTime;
 use Closure;
@@ -50,7 +50,6 @@ class Task
             $this->Status = Self::Started;
             $this->Scheduler->add($this);
         }
-        
     }
 
     public function then(Closure $next) : Task

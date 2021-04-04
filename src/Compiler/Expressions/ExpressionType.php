@@ -3,15 +3,15 @@
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
  * @license     MIT License. For full license information see LICENSE file in the project root.
- * @link        https://github.com/artister
+ * @link        https://github.com/DevNet-Framework
  */
 
-namespace Artister\System\Compiler\Expressions;
+namespace DevNet\System\Compiler\Expressions;
 
 class ExpressionType
 {
-    const Constant = 'Artister\System\Linq\Expressions\ConstantExpression';
-    const Parameter = 'Artister\System\Linq\Expressions\ParameterExpression';
-    const Property = 'Artister\System\Linq\Expressions\PropertyExpression';
-    const Binary = 'Artister\System\Linq\Expressions\BinaryExpression';
+    const Constant = 'DevNet\System\Linq\Expressions\ConstantExpression';
+    const Parameter = 'DevNet\System\Linq\Expressions\ParameterExpression';
+    const Property = 'DevNet\System\Linq\Expressions\PropertyExpression';
+    const Binary = 'DevNet\System\Linq\Expressions\BinaryExpression';
 }

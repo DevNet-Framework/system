@@ -3,15 +3,15 @@
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
  * @license     MIT License. For full license information see LICENSE file in the project root.
- * @link        https://github.com/artister
+ * @link        https://github.com/DevNet-Framework
  */
 
-namespace Artister\System\Compiler\Expressions;
+namespace DevNet\System\Compiler\Expressions;
 
-use Artister\System\Linq\IQueryable;
-use Artister\System\Compiler\Expressions\Expression;
-use Artister\System\Compiler\ExpressionStringBuilder;
-use Artister\System\Compiler\ExpressionVisitor;
+use DevNet\System\Linq\IQueryable;
+use DevNet\System\Compiler\Expressions\Expression;
+use DevNet\System\Compiler\ExpressionStringBuilder;
+use DevNet\System\Compiler\ExpressionVisitor;
 
 
 class ExpressionSqlBuilder extends ExpressionVisitor
@@ -83,7 +83,6 @@ class ExpressionSqlBuilder extends ExpressionVisitor
         $this->Out .= "(";
         $this->visit($expression->Expression);
         $this->Out .= ")";
-        //return $expression;
     }
 
     public function visitBinary(Expression $expression)
@@ -111,7 +110,6 @@ class ExpressionSqlBuilder extends ExpressionVisitor
         $this->visit($expression->Left);
         $this->Out .= ' '.$operator.' ';
         $this->visit($expression->Right);
-        //return $expression;
     }
 
     public function visitProperty(Expression $expression)
@@ -150,7 +148,6 @@ class ExpressionSqlBuilder extends ExpressionVisitor
         }
         $this->Out .= "{$operator}";
         $this->visit($expression->Operand);
-        //return $expression;
     }
 
     public function __toString()

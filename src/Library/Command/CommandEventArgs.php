@@ -3,12 +3,12 @@
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
  * @license     MIT License. For full license information see LICENSE file in the project root.
- * @link        https://github.com/artister
+ * @link        https://github.com/DevNet-Framework
  */
 
-namespace Artister\System\Command;
+namespace DevNet\System\Command;
 
-use Artister\System\Event\EventArgs;
+use DevNet\System\Event\EventArgs;
 
 class CommandEventArgs extends EventArgs
 {
@@ -16,14 +16,6 @@ class CommandEventArgs extends EventArgs
     private array $Parameters;
     private array $Options;
     private array $Arguments;
-
-    /* public function __construct(?string $name, array $parameters, array $options, array $arguments)
-    {
-        $this->Name         = $name;
-        $this->Parameters   = $parameters;
-        $this->Options      = $options;
-        $this->Arguments    = $arguments;
-    } */
 
     public function getName()
     {
