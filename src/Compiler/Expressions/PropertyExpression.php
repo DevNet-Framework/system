@@ -12,8 +12,8 @@ use DevNet\System\Compiler\ExpressionVisitor;
 
 class PropertyExpression extends Expression
 {
-    public ParameterExpression $parameter;
-    public string $property;
+    public ParameterExpression $Parameter;
+    public string $Property;
 
     public function __construct(ParameterExpression $parameter, string $property)
     {

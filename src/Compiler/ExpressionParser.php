@@ -201,7 +201,8 @@ class ExpressionParser
                         break;
                     case 32 : // property
                         $name = ltrim($items[0]->getValue(), '$');
-                        $parameter = Expression::parameter($name, $items[0]->getName());
+                        $value = $this->OuterVariables[$name] ?? null;
+                        $parameter = Expression::parameter($name, $items[0]->getName(), $value);
                         $expression = Expression::property($parameter, $items[2]->getValue());
                         $stack->push($expression);
                         break;
@@ -300,22 +301,8 @@ class ExpressionParser
         return $parameters;
     }
 
-    public function getOuterVariables()
+    public function getOuterVariables() : array
     {
-        $outerVariables = [];
-        $function = $this->FunctionReflector->getClosure();
-        ob_start();
-        var_dump($function);
-        $buffer = ob_get_clean();
-        $buffer = preg_replace('/\s|(bool|int)\((\w+|\d+)\)|(string|)\(\d+\)|:"\w+"|object\(Closure\)#\d\s\(\d\)\s\{\s+\["static"\]=>|\["parameter"\](.|\s)+/','\\2', $buffer);
-        $buffer = preg_replace('/"(\w+)"(:\w+)/','"\\1\\2"', $buffer);
-        $buffer = preg_replace('/object\(\w+\)#\d+|\["static"\]=>array/','(object)array', $buffer);
-        $buffer = strtr($buffer, '"{}[]', "'(), ");
-        $buffer = str_replace('(,', '(', $buffer);
-        $buffer = '$outerVariables='.$buffer;
-        eval($buffer.'?>');
-        $this->OuterVariables = $outerVariables;
-
-        return $outerVariables;
+        return $this->OuterVariables;
     }
 }
