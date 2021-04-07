@@ -10,6 +10,7 @@ namespace DevNet\System\Async;
 
 use DateTime;
 use Closure;
+use DevNet\System\Exceptions\PropertyException;
 
 class Task
 {
@@ -19,10 +20,11 @@ class Task
     public const Faulted   = -1;
     public const Canceled  = -2;
 
-    private Closure $Action;
-    private TaskScheduler $Scheduler;
     private int $Id;
     private int $Status;
+    private Closure $Action;
+    private TaskScheduler $Scheduler;
+    private Task $Next;
     private $Result = null;
 
     public function __construct(Closure $action)
@@ -35,7 +37,16 @@ class Task
 
     public function __get(string $name)
     {
-        return $this->$name;
+        switch ($name)
+        {
+            case 'Action':
+            case 'Next':
+                throw new PropertyException("access to private property {$this}::{$name}");
+                break;
+            default:
+                return $this->$name;
+                break;
+        }
     }
 
     public function start(TaskScheduler $taskScheduler = null) : void
@@ -65,7 +76,8 @@ class Task
             return $next($previous);
         };
         
-        return new Task($next);
+        $this->Next = new Task($next);
+        return $this->Next;
     }
 
     public function wait() : void
@@ -77,6 +89,18 @@ class Task
             $this->Status = Self::Completed;
             TaskScheduler::getDefaultScheduler()->remove($this);
         }
+
+        if (isset($this->Next))
+        {
+            $this->Next->start();
+        }
+    }
+
+    public static function run(Closure $action) : Task
+    {
+        $task = new Task($action);
+        $task->start();
+        return $task;
     }
 
     public static function completedTask()
