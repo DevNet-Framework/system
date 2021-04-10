@@ -8,9 +8,6 @@
 
 namespace DevNet\System\Async;
 
-use DateTime;
-use Closure;
-
 class TaskScheduler
 {
     private static TaskScheduler $Scheduler;
@@ -46,9 +43,9 @@ class TaskScheduler
     {
         while ($this->Tasks)
         {
-            foreach ($this->Tasks as $key => $task)
+            foreach ($this->Tasks as $task)
             {
-                $task->wait();
+                $task->yield();
             }
         }
     }

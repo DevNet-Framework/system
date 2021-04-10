@@ -8,9 +8,9 @@
 
 namespace DevNet\System\Async;
 
-use DateTime;
+use ReflectionFunction;
+use Generator;
 use Closure;
-use DevNet\System\Exceptions\PropertyException;
 
 class Task
 {
@@ -22,14 +22,24 @@ class Task
 
     private int $Id;
     private int $Status;
-    private Closure $Action;
+    private Generator $Action;
     private TaskScheduler $Scheduler;
     private Task $Next;
     private $Result = null;
 
     public function __construct(Closure $action)
     {
-        $this->Action = $action;
+        $actionInfo = new ReflectionFunction($action);
+
+        if (!$actionInfo->isGenerator())
+        {
+            $action = function() use($action)
+            {
+                yield $action();
+            };
+        }
+
+        $this->Action = $action();
         $this->Id = spl_object_id ($this);
         $this->Status = Self::Created;
         $this->Scheduler = TaskScheduler::getDefaultScheduler();
@@ -37,16 +47,7 @@ class Task
 
     public function __get(string $name)
     {
-        switch ($name)
-        {
-            case 'Action':
-            case 'Next':
-                throw new PropertyException("access to private property {$this}::{$name}");
-                break;
-            default:
-                return $this->$name;
-                break;
-        }
+        return $this->$name;
     }
 
     public function start(TaskScheduler $taskScheduler = null) : void
@@ -58,7 +59,6 @@ class Task
         
         if ($this->Status === self::Created)
         {
-            $this->Status = Self::Started;
             $this->Scheduler->add($this);
         }
     }
@@ -73,7 +73,14 @@ class Task
                 $previous->wait();
             }
 
-            return $next($previous);
+            $actionInfo = new ReflectionFunction($next);
+
+            if (!$actionInfo->isGenerator())
+            {
+                return $next($previous);
+            }
+
+            yield from $next($previous);
         };
         
         $this->Next = new Task($next);
@@ -84,15 +91,49 @@ class Task
     {
         if ($this->Status === self::Created || $this->Status === self::Started)
         {
-            $action = $this->Action;
-            $this->Result = $action(null);
+            while ($this->Action->valid())
+            {
+                $this->Result = $this->Action->current();
+                $this->Action->next();
+            }
+            
             $this->Status = Self::Completed;
             TaskScheduler::getDefaultScheduler()->remove($this);
-        }
 
-        if (isset($this->Next))
+            if (isset($this->Next))
+            {
+                $this->Next->start();
+            }
+        }
+    }
+
+    public function yield() : void
+    {
+        $this->Scheduler->remove($this);
+
+        if ($this->Status == Task::Created)
         {
-            $this->Next->start();
+            $this->Status = Task::Started;
+            $this->Result = $this->Action->current();
+        }
+        else
+        {
+            $this->Action->next();
+            $this->Result = $this->Action->current();
+        }
+        
+
+        if ($this->Action->valid())
+        {
+            $this->Scheduler->add($this);
+        }
+        else
+        {
+            $this->Status = Task::Completed;
+            if (isset($this->Next))
+            {
+                $this->Next->start();
+            }
         }
     }
 
