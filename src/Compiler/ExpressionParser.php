@@ -13,6 +13,7 @@ use DevNet\System\Compiler\Lexing\LexerBuilder;
 use DevNet\System\Compiler\Parsing\ParserBuilder;
 use DevNet\System\Compiler\Parsing\Stack;
 use DevNet\System\Compiler\Parsing\Parser;
+use DevNet\System\Compiler\Parsing\ParserException;
 use Closure;
 
 class ExpressionParser
@@ -181,22 +182,22 @@ class ExpressionParser
                         $stack->push($expression);
                         break;
                     case 33 : // variable property
-                        $name = ltrim($items[0]->getValue(), '$');
-                        $parameter = Expression::parameter($name, $items[0]->getName());
-                        $name = ltrim($items[2]->getValue(), '$');
+                        $parameterName = ltrim($items[0]->getValue(), '$');
+                        $parameter     = Expression::parameter($parameterName, $items[0]->getName());
+                        $variableName  = ltrim($items[2]->getValue(), '$');
                         
-                        if (!isset($this->OuterVariables[$name]))
+                        if (!array_key_exists($variableName, $this->OuterVariables))
                         {
-                            throw new \Exception("Undefined outer variable \${$name}");
+                            throw new ParserException("Undefined property variable \${$parameterName}::${$variableName}");
                         }
 
-                        if (is_array($this->OuterVariables[$name]) || is_object($this->OuterVariables[$name]))
+                        if (!is_string($this->OuterVariables[$variableName]))
                         {
-                            throw new \Exception("Unsupported outer variable type, only scalar types are supported.");
+                            throw new ParserException("Variable property {$parameterName}::\${$variableName} must be of type string.");
                         }
 
-                        $name = $this->OuterVariables[$name];
-                        $expression = Expression::property($parameter, $name);
+                        $propertyName = $this->OuterVariables[$variableName];
+                        $expression   = Expression::property($parameter, $propertyName);
                         $stack->push($expression);
                         break;
                     case 32 : // property
@@ -224,16 +225,15 @@ class ExpressionParser
                         $stack->push($expression);
                         break;
                     case 19 : // variable
-                        $name = ltrim($items[0]->getValue(), '$');
-                        $value = null;
-                        if (isset($this->OuterVariables[$name]))
+                        $name  = ltrim($items[0]->getValue(), '$');
+                        $value = $this->OuterVariables[$name] ?? null;
+
+                        if (is_array($value))
                         {
-                            if (is_array($this->OuterVariables[$name]) || is_object($this->OuterVariables[$name]))
-                            {
-                                throw new \Exception("Unsupported outer variable type, only scalar types are supported.");
-                            }
-                            $value = $this->OuterVariables[$name];
+                            throw new ParserException("value of type array not supported yet, only object and scalar types are supported.");
                         }
+                        $value = $this->OuterVariables[$name];
+                        
                         $expression = Expression::parameter($name, gettype($value), $value);
                         $stack->push($expression);
                         break;
