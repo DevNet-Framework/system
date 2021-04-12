@@ -22,6 +22,7 @@ class Task
 
     private int $Id;
     private int $Status;
+    private float $Delay = 0;
     private Generator $Action;
     private TaskScheduler $Scheduler;
     private Task $Next;
@@ -61,6 +62,17 @@ class Task
         {
             $this->Scheduler->add($this);
         }
+    }
+
+    public function delay(int $milliseconds)
+    {
+        $this->Delay = $milliseconds;
+
+        if (isset($this->Scheduler))
+        {
+            $this->start();
+        }
+        return $this;
     }
 
     public function then(Closure $next) : Task

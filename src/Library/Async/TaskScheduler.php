@@ -11,7 +11,9 @@ namespace DevNet\System\Async;
 class TaskScheduler
 {
     private static TaskScheduler $Scheduler;
-    private array $Tasks = [];
+
+    private array $Tasks     = [];
+    private array $Deferrals = [];
 
     public static function getDefaultScheduler() : TaskScheduler
     {
@@ -26,6 +28,11 @@ class TaskScheduler
     public function add(Task $task)
     {
         $this->Tasks[$task->Id] = $task;
+        $this->Deferrals[$task->Id] = 0;
+        if ($task->Delay > 0)
+        {
+            $this->Deferrals[$task->Id] = microtime(true) + $task->Delay / 1000;
+        }
     }
 
     public function remove(Task $task) : bool
@@ -33,6 +40,7 @@ class TaskScheduler
         if (isset($this->Tasks[$task->Id]))
         {
             unset($this->Tasks[$task->Id]);
+            unset($this->Deferrals[$task->Id]);
             return true;
         }
         
@@ -43,9 +51,19 @@ class TaskScheduler
     {
         while ($this->Tasks)
         {
-            foreach ($this->Tasks as $task)
+            foreach ($this->Tasks as $id => $task)
             {
+                $startingTime = $this->Deferrals[$id];
+                if ($startingTime > 0)
+                {
+                    if ($startingTime > microtime(true))
+                    {
+                        continue;
+                    }
+                }
+
                 $task->yield();
+                $this->Deferrals[$id] = 0;
             }
         }
     }
