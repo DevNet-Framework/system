@@ -11,6 +11,7 @@ namespace DevNet\System\Async;
 use ReflectionFunction;
 use Generator;
 use Closure;
+use Exception;
 
 class Task
 {
@@ -154,6 +155,22 @@ class Task
         $task = new Task($action);
         $task->start();
         return $task;
+    }
+
+    public static function fromResult($result) : Task
+    {
+        return Task::run(function () use($result)
+        {
+            yield $result;
+        });
+    }
+
+    public static function fromException(Exception $exception) : Task
+    {
+        return Task::run(function () use($exception)
+        {
+            throw $exception;
+        });
     }
 
     public static function completedTask()
