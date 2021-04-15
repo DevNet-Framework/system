@@ -18,18 +18,19 @@ class Task
     public const Created   = 0;
     public const Started   = 1;
     public const Completed = 2;
-    public const Faulted   = -1;
-    public const Canceled  = -2;
+    public const Canceled  = -1;
+    public const Faulted   = -2;
 
     private int $Id;
     private int $Status;
     private float $Delay = 0;
     private Generator $Action;
     private TaskScheduler $Scheduler;
+    private TaskCancelationToken $Token;
     private Task $Next;
     private $Result = null;
 
-    public function __construct(Closure $action)
+    public function __construct(Closure $action, ?TaskCancelationToken $token = null)
     {
         $actionInfo = new ReflectionFunction($action);
 
@@ -39,6 +40,11 @@ class Task
             {
                 yield $action();
             };
+        }
+
+        if ($token)
+        {
+            $this->Token = $token;
         }
 
         $this->Action = $action();
@@ -100,29 +106,24 @@ class Task
         return $this->Next;
     }
 
-    public function wait() : void
-    {
-        if ($this->Status === self::Created || $this->Status === self::Started)
-        {
-            while ($this->Action->valid())
-            {
-                $this->Result = $this->Action->current();
-                $this->Action->next();
-            }
-            
-            $this->Status = Self::Completed;
-            TaskScheduler::getDefaultScheduler()->remove($this);
-
-            if (isset($this->Next))
-            {
-                $this->Next->start();
-            }
-        }
-    }
-
     public function yield() : void
     {
         $this->Scheduler->remove($this);
+
+        if (isset($this->Token))
+        {
+            if ($this->Token->IsCanceled)
+            {
+                $action = $this->Token->Action ?? null;
+                if ($action)
+                {
+                    $action($this);
+                }
+
+                $this->Status = Task::Canceled;
+                return;
+            }
+        }
 
         if ($this->Status == Task::Created)
         {
@@ -150,9 +151,18 @@ class Task
         }
     }
 
-    public static function run(Closure $action) : Task
+    public function wait() : void
     {
-        $task = new Task($action);
+        $this->Status = self::Started;
+        while ($this->Status === self::Started)
+        {
+            $this->yield();
+        }
+    }
+
+    public static function run(Closure $action, ?TaskCancelationToken $token = null) : Task
+    {
+        $task = new Task($action, $token);
         $task->start();
         return $task;
     }

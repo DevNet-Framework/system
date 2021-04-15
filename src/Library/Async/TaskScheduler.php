@@ -31,7 +31,7 @@ class TaskScheduler
         $this->Deferrals[$task->Id] = 0;
         if ($task->Delay > 0)
         {
-            $this->Deferrals[$task->Id] = microtime(true) + $task->Delay / 1000;
+            $this->Deferrals[$task->Id] = time() + $task->Delay / 1000;
         }
     }
 
@@ -56,7 +56,7 @@ class TaskScheduler
                 $startingTime = $this->Deferrals[$id];
                 if ($startingTime > 0)
                 {
-                    if ($startingTime > microtime(true))
+                    if ($startingTime > time())
                     {
                         continue;
                     }
