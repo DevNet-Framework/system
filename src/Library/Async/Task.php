@@ -8,8 +8,6 @@
 
 namespace DevNet\System\Async;
 
-use ReflectionFunction;
-use Generator;
 use Closure;
 use Exception;
 
@@ -24,7 +22,7 @@ class Task
     private int $Id;
     private int $Status;
     private float $Delay = 0;
-    private Generator $Action;
+    private Closure $Action;
     private TaskScheduler $Scheduler;
     private TaskCancelationToken $Token;
     private Task $Next;
@@ -32,22 +30,17 @@ class Task
 
     public function __construct(Closure $action, ?TaskCancelationToken $token = null)
     {
-        $actionInfo = new ReflectionFunction($action);
-
-        if (!$actionInfo->isGenerator())
+        $action = function() use($action)
         {
-            $action = function() use($action)
-            {
-                yield $action();
-            };
-        }
+            return $action();
+        };
 
         if ($token)
         {
             $this->Token = $token;
         }
 
-        $this->Action = $action();
+        $this->Action = $action;
         $this->Id = spl_object_id ($this);
         $this->Status = Self::Created;
         $this->Scheduler = TaskScheduler::getDefaultScheduler();
@@ -92,14 +85,7 @@ class Task
                 $previous->wait();
             }
 
-            $actionInfo = new ReflectionFunction($next);
-
-            if (!$actionInfo->isGenerator())
-            {
-                return $next($previous);
-            }
-
-            yield from $next($previous);
+            return $next($previous);
         };
         
         $this->Next = new Task($next);
@@ -125,29 +111,16 @@ class Task
             }
         }
 
-        if ($this->Status == Task::Created)
+        if ($this->Status == Task::Created || $this->Status == Task::Started)
         {
-            $this->Status = Task::Started;
-            $this->Result = $this->Action->current();
-        }
-        else
-        {
-            $this->Action->next();
-            $this->Result = $this->Action->current();
-        }
-        
-
-        if ($this->Action->valid())
-        {
-            $this->Scheduler->add($this);
-        }
-        else
-        {
+            $action = $this->Action;
+            $this->Result = $action();
             $this->Status = Task::Completed;
-            if (isset($this->Next))
-            {
-                $this->Next->start();
-            }
+        }
+
+        if (isset($this->Next))
+        {
+            $this->Next->start();
         }
     }
 
