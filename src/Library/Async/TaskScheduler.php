@@ -47,7 +47,7 @@ class TaskScheduler
         return false;
     }
 
-    public function execute()
+    public function run()
     {
         while ($this->Tasks)
         {

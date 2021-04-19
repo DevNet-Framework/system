@@ -34,6 +34,6 @@ class MainClassRunner
         }
 
         $this->MainClass::main($this->Args);
-        TaskScheduler::getDefaultScheduler()->execute();
+        TaskScheduler::getDefaultScheduler()->run();
     }
 }
