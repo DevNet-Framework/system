@@ -129,7 +129,7 @@ class Task
         $this->Status = self::Started;
         while ($this->Status === self::Started)
         {
-            $this->yield();
+            $this->execute();
         }
     }
 
