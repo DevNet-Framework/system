@@ -62,7 +62,7 @@ class TaskScheduler
                     }
                 }
 
-                $task->yield();
+                $task->execute();
                 $this->Deferrals[$id] = 0;
             }
         }

@@ -92,7 +92,7 @@ class Task
         return $this->Next;
     }
 
-    public function yield() : void
+    public function execute() : void
     {
         $this->Scheduler->remove($this);
 
