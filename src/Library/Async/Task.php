@@ -148,11 +148,11 @@ class Task
         });
     }
 
-    public static function fromException(Exception $exception) : Task
+    public static function fromException(string $messsage, int $code = 0) : Task
     {
-        return Task::run(function () use($exception)
+        return Task::run(function() use($messsage, $code)
         {
-            throw $exception;
+            throw new TaskException($messsage, $code);
         });
     }
 
