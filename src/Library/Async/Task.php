@@ -30,11 +30,6 @@ class Task
 
     public function __construct(Closure $action, ?TaskCancelationToken $token = null)
     {
-        $action = function() use($action)
-        {
-            return $action();
-        };
-
         if ($token)
         {
             $this->Token = $token;
@@ -144,7 +139,7 @@ class Task
     {
         return Task::run(function () use($result)
         {
-            yield $result;
+            return $result;
         });
     }
 
