@@ -9,7 +9,6 @@
 namespace DevNet\System\Async;
 
 use Closure;
-use Exception;
 
 class Task
 {
@@ -24,20 +23,18 @@ class Task
     private float $Delay = 0;
     private Closure $Action;
     private TaskScheduler $Scheduler;
-    private TaskCancelationToken $Token;
-    private Task $Next;
+    private ?TaskCancelationToken $Token;
+    private ?Task $Next = null;
+    private $Parameter;
     private $Result = null;
 
-    public function __construct(Closure $action, ?TaskCancelationToken $token = null)
-    {
-        if ($token)
-        {
-            $this->Token = $token;
-        }
-
-        $this->Action = $action;
-        $this->Id = spl_object_id ($this);
-        $this->Status = Self::Created;
+    public function __construct(Closure $action, ?TaskCancelationToken $token = null, $parameter = null)
+    {        
+        $this->Id        = spl_object_id ($this);
+        $this->Action    = $action;
+        $this->Token     = $token;
+        $this->Parameter = $parameter;
+        $this->Status    = Self::Created;
         $this->Scheduler = TaskScheduler::getDefaultScheduler();
     }
 
@@ -48,6 +45,14 @@ class Task
 
     public function start(TaskScheduler $taskScheduler = null) : void
     {
+        if ($this->Parameter instanceof Task)
+        {
+            if ($this->Parameter->Status != self::Completed)
+            {
+                return;
+            }
+        }
+
         if ($taskScheduler)
         {
             $this->Scheduler = $taskScheduler;
@@ -72,26 +77,23 @@ class Task
 
     public function then(Closure $next) : Task
     {
-        $previous = $this;
-        $next = function () use ($previous, $next)
-        {
-            if ($previous->Status !== self::Completed)
-            {
-                $previous->wait();
-            }
-
-            return $next($previous);
-        };
-        
-        $this->Next = new Task($next);
+        $this->Next = new Task($next, null, $this);
         return $this->Next;
     }
 
     public function execute() : void
     {
+        if ($this->Parameter instanceof Task)
+        {
+            if ($this->Parameter->Status != self::Completed)
+            {
+                return;
+            }
+        }
+
         $this->Scheduler->remove($this);
 
-        if (isset($this->Token))
+        if ($this->Token)
         {
             if ($this->Token->IsCanceled)
             {
@@ -109,11 +111,11 @@ class Task
         if ($this->Status == Task::Created || $this->Status == Task::Started)
         {
             $action = $this->Action;
-            $this->Result = $action();
+            $this->Result = $action($this->Parameter);
             $this->Status = Task::Completed;
         }
 
-        if (isset($this->Next))
+        if ($this->Next)
         {
             $this->Next->start();
         }
