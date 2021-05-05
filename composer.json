@@ -11,7 +11,7 @@
     ],
     "require": {
         "php": ">=7.4.0",
-        "opis/closure": "^3.6"
+        "opis/closure": "3.6.*"
     },
     "autoload": {
         "psr-4": {
