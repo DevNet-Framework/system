@@ -12,8 +12,12 @@ class TaskScheduler
 {
     private static TaskScheduler $Scheduler;
 
-    private array $Tasks     = [];
-    private array $Deferrals = [];
+    private array $Tasks = [];
+
+    public function __construct()
+    {
+        register_shutdown_function([$this, 'onShutdown']);
+    }
 
     public static function getDefaultScheduler() : TaskScheduler
     {
@@ -28,11 +32,6 @@ class TaskScheduler
     public function add(Task $task)
     {
         $this->Tasks[$task->Id] = $task;
-        $this->Deferrals[$task->Id] = 0;
-        if ($task->Delay > 0)
-        {
-            $this->Deferrals[$task->Id] = time() + $task->Delay / 1000;
-        }
     }
 
     public function remove(Task $task) : bool
@@ -40,31 +39,31 @@ class TaskScheduler
         if (isset($this->Tasks[$task->Id]))
         {
             unset($this->Tasks[$task->Id]);
-            unset($this->Deferrals[$task->Id]);
             return true;
         }
         
         return false;
     }
 
-    public function run()
+    public function wait()
     {
         while ($this->Tasks)
         {
-            foreach ($this->Tasks as $id => $task)
+            foreach ($this->Tasks as $task)
             {
-                $startingTime = $this->Deferrals[$id];
-                if ($startingTime > 0)
+                if ($task->Status == Task::Completed || $task->Status == Task::Canceled || $task->Status == Task::Faulted)
                 {
-                    if ($startingTime > time())
-                    {
-                        continue;
-                    }
+                    $this->remove($task);
                 }
-
-                $task->execute();
-                $this->Deferrals[$id] = 0;
             }
+        }
+    }
+
+    public function onShutdown() : void
+    {
+        foreach ($this->Tasks as $task)
+        {
+            $task->Awaiter->Stop();
         }
     }
 }
