@@ -63,12 +63,12 @@ class Process
         return null;
     }
 
-    public function setInput(string $data) : void
+    public function write(string $data) : void
     {
         fwrite($this->Pipes[0], $data);
     }
 
-    public function getOutput(int $chunk = 0) : ?string
+    public function read(int $chunk = 0) : ?string
     {
         $result = null;
         if (is_resource($this->Process))
@@ -86,7 +86,7 @@ class Process
         return $result;
     }
 
-    public function getReport(int $chunk = 0) : ?string
+    public function report(int $chunk = 0) : ?string
     {
         $result = null;
         if (is_resource($this->Process))
