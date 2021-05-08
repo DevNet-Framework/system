@@ -124,8 +124,6 @@ class Task
             {
                 $this->Status = self::Completed;
             }
-
-            $this->Scheduler->remove($this);
         }  
     }
 
