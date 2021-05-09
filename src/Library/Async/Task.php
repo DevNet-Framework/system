@@ -21,8 +21,8 @@ class Task
 
     private int $Id;
     private int $Status;
-    private TaskAwaiter $Awaiter;
     private TaskScheduler $Scheduler;
+    private ?TaskAwaiter $Awaiter = null;
     private $Action = null;
     private $Result = null;
 
@@ -30,13 +30,13 @@ class Task
     {
         $this->Id        = spl_object_id($this);
         $this->Status    = Self::Completed;
-        $this->Awaiter   = new TaskAwaiter();
         $this->Scheduler = TaskScheduler::getDefaultScheduler();
-
+        
         if ($action)
         {
-            $this->Action = new SerializableClosure($action);
-            $this->Status = Self::Created;
+            $this->Action  = new SerializableClosure($action);
+            $this->Awaiter = new TaskAwaiter(serialize($this->Action));
+            $this->Status  = Self::Created;
         }
 
         if ($token)
@@ -79,9 +79,7 @@ class Task
         if ($this->Status === self::Created)
         {
             $this->Scheduler->add($this);
-            $serialized = serialize($this->Action);
             $this->Awaiter->Process->start();
-            $this->Awaiter->Process->setInput($serialized);
             $this->Status = self::Started;
         }
     }
