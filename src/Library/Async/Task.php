@@ -79,7 +79,7 @@ class Task
         if ($this->Status === self::Created)
         {
             $this->Scheduler->add($this);
-            $this->Awaiter->Process->start();
+            $this->Awaiter->Worker->start();
             $this->Status = self::Started;
         }
     }
