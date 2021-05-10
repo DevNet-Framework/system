@@ -20,7 +20,7 @@ class TaskAwaiter
     {
         $data          = base64_encode($data);
         $workspace     = escapeshellarg(LauncherProperties::getWorkspace());
-        $this->Worker = new Worker('php '.__DIR__.'/Worker.php '.$workspace.' '.$data);
+        $this->Worker = new Worker('php '.__DIR__.'/Process.php '.$workspace.' '.$data);
     }
 
     public function __get(string $name)
