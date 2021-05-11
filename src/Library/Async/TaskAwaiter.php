@@ -18,8 +18,8 @@ class TaskAwaiter
 
     public function __construct(string $data)
     {
-        $data          = base64_encode($data);
-        $workspace     = escapeshellarg(LauncherProperties::getWorkspace());
+        $data         = base64_encode($data);
+        $workspace    = escapeshellarg(LauncherProperties::getWorkspace());
         $this->Worker = new Worker('php '.__DIR__.'/Process.php '.$workspace.' '.$data);
     }
 
