@@ -58,14 +58,6 @@ class Task
             }
         }
 
-        if ($name == 'Result')
-        {
-            if ($this->Status == self::Created || $this->Status == self::Started)
-            {
-                $this->wait();
-            }
-        }
-
         return $this->$name;
     }
 
