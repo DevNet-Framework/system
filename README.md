@@ -28,4 +28,4 @@ composer require devnet/core
 Full documentation on how to use **DevNet Framework** is available at [devnet-framework.github.io](https://devnet-framework.github.io)
 
 ## License
-This library is licensed under the MIT license. See [License File](https://github.com/DevNet-Framework/cli/blob/master/LICENSE) in the root folder for more information.
+This library is licensed under the MIT license. See [License File](https://github.com/DevNet-Framework/core/blob/master/LICENSE) in the root folder for more information.
