@@ -9,7 +9,7 @@
 namespace DevNet\System\Collections;
 
 use DevNet\System\Type;
-use DevNet\System\StringBuilder;
+use DevNet\System\Text\StringBuilder;
 use DevNet\System\Exceptions\ErrorMessageExtension;
 use DevNet\System\Exceptions\TypeException;
 

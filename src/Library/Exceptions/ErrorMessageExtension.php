@@ -8,7 +8,7 @@
 
 namespace DevNet\System\Exceptions;
 
-use DevNet\System\StringBuilder;
+use DevNet\System\Text\StringBuilder;
 
 class ErrorMessageExtension
 {

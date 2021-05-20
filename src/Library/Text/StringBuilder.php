@@ -6,7 +6,7 @@
  * @link        https://github.com/DevNet-Framework
  */
 
-namespace DevNet\System;
+namespace DevNet\System\Text;
 
 class StringBuilder
 {
