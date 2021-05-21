@@ -8,27 +8,8 @@
 
 namespace DevNet\System\Collections;
 
-use DevNet\System\Type;
-
-class Stack extends ArrayBase
+class Stack extends ArrayList
 {
-    private string $ValueType;
-
-    public function __construct(string $valueType)
-    {
-        $this->ValueType = $valueType;
-    }
-
-    public function add($value) : void
-    {
-        $this->offsetSet(null, $value);
-    }
-
-    public function addRange(array $items)
-    {
-        $this->Array = array_merge($this->Array, $items);
-    }
-
     public function peek()
     {
         return end($this->Array);
@@ -37,25 +18,5 @@ class Stack extends ArrayBase
     public function pop()
     {
         return array_pop($this->Array);
-    }
-
-    public function clear()
-    {
-        $this->Array = [];
-    }
-
-    public function getKeyType() : string
-    {
-        return Type::Integer;
-    }
-
-    public function getValueType() : string
-    {
-        return $this->ValueType;
-    }
-
-    public function toArray() : array
-    {
-        return $this->Array;
     }
 }
