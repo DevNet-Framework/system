@@ -6,7 +6,7 @@
  * @link        https://github.com/DevNet-Framework
  */
 
-namespace DevNet\System\Boot;
+namespace DevNet\System\Runtime;
 
 class Launcher extends LauncherProperties
 {
