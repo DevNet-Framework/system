@@ -8,7 +8,7 @@
 
 require __DIR__ . '/../../../../../../vendor/autoload.php';
 
-use DevNet\System\Boot\ClassLoader;
+use DevNet\System\Runtime\ClassLoader;
 use DevNet\System\Async\TaskException;
 use Opis\Closure\SerializableClosure;
 

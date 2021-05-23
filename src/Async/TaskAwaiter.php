@@ -8,7 +8,7 @@
 
 namespace DevNet\System\Async;
 
-use DevNet\System\Boot\LauncherProperties;
+use DevNet\System\Runtime\LauncherProperties;
 
 class TaskAwaiter
 {
