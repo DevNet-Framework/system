@@ -12,15 +12,15 @@ use DevNet\System\Runtime\LauncherProperties;
 
 class TaskAwaiter
 {
-    private Worker $Worker;
+    private Process $Process;
     private bool $IsComplited = false;
     private $Result = null;
 
     public function __construct(string $data)
     {
-        $data         = base64_encode($data);
-        $workspace    = escapeshellarg(LauncherProperties::getWorkspace());
-        $this->Worker = new Worker('php '.__DIR__.'/Process.php '.$workspace.' '.$data);
+        $data          = base64_encode($data);
+        $workspace     = escapeshellarg(LauncherProperties::getWorkspace());
+        $this->Process = new Process('php '.__DIR__.'/Worker.php '.$workspace.' '.$data);
     }
 
     public function __get(string $name)
@@ -29,7 +29,7 @@ class TaskAwaiter
         {
             if (!$this->IsComplited)
             {
-                if (!$this->Worker->isRunning())
+                if (!$this->Process->isRunning())
                 {
                     $this->getResult();
                 }
@@ -43,11 +43,11 @@ class TaskAwaiter
     {
         if (!$this->IsComplited)
         {
-            $output = $this->Worker->read();
-            $result = $this->Worker->report();
+            $output = $this->Process->read();
+            $result = $this->Process->report();
 
             $this->Result = unserialize($result);
-            $this->Worker->close();
+            $this->Process->close();
 
             if ($output)
             {
@@ -64,9 +64,9 @@ class TaskAwaiter
     {
         if (!$this->IsComplited)
         {
-            if ($this->Worker->isRunning())
+            if ($this->Process->isRunning())
             {
-                $this->Worker->stop();
+                $this->Process->stop();
                 $this->Result = new TaskException('The task was canceled');
                 $this->IsComplited = true;
             }
