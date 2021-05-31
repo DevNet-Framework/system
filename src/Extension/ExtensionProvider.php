@@ -61,14 +61,17 @@ class ExtensionProvider
                 {
                     $reflectionMethod = new \ReflectionMethod($className, $methodName);
                     $reflectionParams = $reflectionMethod->getParameters();
-                    if ( $reflectionParams[0]->getType())
+                    if (isset($reflectionParams[0]))
                     {
-                        $fistParameterType = $reflectionParams[0]->getType()->getName();
-                    }
+                        if ($reflectionParams[0]->hasType())
+                        {
+                            $fistParameterType = $reflectionParams[0]->getType()->getName();
+                        }
 
-                    if ($target instanceof $fistParameterType)
-                    {
-                        return $reflectionMethod;
+                        if ($target instanceof $fistParameterType)
+                        {
+                            return $reflectionMethod;
+                        }
                     }
                 }
             }
