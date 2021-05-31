@@ -20,7 +20,7 @@ class TakeEnumerable implements IEnumerable
 
     public function __construct(IEnumerable $enumerable)
     {
-        $this->Array = $enumerable->toArray();
+        $this->Array = $enumerable->getIterator()->toArray();
     }
 
     public function take(int $limit)
