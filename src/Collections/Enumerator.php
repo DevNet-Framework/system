@@ -19,6 +19,7 @@ class Enumerator implements Iterator, Countable
     public function __construct(array $Array = [])
     {
         $this->Array = $Array;
+        $this->Key = key($this->Array);
     }
 
     public function rewind()
