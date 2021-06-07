@@ -7,7 +7,6 @@ This dependency is the core library of **DevNet Framework**, and it includes the
 - Generic Collection
 - Extension Method
 - Linq Method
-- Dependency Injection
 - Database Connector
 - Error Handler
 - Generic compiler
