@@ -126,7 +126,7 @@ class Task
 
     public static function fromResult($result) : Task
     {
-        return Task::run(function () use($result)
+        return new Task(function () use($result)
         {
             return $result;
         });
@@ -134,9 +134,9 @@ class Task
 
     public static function fromException(string $message, int $code = 0) : Task
     {
-        return Task::run(function () use($message, $code)
+        return new Task(function () use($message, $code)
         {
-            throw new TaskException($message, $code);
+            return new TaskException($message, $code);
         });
     }
 
