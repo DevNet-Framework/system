@@ -6,6 +6,14 @@
  * @link        https://github.com/DevNet-Framework
  */
 
+use DevNet\System\Async\Task;
+
+function await(Task $task)
+{
+    $task->wait();
+    return $task->Result;
+}
+
 /**
  * add some PHP 8 features to PHP 7.
  */
