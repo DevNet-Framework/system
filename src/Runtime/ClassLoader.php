@@ -26,7 +26,7 @@ class ClassLoader
 
     public function map(string $prefix, string $root) : void
     {
-        $this->Map[$prefix] = $root;
+        $this->Map[$root] = $prefix;
     }
 
     public function load(string $type) : void
@@ -35,7 +35,7 @@ class ClassLoader
         $name       = array_pop($segmets);
         $namespace  = implode("\\", $segmets);
 
-        foreach ($this->Map as $prefix => $root)
+        foreach ($this->Map as $root => $prefix)
         {
             $position = strpos($namespace, $prefix);
 
