@@ -27,9 +27,9 @@ class Launcher extends LauncherProperties
         self::$Workspace = $workspace;
     }
 
-    public function namespaces(array $namespaces) : void
+    public function namespace(string $namespace) : void
     {
-        self::$Namespaces = $namespaces;
+        self::$Namespace = $namespace;
     }
 
     public function entryPoint(string $entryPoint) : void
@@ -49,7 +49,14 @@ class Launcher extends LauncherProperties
     
     public function Launch() : void
     {
-        self::$Loader = new ClassLoader(self::$Workspace, self::$Namespaces);
+        if (!self::$Namespace)
+        {
+            $entrypoint = explode('\\', self::$EntryPoint);
+            array_pop($entrypoint);
+            self::$Namespace = implode('\\', $entrypoint);
+        }
+
+        self::$Loader = new ClassLoader(self::$Workspace, ["/" => self::$Namespace]);
         self::$Loader->register();
 
         $inputArgs = $GLOBALS['argv'] ?? [];

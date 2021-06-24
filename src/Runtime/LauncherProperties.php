@@ -12,7 +12,7 @@ class LauncherProperties
 {
     protected static ClassLoader $Loader;
     protected static string $Workspace = __DIR__;
-    protected static array $Namespaces = ["Application" => "/"];
+    protected static ?string $Namespace = null;
     protected static string $EntryPoint = "Application\Program";
     protected static array $Arguments = [];
     protected static string $Envirement;
@@ -27,22 +27,22 @@ class LauncherProperties
         return self::$Workspace;
     }
 
-    public static function getNamespaces() : array
+    public static function getNamespace() : string
     {
-        return self::$Namespaces;
+        return self::$Namespace;
     }
 
-    public function getEntryPoint() : string
+    public static function getEntryPoint() : string
     {
         return self::$EntryPoint;
     }
     
-    public function getArguments() : array
+    public static function getArguments() : array
     {
         return self::$Arguments;
     }
 
-    public function getEnvironmoment() : string
+    public static function getEnvironmoment() : string
     {
         return self::$Envirement;
     }
