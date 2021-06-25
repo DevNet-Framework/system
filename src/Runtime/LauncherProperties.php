@@ -12,8 +12,8 @@ class LauncherProperties
 {
     protected static ClassLoader $Loader;
     protected static string $Workspace = __DIR__;
-    protected static ?string $Namespace = null;
-    protected static string $EntryPoint = "Application\Program";
+    protected static ?string $Namespace = 'Application';
+    protected static string $EntryPoint = 'Program';
     protected static array $Arguments = [];
     protected static string $Envirement;
 
