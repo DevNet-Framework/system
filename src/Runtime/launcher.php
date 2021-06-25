@@ -49,21 +49,16 @@ class Launcher extends LauncherProperties
     
     public function Launch() : void
     {
-        if (!self::$Namespace)
-        {
-            $entrypoint = explode('\\', self::$EntryPoint);
-            array_pop($entrypoint);
-            self::$Namespace = implode('\\', $entrypoint);
-        }
-
         self::$Loader = new ClassLoader(self::$Workspace, ["/" => self::$Namespace]);
         self::$Loader->register();
 
         $inputArgs = $GLOBALS['argv'] ?? [];
         array_shift($inputArgs);
-        $inputArgs = $inputArgs + self::$Arguments;
 
-        $runner = new MainClassRunner(self::$EntryPoint, $inputArgs);
+        $inputArgs = $inputArgs + self::$Arguments;
+        $mainClass = self::$Namespace.'\\'.self::$EntryPoint;
+        $runner    = new MainClassRunner($mainClass, $inputArgs);
+        
         $runner->run();
     }
 }
