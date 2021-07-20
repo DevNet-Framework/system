@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -20,16 +21,14 @@ class MainClassRunner
         $this->MainClass = $mainClass;
         $this->Args = $args;
     }
-    
-    public function run() : void
+
+    public function run(): void
     {
-        if (!class_exists($this->MainClass))
-        {
+        if (!class_exists($this->MainClass)) {
             throw new \Exception("Main class does not exist or not configured yet");
         }
 
-        if (!method_exists($this->MainClass, 'main'))
-        {
+        if (!method_exists($this->MainClass, 'main')) {
             throw new \Exception("Main Method does not exist or entry point not configured yet");
         }
 

@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -23,14 +24,12 @@ class DbReader implements IteratorAggregate
         $this->Command->Statement->setFetchMode(PDO::FETCH_ASSOC);
     }
 
-    public function read() : bool
+    public function read(): bool
     {
-        if ($this->Command->Connection->getState() === 1)
-        {
+        if ($this->Command->Connection->getState() === 1) {
             $row = $this->Command->Statement->fetch();
 
-            if ($row)
-            {
+            if ($row) {
                 $this->Row = $row;
                 return true;
             }
@@ -46,7 +45,7 @@ class DbReader implements IteratorAggregate
         return $this->Row[$name] ?? null;
     }
 
-    public function getName(int $ordinal) : ?string
+    public function getName(int $ordinal): ?string
     {
         $row = array_keys($this->Row);
         return $row[$ordinal] ?? null;
@@ -66,7 +65,7 @@ class DbReader implements IteratorAggregate
         $this->Command->Connection = null;
     }
 
-    public function getIterator() : iterable
+    public function getIterator(): iterable
     {
         return new Enumerator($this->Command->Statement->fetchAll());
     }

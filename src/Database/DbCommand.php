@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -28,44 +29,35 @@ class DbCommand
         $this->Parameters = $parameters;
     }
 
-    public function execute() : int
+    public function execute(): int
     {
-        if ($this->Connection->getState() === 0)
-        {
+        if ($this->Connection->getState() === 0) {
             throw new \Exception("DB connection is closed");
         }
 
-        if ($this->Parameters)
-        {
+        if ($this->Parameters) {
             $statement = $this->Connection->getConnector()->prepare($this->Sql);
             $statement->execute($this->Parameters);
             return $statement->rowCount();
-        }
-        else
-        {
+        } else {
             return $this->Connection->getConnector()->exec($this->Sql);
         }
     }
 
-    public function executeReader() : ?DbReader
+    public function executeReader(): ?DbReader
     {
-        if ($this->Connection->getState() == 0)
-        {
+        if ($this->Connection->getState() == 0) {
             throw new \Exception("DB connection is closed");
         }
 
-        if ($this->Parameters)
-        {
+        if ($this->Parameters) {
             $statement = $this->Connection->getConnector()->prepare($this->Sql);
             $statement->execute($this->Parameters);
-        }
-        else
-        {
+        } else {
             $statement = $this->Connection->getConnector()->query($this->Sql);
         }
 
-        if (!$statement)
-        {
+        if (!$statement) {
             return null;
         }
 

@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -24,17 +25,14 @@ class LambdaExpression extends Expression
             $this->Body = $predicate;
             $this->Parameters = $parameters;
             $this->ReturnType = $returnType;
-
         } else if ($predicate instanceof Closure) {
             $parser = ExpressionParser::getInstance();
             $parser->parse($predicate);
             $this->Body = $parser->getBody();
             $this->Parameters = $parser->getParameters();
-            
         } else {
             throw new \Exception("argument 1 must be type of Closure or Expression ");
         }
-
     }
 
     public function accept(ExpressionVisitor $visitor)

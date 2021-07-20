@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -16,8 +17,7 @@ trait ExtensionTrait
     {
         $extensionMethod = ExtensionProvider::getExtensionMethod($this, $methodName);
 
-        if ($extensionMethod)
-        {
+        if ($extensionMethod) {
             array_unshift($args, $this);
             return $extensionMethod->invokeArgs(null, $args);
         }

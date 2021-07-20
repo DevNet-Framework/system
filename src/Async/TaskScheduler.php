@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -19,10 +20,9 @@ class TaskScheduler
         register_shutdown_function([$this, 'onShutdown']);
     }
 
-    public static function getDefaultScheduler() : TaskScheduler
+    public static function getDefaultScheduler(): TaskScheduler
     {
-        if (!isset(self::$Scheduler))
-        {
+        if (!isset(self::$Scheduler)) {
             self::$Scheduler = new TaskScheduler();
         }
 
@@ -34,35 +34,30 @@ class TaskScheduler
         $this->Tasks[$task->Id] = $task;
     }
 
-    public function remove(Task $task) : bool
+    public function remove(Task $task): bool
     {
-        if (isset($this->Tasks[$task->Id]))
-        {
+        if (isset($this->Tasks[$task->Id])) {
             unset($this->Tasks[$task->Id]);
             return true;
         }
-        
+
         return false;
     }
 
     public function wait()
     {
-        while ($this->Tasks)
-        {
-            foreach ($this->Tasks as $task)
-            {
-                if ($task->Status == Task::Completed || $task->Status == Task::Canceled || $task->Status == Task::Faulted)
-                {
+        while ($this->Tasks) {
+            foreach ($this->Tasks as $task) {
+                if ($task->Status == Task::Completed || $task->Status == Task::Canceled || $task->Status == Task::Faulted) {
                     $this->remove($task);
                 }
             }
         }
     }
 
-    public function onShutdown() : void
+    public function onShutdown(): void
     {
-        foreach ($this->Tasks as $task)
-        {
+        foreach ($this->Tasks as $task) {
             $task->Awaiter->Stop();
         }
     }

@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -24,8 +25,7 @@ class Linq
     public static function where(IEnumerable $enumerable, Closure $predecate)
     {
         $interfaces = class_implements($enumerable);
-        if (in_array(IQueryable::class, $interfaces))
-        {
+        if (in_array(IQueryable::class, $interfaces)) {
             return Queryable::where($enumerable, $predecate);
         }
 
@@ -35,19 +35,17 @@ class Linq
     public static function orderBy(IEnumerable $enumerable, Closure $predecate)
     {
         $interfaces = class_implements($enumerable);
-        if (in_array(IQueryable::class, $interfaces))
-        {
+        if (in_array(IQueryable::class, $interfaces)) {
             return Queryable::orderBy($enumerable, $predecate);
         }
 
         return Enumerable::orderBy($enumerable, $predecate);
     }
-    
+
     public static function orderByDescending(IEnumerable $enumerable, Closure $predecate)
     {
         $interfaces = class_implements($enumerable);
-        if (in_array(IQueryable::class, $interfaces))
-        {
+        if (in_array(IQueryable::class, $interfaces)) {
             return Queryable::orderByDescending($enumerable, $predecate);
         }
 
@@ -57,8 +55,7 @@ class Linq
     public static function skip(IEnumerable $enumerable, int $offset)
     {
         $interfaces = class_implements($enumerable);
-        if (in_array(IQueryable::class, $interfaces))
-        {
+        if (in_array(IQueryable::class, $interfaces)) {
             return Queryable::skip($enumerable, $offset);
         }
 
@@ -68,8 +65,7 @@ class Linq
     public static function take(IEnumerable $enumerable, int $limit)
     {
         $interfaces = class_implements($enumerable);
-        if (in_array(IQueryable::class, $interfaces))
-        {
+        if (in_array(IQueryable::class, $interfaces)) {
             return Queryable::take($enumerable, $limit);
         }
 
@@ -79,8 +75,7 @@ class Linq
     public static function groupBy(IEnumerable $enumerable, Closure $predecate)
     {
         $interfaces = class_implements($enumerable);
-        if (in_array(IQueryable::class, $interfaces))
-        {
+        if (in_array(IQueryable::class, $interfaces)) {
             throw new \Exception("Queriable method not implemented yet, try it as Enumerable");
         }
 
@@ -90,19 +85,17 @@ class Linq
     public static function join(IEnumerable $enumerable, $innerCollection, Closure $outerSelector, Closure $innerSelector, Closure $resultSelector)
     {
         $interfaces = class_implements($enumerable);
-        if (in_array(IQueryable::class, $interfaces))
-        {
+        if (in_array(IQueryable::class, $interfaces)) {
             throw new \Exception("Queriable method not implemented yet, try it as Enumerable");
         }
 
         return Enumerable::join($enumerable, $innerCollection, $outerSelector, $innerSelector, $resultSelector);
     }
 
-    public static function count(IEnumerable $enumerable, Closure $predecate = null) : int
+    public static function count(IEnumerable $enumerable, Closure $predecate = null): int
     {
         $interfaces = class_implements($enumerable);
-        if (in_array(IQueryable::class, $interfaces))
-        {
+        if (in_array(IQueryable::class, $interfaces)) {
             throw new \Exception("Queriable method not implemented yet, try it as Enumerable");
         }
 
@@ -112,8 +105,7 @@ class Linq
     public static function max(IEnumerable $enumerable, Closure $predecate = null)
     {
         $interfaces = class_implements($enumerable);
-        if (in_array(IQueryable::class, $interfaces))
-        {
+        if (in_array(IQueryable::class, $interfaces)) {
             throw new \Exception("Queriable method not implemented yet, try it as Enumerable");
         }
 
@@ -123,8 +115,7 @@ class Linq
     public static function min(IEnumerable $enumerable, Closure $predecate = null)
     {
         $interfaces = class_implements($enumerable);
-        if (in_array(IQueryable::class, $interfaces))
-        {
+        if (in_array(IQueryable::class, $interfaces)) {
             throw new \Exception("Queriable method not implemented yet, try it as Enumerable");
         }
 
@@ -134,8 +125,7 @@ class Linq
     public static function first(IEnumerable $enumerable)
     {
         $interfaces = class_implements($enumerable);
-        if (in_array(IQueryable::class, $interfaces))
-        {
+        if (in_array(IQueryable::class, $interfaces)) {
             return Queryable::first($enumerable);
         }
 
@@ -145,8 +135,7 @@ class Linq
     public static function last(IEnumerable $enumerable)
     {
         $interfaces = class_implements($enumerable);
-        if (in_array(IQueryable::class, $interfaces))
-        {
+        if (in_array(IQueryable::class, $interfaces)) {
             return Queryable::last($enumerable);
         }
 

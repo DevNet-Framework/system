@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -12,22 +13,22 @@ use Exception;
 
 class PropertyException extends Exception
 {
-    public static function undefinedPropery(string $ClassName, string $propertyName) : self
+    public static function undefinedPropery(string $ClassName, string $propertyName): self
     {
         return new self("access to undefined property {$ClassName}::{$propertyName}");
     }
 
-    public static function privateProperty(string $ClassName, string $propertyName) : self
+    public static function privateProperty(string $ClassName, string $propertyName): self
     {
         return new self("access to private property {$ClassName}::{$propertyName}");
     }
 
-    public static function protectedProperty(string $ClassName, string $propertyName) : self
+    public static function protectedProperty(string $ClassName, string $propertyName): self
     {
         return new self("access to protected property {$ClassName}::{$propertyName}");
     }
 
-    public static function invalidValueType(string $className, string $methodName, string $requiredType) : self
+    public static function invalidValueType(string $className, string $methodName, string $requiredType): self
     {
         return new self("Value passed to {$className}::{$methodName} must be of the type {$requiredType}");
     }

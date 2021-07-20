@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -23,20 +24,15 @@ class CountEnumerable implements IEnumerable
         $this->Enumerable = $enumerable;
     }
 
-    public function count(Closure $predecate = null) : int
+    public function count(Closure $predecate = null): int
     {
         $cout = 0;
-        foreach ($this->Enumerable as $element)
-        {
-            if ($predecate)
-            {
-                if ($predecate($element))
-                {
+        foreach ($this->Enumerable as $element) {
+            if ($predecate) {
+                if ($predecate($element)) {
                     $cout++;
                 }
-            }
-            else
-            {
+            } else {
                 $cout++;
             }
         }
@@ -47,15 +43,12 @@ class CountEnumerable implements IEnumerable
     public function max(Closure $predecate = null)
     {
         $value = null;
-        foreach ($this->Enumerable as $element)
-        {
-            if ($predecate)
-            {
+        foreach ($this->Enumerable as $element) {
+            if ($predecate) {
                 $element = $predecate($element);
             }
 
-            if ($value == null || $element > $value)
-            {
+            if ($value == null || $element > $value) {
                 $value = $element;
             }
         }
@@ -66,15 +59,12 @@ class CountEnumerable implements IEnumerable
     public function min(Closure $predecate = null)
     {
         $value = null;
-        foreach ($this->Enumerable as $element)
-        {
-            if ($predecate)
-            {
+        foreach ($this->Enumerable as $element) {
+            if ($predecate) {
                 $element = $predecate($element);
             }
 
-            if ($value == null || $element < $value)
-            {
+            if ($value == null || $element < $value) {
                 $value = $element;
             }
         }
@@ -82,7 +72,7 @@ class CountEnumerable implements IEnumerable
         return $value;
     }
 
-    public function getIterator() : Enumerator
+    public function getIterator(): Enumerator
     {
         return $this->Enumerable->getIterator();
     }

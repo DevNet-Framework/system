@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -23,11 +24,10 @@ class TaskCancelationToken
 
     public function __get(string $name)
     {
-        if ($name == 'IsCanceled')
-        {
+        if ($name == 'IsCanceled') {
             return $this->Canceler->IsCanceled;
         }
-        
+
         return $this->$name;
     }
 

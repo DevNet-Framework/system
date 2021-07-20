@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -25,14 +26,10 @@ class Action
         $this->Target     = $target;
         $this->ActionName = $actionName;
 
-        if ($target instanceof Closure)
-        {
+        if ($target instanceof Closure) {
             $this->ActionInfo = new ReflectionFunction($target);
-        }
-        else
-        {
-            if (!method_exists($target, $actionName))
-            {
+        } else {
+            if (!method_exists($target, $actionName)) {
                 throw MethodException::undefinedMethod(get_class($target), $actionName);
             }
 
@@ -52,12 +49,9 @@ class Action
 
     public function invokeArgs(array $args = [])
     {
-        if ($this->Target instanceof Closure)
-        {
+        if ($this->Target instanceof Closure) {
             return $this->ActionInfo->invokeArgs($args);
-        }
-        else
-        {
+        } else {
             return $this->ActionInfo->invokeArgs($this->Target, $args);
         }
     }

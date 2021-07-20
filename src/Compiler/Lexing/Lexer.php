@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -32,7 +33,7 @@ class Lexer implements ILexer
             if ($this->input == '') {
                 $this->token = new Token(Token::EOI);
                 break;
-            } else if (preg_match('%^('.$definition->pattern.')%', $this->input, $matches)) {
+            } else if (preg_match('%^(' . $definition->pattern . ')%', $this->input, $matches)) {
                 $tokenValue = $matches[0];
                 $tokenLength = strlen($tokenValue);
                 $this->offset += $tokenLength;
@@ -46,7 +47,7 @@ class Lexer implements ILexer
         }
     }
 
-    public function getToken() : IToken
+    public function getToken(): IToken
     {
         return $this->token;
     }
@@ -65,7 +66,7 @@ class Lexer implements ILexer
         while (strlen($this->input)) {
             $matches = null;
             foreach ($this->definitions as $definition) {
-                if (preg_match('%^'.$definition->pattern.'%', $this->input, $matches)) {
+                if (preg_match('%^' . $definition->pattern . '%', $this->input, $matches)) {
                     $tokenValue = $matches[0];
                     $tokenLength = strlen($tokenValue);
                     $this->input = substr($this->input, $tokenLength);
@@ -77,7 +78,7 @@ class Lexer implements ILexer
                 }
             }
             if (!$matches) {
-                throw new \Exception(sprintf('At offset %s: %s', $this->offset, substr($this->input, 0, 16).'...'));
+                throw new \Exception(sprintf('At offset %s: %s', $this->offset, substr($this->input, 0, 16) . '...'));
             }
         }
         return $tokens;

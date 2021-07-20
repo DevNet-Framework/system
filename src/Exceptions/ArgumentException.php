@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -12,7 +13,7 @@ use Exception;
 
 class ArgumentException extends Exception
 {
-    public static function invalidArgumentType(string $className, string $methodName, int $argumentPosition, string $requiredType) : self
+    public static function invalidArgumentType(string $className, string $methodName, int $argumentPosition, string $requiredType): self
     {
         return new self("Argument {$argumentPosition} passed to {$className}::{$methodName}() must be of the type {$requiredType}");
     }

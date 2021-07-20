@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -17,25 +18,22 @@ function await(Task $task)
 /**
  * add some PHP 8 features to PHP 7.
  */
-if(!function_exists("str_contains"))
-{
-    function str_contains(string $string, string $needle) : bool
+if (!function_exists("str_contains")) {
+    function str_contains(string $string, string $needle): bool
     {
         return strpos($string, $needle) !== false ? true : false;
     }
 }
 
-if(!function_exists("str_starts_with"))
-{
-    function str_starts_with(string $string, string $needle) : bool
+if (!function_exists("str_starts_with")) {
+    function str_starts_with(string $string, string $needle): bool
     {
         return strpos($string, $needle) === 0 ? true : false;
     }
 }
 
-if(!function_exists("str_ends_with"))
-{
-    function str_ends_with(string $string, string $needle) : bool
+if (!function_exists("str_ends_with")) {
+    function str_ends_with(string $string, string $needle): bool
     {
         return strpos(strrev($string), strrev($needle)) === 0 ? true : false;
     }

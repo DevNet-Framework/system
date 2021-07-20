@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -19,15 +20,14 @@ class Dictionary implements ArrayAccess, IDictionary
 
     public function __construct(string $keyType, string $valueType)
     {
-        if ($keyType != Type::Integer && $keyType != Type::String)
-        {
+        if ($keyType != Type::Integer && $keyType != Type::String) {
             throw ArrayException::keyConstraint();
         }
 
         $this->GenericType = new Type(self::class, new Type($keyType), new Type($valueType));
     }
 
-    public function add($key, $value) : void
+    public function add($key, $value): void
     {
         $this->offsetSet($key, $value);
     }
@@ -37,7 +37,7 @@ class Dictionary implements ArrayAccess, IDictionary
         return isset($this->Array[$key]) ? true : false;
     }
 
-    public function remove($key) : void
+    public function remove($key): void
     {
         if (isset($this->Array[$key])) {
             unset($this->Array[$key]);
@@ -46,20 +46,20 @@ class Dictionary implements ArrayAccess, IDictionary
 
     public function getValue($key)
     {
-        return $this->Array[$key] ?? null; 
+        return $this->Array[$key] ?? null;
     }
 
-    public function clear() : void
+    public function clear(): void
     {
         $this->Array = [];
     }
 
-    public function getType() : Type
+    public function getType(): Type
     {
         return $this->GenericType;
     }
 
-    public function toArray() : array
+    public function toArray(): array
     {
         return $this->Array;
     }

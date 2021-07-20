@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -17,8 +18,7 @@ class ErrorMessageExtension
         string $className,
         string $propertyName,
         string $requiredType
-        ) : void
-    {
+    ): void {
         $builder->append(
             "Property {$className}::{$propertyName} must be of the type {$requiredType}"
         );
@@ -30,8 +30,7 @@ class ErrorMessageExtension
         string $methodName,
         int $argumentPosition,
         string $requiredType
-        ) : void
-    {
+    ): void {
         $builder->append(
             "Argument {$argumentPosition} passed to {$className}::{$methodName}() must be of the type {$requiredType}"
         );
@@ -39,10 +38,10 @@ class ErrorMessageExtension
 
     public static function invalidReturnType(
         StringBuilder $builder,
-        string $className, string $methodName,
+        string $className,
+        string $methodName,
         string $requiredType
-        ) : void
-    {
+    ): void {
         $builder->append(
             "Return Type of {$className}::{$methodName}() must be of the type {$requiredType}"
         );
@@ -52,8 +51,7 @@ class ErrorMessageExtension
         StringBuilder $builder,
         string $targetName,
         string $requiredType
-        ) : void
-    {
+    ): void {
         $builder->append(
             "Key passed to {$targetName} must be of the type {$requiredType}"
         );

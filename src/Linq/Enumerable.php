@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -37,7 +38,7 @@ class Enumerable
         $orderEnumerable = new OrderEnumerable($enumerable);
         return $orderEnumerable->orderBy($predecate);
     }
-    
+
     public static function orderByDescending(IEnumerable $enumerable, Closure $predecate)
     {
         $orderEnumerable = new OrderEnumerable($enumerable);
@@ -56,7 +57,7 @@ class Enumerable
         return $joined->join($innerCollection, $outerSelector, $innerSelector, $resultSelector);
     }
 
-    public static function count(IEnumerable $enumerable, Closure $predecate = null) : int
+    public static function count(IEnumerable $enumerable, Closure $predecate = null): int
     {
         $count = new CountEnumerable($enumerable);
         return $count->count($predecate);

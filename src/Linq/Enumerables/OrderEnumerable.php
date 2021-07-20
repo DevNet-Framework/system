@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -30,7 +31,7 @@ class OrderEnumerable implements IEnumerable
     {
         $array       = $this->Enumerable->getIterator()->toArray();
         $this->Sort  = $this->sort($array, $predecate);
-        $list        = $this->list($this->Sort); 
+        $list        = $this->list($this->Sort);
         $this->Array = $list;
         return $this;
     }
@@ -51,7 +52,7 @@ class OrderEnumerable implements IEnumerable
         $this->Array = $list;
         return $this;
     }
-    
+
     public function thenByDescending(Closure $predecate)
     {
         $map         = $this->sort($this->Sort, $predecate, true);
@@ -64,57 +65,42 @@ class OrderEnumerable implements IEnumerable
     {
         $sort = [];
         $leaf = false;
-        foreach ($array as $key => $element)
-        {
+        foreach ($array as $key => $element) {
             $subKey = false;
-            if (is_array($element))
-            {
+            if (is_array($element)) {
                 $element = $this->sort($element, $predecate, $reverseOrder);
-            }
-            else
-            {
+            } else {
                 $key    = $predecate($element);
                 $subKey = true;
                 $leaf   = true;
             }
 
-            if ($subKey)
-            {
+            if ($subKey) {
                 $sort[$key][] = $element;
-            }
-            else
-            {
+            } else {
                 $sort[$key] = $element;
             }
         }
 
-        if ($leaf)
-        {
-            if ($reverseOrder)
-            {
+        if ($leaf) {
+            if ($reverseOrder) {
                 krsort($sort);
-            }
-            else
-            {
+            } else {
                 ksort($sort);
             }
         }
-       
+
         return $sort;
     }
 
     private function list(array $array)
     {
         $list = [];
-        foreach ($array as $element) 
-        {
-            if (is_array($element))
-            {
+        foreach ($array as $element) {
+            if (is_array($element)) {
                 $element = $this->list($element);
                 $list    = array_merge($list, $element);
-            }
-            else
-            {
+            } else {
                 $list[] = $element;
             }
         }
@@ -122,7 +108,7 @@ class OrderEnumerable implements IEnumerable
         return $list;
     }
 
-    public function getIterator() : Enumerator
+    public function getIterator(): Enumerator
     {
         return new Enumerator($this->Array);
     }

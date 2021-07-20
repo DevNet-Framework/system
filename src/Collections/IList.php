@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -10,9 +11,9 @@ namespace DevNet\System\Collections;
 
 interface IList extends IEnumerable
 {
-    public function add($item) : void;
+    public function add($item): void;
 
-    public function contains($item) : bool;
+    public function contains($item): bool;
 
-    public function remove($item) : void;
+    public function remove($item): void;
 }

@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -23,21 +24,17 @@ class Worker
         set_error_handler([$this, 'errorHandler']);
     }
 
-    public function load(string $workspace) : void
+    public function load(string $workspace): void
     {
-        if (file_exists($workspace.'/vendor/autoload.php'))
-        {
-            require $workspace.'/vendor/autoload.php';
+        if (file_exists($workspace . '/vendor/autoload.php')) {
+            require $workspace . '/vendor/autoload.php';
         }
 
-        if (file_exists($workspace."/project.phproj"))
-        {
-            $projectFile = simplexml_load_file($workspace."/project.phproj");
-            if ($projectFile)
-            {
+        if (file_exists($workspace . "/project.phproj")) {
+            $projectFile = simplexml_load_file($workspace . "/project.phproj");
+            if ($projectFile) {
                 $namespace = (string)$projectFile->properties->namespace;
-                if (!empty($namespace))
-                {
+                if (!empty($namespace)) {
                     $loader = new ClassLoader($workspace);
                     $loader->map($namespace, "/");
                     $loader->register();
@@ -46,23 +43,19 @@ class Worker
         }
     }
 
-    public function execute() : void
+    public function execute(): void
     {
-        try
-        {
+        try {
             $result = null;
             $action = unserialize(base64_decode($this->Data));
             $result = $action();
 
-            if ($result instanceof Closure)
-            {
+            if ($result instanceof Closure) {
                 $result = new SerializableClosure($result);
             }
-            
+
             fwrite(STDERR, serialize($result));
-        }
-        catch (\Throwable $error)
-        {
+        } catch (\Throwable $error) {
             $exception = new TaskException($error->getMessage(), $error->getCode());
             fwrite(STDERR, serialize($exception));
         }

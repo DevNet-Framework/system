@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -31,28 +32,23 @@ class Task
         $this->Id        = spl_object_id($this);
         $this->Status    = Self::Completed;
         $this->Scheduler = TaskScheduler::getDefaultScheduler();
-        
-        if ($action)
-        {
+
+        if ($action) {
             $this->Action  = new SerializableClosure($action);
             $this->Awaiter = new TaskAwaiter(serialize($this->Action));
             $this->Status  = Self::Created;
         }
 
-        if ($token)
-        {
+        if ($token) {
             $token->Awaiters->add($this->TaskAwaiter);
         }
     }
 
     public function __get(string $name)
     {
-        if ($name == 'Status')
-        {
-            if ($this->Status == self::Started)
-            {
-                if ($this->Awaiter->IsComplited)
-                {
+        if ($name == 'Status') {
+            if ($this->Status == self::Started) {
+                if ($this->Awaiter->IsComplited) {
                     $this->wait();
                 }
             }
@@ -61,15 +57,13 @@ class Task
         return $this->$name;
     }
 
-    public function start(TaskScheduler $taskScheduler = null) : void
+    public function start(TaskScheduler $taskScheduler = null): void
     {
-        if ($taskScheduler)
-        {
+        if ($taskScheduler) {
             $this->Scheduler = $taskScheduler;
         }
-        
-        if ($this->Status === self::Created)
-        {
+
+        if ($this->Status === self::Created) {
             $this->Scheduler->add($this);
             $this->Awaiter->Process->start();
             $this->Status = self::Started;
@@ -80,62 +74,50 @@ class Task
     {
         $this->wait();
         $precedent = $this;
-        $next = function() use($next, $precedent)
-        {
+        $next = function () use ($next, $precedent) {
             return $next($precedent);
         };
 
         return Task::run($next, $token);
     }
 
-    public function wait() : void
+    public function wait(): void
     {
-        if ($this->Status == self::Created || $this->Status == self::Started)
-        {
-            if ($this->Status == self::Created)
-            {
+        if ($this->Status == self::Created || $this->Status == self::Started) {
+            if ($this->Status == self::Created) {
                 $action = $this->Action->getClosure();
                 $this->Result = $action();
-            }
-            else if ($this->Status == self::Started)
-            {
+            } else if ($this->Status == self::Started) {
                 $this->Result = $this->Awaiter->getResult();
             }
 
-            if ($this->Result instanceof TaskCanceledException)
-            {
+            if ($this->Result instanceof TaskCanceledException) {
                 $this->Status = self::Canceled;
-            }
-            else if ($this->Result instanceof TaskException)
-            {
+            } else if ($this->Result instanceof TaskException) {
                 $this->Status = self::Faulted;
-            }
-            else
-            {
+            } else {
                 $this->Status = self::Completed;
             }
-        }  
+        }
     }
 
-    public static function run(Closure $action, ?TaskCancelationToken $token = null) : Task
+    public static function run(Closure $action, ?TaskCancelationToken $token = null): Task
     {
         $task = new Task($action, $token);
         $task->start();
         return $task;
     }
 
-    public static function fromResult($result) : Task
+    public static function fromResult($result): Task
     {
-        return new Task(function () use($result)
-        {
+        return new Task(function () use ($result) {
             return $result;
         });
     }
 
-    public static function fromException(string $message, int $code = 0) : Task
+    public static function fromException(string $message, int $code = 0): Task
     {
-        return new Task(function () use($message, $code)
-        {
+        return new Task(function () use ($message, $code) {
             return new TaskException($message, $code);
         });
     }

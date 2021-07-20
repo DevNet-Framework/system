@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -12,17 +13,17 @@ use Exception;
 
 class ArrayException extends Exception
 {
-    public static function keyConstraint() : self
+    public static function keyConstraint(): self
     {
         return new self("Key must be of the type Integert or String");
     }
-    
-    public static function invalidKeyType(string $requiredType) : self
+
+    public static function invalidKeyType(string $requiredType): self
     {
         return new self("Key must be of the type {$requiredType}");
     }
 
-    public static function invalidValueType(string $requiredType) : self
+    public static function invalidValueType(string $requiredType): self
     {
         return new self("Value must be of the type {$requiredType}");
     }

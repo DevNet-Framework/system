@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -24,7 +25,7 @@ class ArrayList implements ArrayAccess, IList
         $this->GenericType = new Type(self::class, new Type(Type::Integer), new Type($valueType));
     }
 
-    public function add($value) : void
+    public function add($value): void
     {
         $this->offsetSet(null, $value);
     }
@@ -36,10 +37,8 @@ class ArrayList implements ArrayAccess, IList
 
     public function addRange(array $array)
     {
-        foreach ($array as $key => $value)
-        {
-            if (gettype($key) != "integer")
-            {
+        foreach ($array as $key => $value) {
+            if (gettype($key) != "integer") {
                 throw ArrayException::invalidValueType("integer");
             }
 
@@ -47,24 +46,24 @@ class ArrayList implements ArrayAccess, IList
         }
     }
 
-    public function remove($item) : void
+    public function remove($item): void
     {
         if (isset($this->Array[$item])) {
             unset($this->Array[$item]);
         }
     }
 
-    public function clear() : void
+    public function clear(): void
     {
         $this->Array = [];
     }
 
-    public function getType() : Type
+    public function getType(): Type
     {
         return $this->GenericType;
     }
 
-    public function toArray() : array
+    public function toArray(): array
     {
         return $this->Array;
     }

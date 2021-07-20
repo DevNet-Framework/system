@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -12,5 +13,5 @@ use IteratorAggregate;
 
 interface IEnumerable extends IteratorAggregate
 {
-    public function getIterator() : Enumerator;
+    public function getIterator(): Enumerator;
 }

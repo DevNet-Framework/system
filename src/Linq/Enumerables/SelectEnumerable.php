@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -15,7 +16,7 @@ use Closure;
 class SelectEnumerable implements IEnumerable
 {
     use \DevNet\System\Extension\ExtensionTrait;
-    
+
     private IEnumerable $Enumerable;
     private array $Array = [];
 
@@ -27,8 +28,7 @@ class SelectEnumerable implements IEnumerable
     public function select(Closure $predecate)
     {
         $elements = [];
-        foreach ($this->Enumerable as $element)
-        {
+        foreach ($this->Enumerable as $element) {
             $object = $predecate($element);
             $elements[] = $object;
         }
@@ -37,7 +37,7 @@ class SelectEnumerable implements IEnumerable
         return $this;
     }
 
-    public function getIterator() : Enumerator
+    public function getIterator(): Enumerator
     {
         return new Enumerator($this->Array);
     }

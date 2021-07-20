@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -12,7 +13,7 @@ use Exception;
 
 class ClassException extends Exception
 {
-    public static function classNotFound(string $className) : self
+    public static function classNotFound(string $className): self
     {
         return new self("Class {$className} not found");
     }

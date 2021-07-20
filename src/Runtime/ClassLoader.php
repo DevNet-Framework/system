@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -19,35 +20,32 @@ class ClassLoader
         $this->Map = $map;
     }
 
-    public function setWorkspace(string $workspace) : void
+    public function setWorkspace(string $workspace): void
     {
         $this->Workspace = $workspace;
     }
 
-    public function map(string $prefix, string $root) : void
+    public function map(string $prefix, string $root): void
     {
         $this->Map[$root] = $prefix;
     }
 
-    public function load(string $type) : void
+    public function load(string $type): void
     {
         $segmets    = explode("\\", $type);
         $name       = array_pop($segmets);
         $namespace  = implode("\\", $segmets);
 
-        foreach ($this->Map as $root => $prefix)
-        {
+        foreach ($this->Map as $root => $prefix) {
             $position = strpos($namespace, $prefix);
 
-            if ($position !== false)
-            {
+            if ($position !== false) {
                 $directory  = substr_replace($namespace, "", $position, strlen($prefix));
                 $directory  = str_replace("\\", "/", $directory);
                 $directory  = trim($directory, "/");
-                $path       = $this->Workspace.$root."/".$directory."/".$name.".php";
+                $path       = $this->Workspace . $root . "/" . $directory . "/" . $name . ".php";
 
-                if (file_exists($path))
-                {
+                if (file_exists($path)) {
                     require_once $path;
                 }
 
@@ -57,20 +55,19 @@ class ClassLoader
 
         $directory  = str_replace("\\", "/", $namespace);
         $directory  = trim($directory, "/");
-        $path       = $this->Workspace."/".$directory."/".$name.".php";
+        $path       = $this->Workspace . "/" . $directory . "/" . $name . ".php";
 
-        if (file_exists($path))
-        {
+        if (file_exists($path)) {
             require_once $path;
         }
     }
 
-    public function register() : void
+    public function register(): void
     {
         spl_autoload_register([$this, 'load']);
     }
 
-    public function unRegister() : void
+    public function unRegister(): void
     {
         spl_autoload_unregister([$this, 'load']);
     }

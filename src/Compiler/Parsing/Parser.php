@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -29,7 +30,8 @@ class Parser
         $this->grammar = $grammar;
     }
 
-    public function consume(string $input) {
+    public function consume(string $input)
+    {
         $this->grammar->consume($input);
         $this->pointer  = new Stack();
         $this->state    = new Stack();
@@ -43,61 +45,42 @@ class Parser
 
     public function advance()
     {
-        if ($this->reduceId == 1)
-        {
+        if ($this->reduceId == 1) {
             $this->action = self::ACCEPT;
-        }
-        else
-        {
+        } else {
             $itemName = $this->node->peek()->getName();
             $state = $this->state->peek();
             $position = $this->pointer->peek();
             $nextState = null;
             $state = $this->grammar->match($state, $position, $itemName);
 
-            if($state == true || $this->action == self::ERROR)
-            {
+            if ($state == true || $this->action == self::ERROR) {
                 $nextState = $this->grammar->lookAhead($itemName);
-                if ($nextState == true && $nextState != $state)
-                {
+                if ($nextState == true && $nextState != $state) {
                     $this->action = self::GOTO;
-                }
-                else
-                {
+                } else {
                     $rule = $this->grammar->canReduce($state, $position, $itemName, $this->state, $this->pointer);
-                    if ($rule)
-                    {
-                            $this->action = self::REDUCE;
-                    }
-                    else
-                    {
+                    if ($rule) {
+                        $this->action = self::REDUCE;
+                    } else {
                         $this->action = self::SHIFT;
                     }
                 }
-            }
-            else
-            {
+            } else {
                 $newState = $this->grammar->goTo($itemName);
-                if ($newState)
-                {
+                if ($newState) {
                     $this->action = self::GOTO;
-                }
-                else
-                {
+                } else {
                     $this->action = self::ERROR;
                 }
             }
 
-            switch ($this->action)
-            {
+            switch ($this->action) {
                 case self::GOTO:
-                    if ($nextState)
-                    {
+                    if ($nextState) {
                         $this->pointer->push(1);
                         $this->state->push($nextState);
-                    }
-                    else
-                    {
+                    } else {
                         $this->pointer->push(1);
                         $this->state->push($newState);
                     }
@@ -111,35 +94,26 @@ class Parser
                 case self::REDUCE:
                     $size = $this->pointer->pop();
                     $items = [];
-                    for ($i = 0; $i < $size; $i++)
-                    {
+                    for ($i = 0; $i < $size; $i++) {
                         $items[] = $this->node->pop();
                     }
-                    if (count($items) == 1)
-                    {
+                    if (count($items) == 1) {
                         $item = $items[0];
-                        if (count($item->getValues()) == 1)
-                        {
+                        if (count($item->getValues()) == 1) {
                             $this->node->push(new Node($rule->name, $item->getValues()));
-                        }
-                        else
-                        {
+                        } else {
                             $this->node->push(new Node($rule->name, [$item]));
                         }
-                    }
-                    else
-                    {
-                        foreach ($items as &$item)
-                        {
+                    } else {
+                        foreach ($items as &$item) {
                             $values = $item->getValues();
-                            if (count($values) == 1)
-                            {
+                            if (count($values) == 1) {
                                 $item = $values[0];
                             }
                         }
                         $this->node->push(new Node($rule->name, array_reverse($items)));
                     }
-                    
+
                     $this->state->pop();
                     $this->reduceId = $rule->index;
                     break;

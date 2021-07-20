@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -12,7 +13,7 @@ use Exception;
 
 class FileException extends Exception
 {
-    public static function fileNotFound() : self
+    public static function fileNotFound(): self
     {
         return new self('No resource available; cannot tell position');
     }

@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -27,12 +28,10 @@ class TakeEnumerable implements IEnumerable
     {
         $i = 1;
         $elements = [];
-        foreach ($this->Array as $key => $element)
-        {
+        foreach ($this->Array as $key => $element) {
             $elements[$key] = $element;
 
-            if ($i == $limit)
-            {
+            if ($i == $limit) {
                 break;
             }
 
@@ -47,10 +46,8 @@ class TakeEnumerable implements IEnumerable
     {
         $i = 1;
         $elements = [];
-        foreach ($this->Array as $key => $element)
-        {
-            if ($i <= $offset)
-            {
+        foreach ($this->Array as $key => $element) {
+            if ($i <= $offset) {
                 $i++;
                 continue;
             }
@@ -72,7 +69,7 @@ class TakeEnumerable implements IEnumerable
         return end($this->Array);
     }
 
-    public function getIterator() : Enumerator
+    public function getIterator(): Enumerator
     {
         return new Enumerator($this->Array);
     }

@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -21,14 +22,14 @@ class ParserBuilder
         $this->lexer = $lexer;
     }
 
-    public function define(string $name, array $predicate) : int
+    public function define(string $name, array $predicate): int
     {
         $this->id++;
         $this->rules[$this->id] = new Rule($this->id, $name,  $predicate);
         return $this->id;
     }
 
-    public function build() : Parser
+    public function build(): Parser
     {
         return new Parser(new Grammar($this->lexer, $this->rules));
     }

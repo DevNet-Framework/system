@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -20,7 +21,7 @@ class ExpressionSqlBuilder extends ExpressionVisitor
     private array $Parameters = [];
     public array $OuterVariables = [];
 
-    public static function expressionToString(Expression $expression) : string
+    public static function expressionToString(Expression $expression): string
     {
         $visitor = new ExpressionStringBuilder();
         $visitor->visit($expression);
@@ -60,7 +61,7 @@ class ExpressionSqlBuilder extends ExpressionVisitor
                 # code...
                 break;
         }
-        
+
         foreach ($arguments as $argument) {
             $this->visit($argument);
         }
@@ -70,7 +71,6 @@ class ExpressionSqlBuilder extends ExpressionVisitor
         } else if ($expression->Method == 'OrderByDescending' || $expression->Method == 'ThenByDescending') {
             $this->Out .= " DESC";
         }
-
     }
 
     public function visitArray(Expression $expression)
@@ -86,7 +86,7 @@ class ExpressionSqlBuilder extends ExpressionVisitor
     }
 
     public function visitBinary(Expression $expression)
-    {   
+    {
         $negation = '';
         switch ($expression->Name) {
             case '!=':
@@ -108,7 +108,7 @@ class ExpressionSqlBuilder extends ExpressionVisitor
         }
         $this->Out .= $negation;
         $this->visit($expression->Left);
-        $this->Out .= ' '.$operator.' ';
+        $this->Out .= ' ' . $operator . ' ';
         $this->visit($expression->Right);
     }
 

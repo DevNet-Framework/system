@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -17,7 +18,7 @@ trait ArrayTrait
 {
     protected array $Array = [];
 
-    abstract public function getType() : Type;
+    abstract public function getType(): Type;
 
     /** 
      * set to the array an element with the provided key and value.
@@ -27,8 +28,7 @@ trait ArrayTrait
         $genericType = $this->getType();
         $result = $genericType->validateArguments($key ?? 0, $value);
 
-        switch ($result)
-        {
+        switch ($result) {
             case 1:
                 $message = new StringBuilder();
                 $message->invalidKeyType(get_class($this), Type::Integer);
@@ -36,12 +36,9 @@ trait ArrayTrait
                 break;
         }
 
-        if ($key != null)
-        {
+        if ($key != null) {
             $this->Array[$key] = $value;
-        }
-        else
-        {
+        } else {
             $this->Array[] = $value;
         }
     }
@@ -49,7 +46,7 @@ trait ArrayTrait
     /**
      * check if the array contains an element with the specified key
      */
-    public function offsetExists($key) : bool
+    public function offsetExists($key): bool
     {
         return isset($this->Array[$key]);
     }
@@ -73,7 +70,7 @@ trait ArrayTrait
     /**
      * return the size of the array
      */
-    public function getLength() : int
+    public function getLength(): int
     {
         return count($this->Array);
     }
@@ -81,7 +78,7 @@ trait ArrayTrait
     /** 
      * reverse the order of the array items
      */
-    public function reverse() : ArrayList
+    public function reverse(): ArrayList
     {
         array_reverse($this->Array);
         return $this;
@@ -90,7 +87,7 @@ trait ArrayTrait
     /**
      * return Iterable collection of values
      */
-    public function getIterator() : Enumerator
+    public function getIterator(): Enumerator
     {
         return new Enumerator($this->Array);
     }

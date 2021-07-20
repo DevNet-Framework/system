@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -31,31 +32,24 @@ class Type
         return $this->$name;
     }
 
-    public function validateArguments(...$args) : int
+    public function validateArguments(...$args): int
     {
-        foreach ($this->GenericTypeArgs as $index => $GenericTypeArg)
-        {
-            if (isset($args[$index]))
-            {
+        foreach ($this->GenericTypeArgs as $index => $GenericTypeArg) {
+            if (isset($args[$index])) {
                 $arg = $args[$index];
-                if ($GenericTypeArg->Name == gettype($arg))
-                {
+                if ($GenericTypeArg->Name == gettype($arg)) {
                     continue;
                 }
 
-                if (is_object($arg))
-                {
+                if (is_object($arg)) {
                     $type = get_class($arg);
-                    if ($GenericTypeArg->Name == $type)
-                    {
+                    if ($GenericTypeArg->Name == $type) {
                         continue;
                     }
                 }
 
                 return $index + 1;
-            }
-            else
-            {
+            } else {
                 return ($index + 1) * -1;
             }
 
@@ -65,55 +59,48 @@ class Type
         return 0;
     }
 
-    public function isPrimitive() : bool
+    public function isPrimitive(): bool
     {
         $types = ['boolean', 'integer', 'float', 'string', 'array', 'object'];
-        if (in_array($this->Name, $types))
-        {
+        if (in_array($this->Name, $types)) {
             return true;
         }
-        
+
         return false;
     }
 
-    public function IsGeneric() : bool
+    public function IsGeneric(): bool
     {
-        if ($this->GenericTypeArgs)
-        {
+        if ($this->GenericTypeArgs) {
             return true;
         }
-        
+
         return false;
     }
 
-    public function IsClass() : bool
+    public function IsClass(): bool
     {
-        if (class_exists($this->Name))
-        {
+        if (class_exists($this->Name)) {
             return true;
         }
-        
+
         return false;
     }
 
-    public function IsInterface() : bool
+    public function IsInterface(): bool
     {
-        if (interface_exists($this->Name))
-        {
+        if (interface_exists($this->Name)) {
             return true;
         }
-        
+
         return false;
     }
 
-    public static function typeOf($value) : string
+    public static function typeOf($value): string
     {
-        if (is_object($value))
-        {
+        if (is_object($value)) {
             return get_class($value);
-        }
-        else
-        {
+        } else {
             return gettype($value);
         }
     }

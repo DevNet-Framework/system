@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -27,10 +28,8 @@ class WhereEnumerable implements IEnumerable
     public function where(Closure $predecate)
     {
         $elements = [];
-        foreach ($this->Enumerable as $key => $element)
-        {
-            if ($predecate($element) !== false)
-            {
+        foreach ($this->Enumerable as $key => $element) {
+            if ($predecate($element) !== false) {
                 $elements[$key] = $element;
             }
         }
@@ -39,7 +38,7 @@ class WhereEnumerable implements IEnumerable
         return $this;
     }
 
-    public function getIterator() : Enumerator
+    public function getIterator(): Enumerator
     {
         return new Enumerator($this->Array);
     }

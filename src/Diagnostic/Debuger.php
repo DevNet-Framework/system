@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -23,17 +24,17 @@ class Debuger
         $this->Handler   = new DebugHandler();
     }
 
-    public function setHandler(IDebugHandler $handler) : void
+    public function setHandler(IDebugHandler $handler): void
     {
         $this->Handler = $handler;
     }
 
-    public function enable() : void
+    public function enable(): void
     {
         $this->Inspector->register($this->Handler);
     }
 
-    public function disable() : void
+    public function disable(): void
     {
         $this->Inspector->register(new DisableHandler());
         /* restore_error_handler();

@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -10,5 +11,7 @@ namespace DevNet\System\Event;
 
 class EventHandler extends Delegate
 {
-    public function delegate(object $sender, EventArgs $args) : void {}
+    public function delegate(object $sender, EventArgs $args): void
+    {
+    }
 }

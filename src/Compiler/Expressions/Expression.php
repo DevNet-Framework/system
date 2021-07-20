@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -19,7 +20,7 @@ abstract class Expression
     {
         return ExpressionStringBuilder::expressionToString($this);
     }
-    
+
     public static function lambda($predicate, array $parameters = [], ?string $returnType = null)
     {
         return new LambdaExpression($predicate, $parameters, $returnType);

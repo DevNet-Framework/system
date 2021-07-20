@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -26,7 +27,8 @@ class Grammar
         $this->rules = $rules;
     }
 
-    public function consume(string $input) {
+    public function consume(string $input)
+    {
         $this->lexer->scan($input);
         $this->lexer->advance();
         $this->tokens = [$this->lexer->getToken()];
@@ -49,7 +51,8 @@ class Grammar
         return $this->filterRules($matchedRules, $position + 1, 0);
     }
 
-    public function lookAhead(string $item) {
+    public function lookAhead(string $item)
+    {
         $nextRules = [];
         foreach ($this->rules as $rule) {
             if (isset($rule->predecates[0])) {
@@ -88,7 +91,7 @@ class Grammar
     }
 
     public function filterRules(array $state, int $position, $lookAhead)
-    {   
+    {
         switch (count($state)) {
             case 0:
                 return $state;
@@ -187,7 +190,7 @@ class Grammar
                 $stackPointer->pop();
                 $lastState = $stackState->pop();
                 $lastPosition = $stackPointer->pop();
-        
+
                 $lastRuleName = null;
                 foreach ($lastState as $lastRule) {
                     if (isset($lastRule->predecates[$lastPosition - 1])) {
@@ -199,7 +202,7 @@ class Grammar
                         }
                     }
                 }
-    
+
                 return reset($rules);
                 break;
         }
@@ -235,7 +238,7 @@ class Grammar
         if ($token) {
             return $token;
         }
-        
+
         $this->lexer->advance();
         $token = $this->lexer->getToken();
         $this->tokens[] = $token;

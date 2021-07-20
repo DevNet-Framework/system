@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -23,7 +24,7 @@ class TaskCancelationSource
         return $this->$name;
     }
 
-    public function cancel() : void
+    public function cancel(): void
     {
         $this->IsCanceled = true;
     }

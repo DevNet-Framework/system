@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -34,18 +35,14 @@ class GroupEnumerable implements IEnumerable
     public function groupBy(Closure $function)
     {
         $groups = [];
-        foreach ($this->Enumerable as $element)
-        {
+        foreach ($this->Enumerable as $element) {
             $groupeName = $function($element);
-            
-            if (isset($groups[$groupeName]))
-            {
+
+            if (isset($groups[$groupeName])) {
                 $group = $groups[$groupeName];
                 $array = $group->Array;
                 $array[] = $element;
-            }
-            else
-            {
+            } else {
                 $array = [$element];
             }
 
@@ -55,13 +52,13 @@ class GroupEnumerable implements IEnumerable
             $group = clone $this;
             $groups[$groupeName] = $group;
         }
-        
+
         $this->Key = null;
         $this->Array = $groups;
         return $this;
     }
 
-    public function getIterator() : Enumerator
+    public function getIterator(): Enumerator
     {
         return new Enumerator($this->Array);
     }

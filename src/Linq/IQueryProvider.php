@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -13,7 +14,7 @@ use DevNet\System\Linq\IQueryable;
 
 interface IQueryProvider
 {
-    public function createQuery(object $entityType, Expression $expression) : IQueryable;
+    public function createQuery(object $entityType, Expression $expression): IQueryable;
 
     public function execute(object $entityType, Expression $expression);
 }

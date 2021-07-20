@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -31,31 +32,24 @@ class DebugParser
         E_USER_DEPRECATED   => 'User Deprecated'
     ];
 
-    public function parse(Throwable $exception) : array
+    public function parse(Throwable $exception): array
     {
         $trace = $exception->getTrace();
-        if ($exception instanceof ErrorException)
-        {
+        if ($exception instanceof ErrorException) {
             $severity = $this->Severities[$exception->getSeverity()];
-        }
-        else
-        {
+        } else {
             $severity = $this->Severities[E_ERROR];
         }
 
         $firstfile = $trace[0]['file'] ?? null;
 
-        if ($exception->getFile() == $firstfile)
-        {
+        if ($exception->getFile() == $firstfile) {
             array_shift($trace);
         }
 
-        if ($exception->getCode() == 0)
-        {
+        if ($exception->getCode() == 0) {
             $code = '';
-        }
-        else
-        {
+        } else {
             $code = $exception->getCode();
         }
 

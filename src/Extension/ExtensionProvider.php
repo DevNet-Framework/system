@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -12,7 +13,7 @@ class ExtensionProvider
 {
     private static array $extensionMap = [];
 
-    static function getClassNames() : array
+    static function getClassNames(): array
     {
         $trace = debug_backtrace();
         $runtimeFile = $trace[2]["file"];
@@ -35,41 +36,33 @@ class ExtensionProvider
 
         $extensionMethod = null;
 
-        if (isset(self::$extensionMap[$targetClass]))
-        {
+        if (isset(self::$extensionMap[$targetClass])) {
             $extensionMethod = self::matchExtension($target, $methodName, self::$extensionMap[$targetClass]);
         }
 
-        if ($extensionMethod)
-        {
+        if ($extensionMethod) {
             return $extensionMethod;
         }
 
         return self::matchExtension($target, $methodName, self::getClassNames());
     }
 
-    public static function matchExtension(object $target, string $methodName, array $classnames) : ?object
+    public static function matchExtension(object $target, string $methodName, array $classnames): ?object
     {
         $targetClass = get_class($target);
 
-        foreach ($classnames as $className)
-        {
-            if (class_exists($className))
-            {
+        foreach ($classnames as $className) {
+            if (class_exists($className)) {
                 self::$extensionMap[$targetClass][] = $className;
-                if (method_exists($className, $methodName))
-                {
+                if (method_exists($className, $methodName)) {
                     $reflectionMethod = new \ReflectionMethod($className, $methodName);
                     $reflectionParams = $reflectionMethod->getParameters();
-                    if (isset($reflectionParams[0]))
-                    {
-                        if ($reflectionParams[0]->hasType())
-                        {
+                    if (isset($reflectionParams[0])) {
+                        if ($reflectionParams[0]->hasType()) {
                             $fistParameterType = $reflectionParams[0]->getType()->getName();
                         }
 
-                        if ($target instanceof $fistParameterType)
-                        {
+                        if ($target instanceof $fistParameterType) {
                             return $reflectionMethod;
                         }
                     }

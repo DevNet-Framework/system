@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -16,7 +17,7 @@ class ExpressionStringBuilder extends ExpressionVisitor
 {
     public string $Out = '';
 
-    public static function expressionToString(Expression $expression) : string
+    public static function expressionToString(Expression $expression): string
     {
         $visitor = new ExpressionStringBuilder();
         $visitor->visit($expression);
@@ -28,9 +29,9 @@ class ExpressionStringBuilder extends ExpressionVisitor
         $parameters = [];
         foreach ($expression->Parameters as $parameter) {
             if ($parameter->Type) {
-                $parameters[] = $parameter->Type .' $'. $parameter->Name;
+                $parameters[] = $parameter->Type . ' $' . $parameter->Name;
             } else {
-                $parameters[] = '$'.$parameter->Name;
+                $parameters[] = '$' . $parameter->Name;
             }
         }
 
@@ -53,11 +54,11 @@ class ExpressionStringBuilder extends ExpressionVisitor
         } else {
             $this->Out .= "{$expression->Method}(";
         }
-        
+
         foreach ($arguments as $argument) {
             $this->visit($argument);
         }
-        $this->Out .=")";
+        $this->Out .= ")";
         return $expression;
     }
 
@@ -77,7 +78,7 @@ class ExpressionStringBuilder extends ExpressionVisitor
     public function visitBinary(Expression $expression)
     {
         $this->visit($expression->Left);
-        $this->Out .= ' '.$expression->Name.' ';
+        $this->Out .= ' ' . $expression->Name . ' ';
         $this->visit($expression->Right);
         return $expression;
     }
@@ -85,7 +86,7 @@ class ExpressionStringBuilder extends ExpressionVisitor
     public function visitProperty(Expression $expression)
     {
         $this->visit($expression->Parameter);
-        $this->Out .= '->'.$expression->Property;
+        $this->Out .= '->' . $expression->Property;
         return $expression;
     }
 

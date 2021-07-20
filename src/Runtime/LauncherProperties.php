@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -17,32 +18,32 @@ class LauncherProperties
     protected static array $Arguments = [];
     protected static string $Envirement;
 
-    public static function getLoader() : ?ClassLoader
+    public static function getLoader(): ?ClassLoader
     {
         return self::$Loader ?? null;
     }
 
-    public static function getWorkspace() : string
+    public static function getWorkspace(): string
     {
         return self::$Workspace;
     }
 
-    public static function getNamespace() : string
+    public static function getNamespace(): string
     {
         return self::$Namespace;
     }
 
-    public static function getEntryPoint() : string
+    public static function getEntryPoint(): string
     {
         return self::$EntryPoint;
     }
-    
-    public static function getArguments() : array
+
+    public static function getArguments(): array
     {
         return self::$Arguments;
     }
 
-    public static function getEnvironmoment() : string
+    public static function getEnvironmoment(): string
     {
         return self::$Envirement;
     }

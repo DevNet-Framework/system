@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -101,7 +102,7 @@ class ExpressionParser
         $parserBuilder->define('method', ['variable', '->', 'call']); //34
         $parserBuilder->define('call', ['identifier', '(', ')']); //35
         $parserBuilder->define('call', ['identifier', '(', 'list', ')']); //36
-        $parserBuilder->define('array', ['variable', '[','list', ']']); //37
+        $parserBuilder->define('array', ['variable', '[', 'list', ']']); //37
         $parserBuilder->define('list', ['list', ',', 'expression']); //38
         $parserBuilder->define('list', ['expression']); //39
 
@@ -127,11 +128,9 @@ class ExpressionParser
         $lines = array_slice($source, $startLine, $length);
         $functionLine = implode("\n", $lines);
 
-        if ($this->StartLine == $startLine)
-        {
+        if ($this->StartLine == $startLine) {
             $position = $this->Position;
-        } else
-        {
+        } else {
             $position = 0;
         }
 
@@ -139,13 +138,13 @@ class ExpressionParser
         if ($matches) {
             $this->Position = $matches[0][1] + strlen($matches[0][0]);
             $this->StartLine = $startLine;
-            $body = preg_replace( "/\(\s*fn\s*\(.*?\)\s*=>\s*(.*?)\)/", "\\1", $matches[0][0]);
+            $body = preg_replace("/\(\s*fn\s*\(.*?\)\s*=>\s*(.*?)\)/", "\\1", $matches[0][0]);
         }
 
         $this->Parser->consume($body);
     }
-    
-    public function getBody() : ?Expression
+
+    public function getBody(): ?Expression
     {
         $list = [];
         $expression = null;
@@ -153,46 +152,42 @@ class ExpressionParser
         do {
             $this->Parser->advance();
 
-            if ($this->Parser->action == Parser::ERROR)
-            {
+            if ($this->Parser->action == Parser::ERROR) {
                 $node = $this->Parser->getNode();
                 if ($node->getName() == 'UNKNOWN') {
                     throw new \Exception("UNKNOWN Token");
                 }
             }
 
-            if ($this->Parser->action == Parser::REDUCE)
-            {
+            if ($this->Parser->action == Parser::REDUCE) {
                 $ruleId = $this->Parser->getReduceId();
                 $node = $this->Parser->getNode();
                 $items = $node->getValues();
 
                 switch ($ruleId) {
                     case 39: // one item list
-                    case 38 : // nested list
+                    case 38: // nested list
                         $list[] = $stack->pop();
                         break;
-                    case 36 : // call with arguments
+                    case 36: // call with arguments
                         $expression = Expression::call(null, $items[0]->getValue(), $list);
                         $stack->push($expression);
                         $list = [];
                         break;
-                    case 35 : // call without arguments
+                    case 35: // call without arguments
                         $expression = Expression::call(null, $items[0]->getValue());
                         $stack->push($expression);
                         break;
-                    case 33 : // variable property
+                    case 33: // variable property
                         $parameterName = ltrim($items[0]->getValue(), '$');
                         $parameter     = Expression::parameter($parameterName, $items[0]->getName());
                         $variableName  = ltrim($items[2]->getValue(), '$');
-                        
-                        if (!array_key_exists($variableName, $this->OuterVariables))
-                        {
+
+                        if (!array_key_exists($variableName, $this->OuterVariables)) {
                             throw new ParserException("Undefined property variable \${$parameterName}::${$variableName}");
                         }
 
-                        if (!is_string($this->OuterVariables[$variableName]))
-                        {
+                        if (!is_string($this->OuterVariables[$variableName])) {
                             throw new ParserException("Variable property {$parameterName}::\${$variableName} must be of type string.");
                         }
 
@@ -200,7 +195,7 @@ class ExpressionParser
                         $expression   = Expression::property($parameter, $propertyName);
                         $stack->push($expression);
                         break;
-                    case 32 : // property
+                    case 32: // property
                         $name = ltrim($items[0]->getValue(), '$');
                         $value = $this->OuterVariables[$name] ?? null;
                         $parameter = Expression::parameter($name, $items[0]->getName(), $value);
@@ -218,67 +213,65 @@ class ExpressionParser
                         $expression = Expression::binary($items[1]->getValue(), $variable, $expression);
                         $stack->push($expression);
                         break;
-                    case 28 : // not
-                    case 27 : // sign
+                    case 28: // not
+                    case 27: // sign
                         $expression = $stack->pop();
                         $expression = Expression::unary($items[0]->getValue(), $expression);
                         $stack->push($expression);
                         break;
-                    case 19 : // variable
+                    case 19: // variable
                         $name  = ltrim($items[0]->getValue(), '$');
                         $value = $this->OuterVariables[$name] ?? null;
 
-                        if (is_array($value))
-                        {
+                        if (is_array($value)) {
                             throw new ParserException("value of type array not supported yet, only object and scalar types are supported.");
                         }
                         $value = $this->OuterVariables[$name];
-                        
+
                         $expression = Expression::parameter($name, gettype($value), $value);
                         $stack->push($expression);
                         break;
-                    case 18 : // string (remove double quotes quotes & escaping slashes)
+                    case 18: // string (remove double quotes quotes & escaping slashes)
                         $value = $items[0]->getValue();
                         $value = preg_replace("%^\"+|\"+$|^\'+|\'+$%", "", $value);
                         $value = stripslashes($value);
                         $expression = Expression::constant($value, $items[0]->getName());
                         $stack->push($expression);
                         break;
-                    case 17 : // number (convert string to number)
+                    case 17: // number (convert string to number)
                         $value = $items[0]->getValue() + 0;
                         $expression = Expression::constant($value, $items[0]->getName());
                         $stack->push($expression);
                         break;
-                    case 16 : // bool
+                    case 16: // bool
                         $value = strtolower($items[0]->getValue()) == "true" ? true : false;
                         $expression = Expression::constant($value, $items[0]->getName());
                         $stack->push($expression);
                         break;
-                    case 14 : // product
-                    case 12 : // product
-                    case 10 : // product
-                    case 8 : // product
-                    case 6 : // product
-                    case 4 : // product
+                    case 14: // product
+                    case 12: // product
+                    case 10: // product
+                    case 8: // product
+                    case 6: // product
+                    case 4: // product
                         $right = $stack->pop();
                         $left = $stack->pop();
                         $expression = Expression::binary($items[1]->getValue(), $left, $right);
                         $stack->push($expression);
                         break;
-                    case 2 : // lambda with parameters
+                    case 2: // lambda with parameters
                         $body = $stack->pop();
                         $expression = Expression::lambda($body, $list);
                         $stack->push($expression);
                         $list = [];
                         break;
-                    case 1 : // lambda without parameters
+                    case 1: // lambda without parameters
                         $body = $stack->pop();
                         $expression = Expression::lambda($body);
                         $stack->push($expression);
                         break;
                 }
             }
-            
         } while ($this->Parser->action != Parser::ACCEPT && $this->Parser->action != Parser::ERROR);
 
         return $expression;
@@ -287,12 +280,10 @@ class ExpressionParser
     public function getParameters()
     {
         $parameters = [];
-        foreach ($this->FunctionReflector->getParameters() as $paramReflector)
-        {
+        foreach ($this->FunctionReflector->getParameters() as $paramReflector) {
             $parameterName = $paramReflector->getName();
             $parameterType = null;
-            if ($paramReflector->getType())
-            {
+            if ($paramReflector->getType()) {
                 $parameterType = $paramReflector->getType()->getName();
             }
             $parameters[] = Expression::parameter($parameterName, $parameterType);
@@ -301,7 +292,7 @@ class ExpressionParser
         return $parameters;
     }
 
-    public function getOuterVariables() : array
+    public function getOuterVariables(): array
     {
         return $this->OuterVariables;
     }

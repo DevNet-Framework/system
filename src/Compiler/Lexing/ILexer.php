@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -14,5 +15,5 @@ interface ILexer
 
     public function advance();
 
-    public function getToken() : IToken;
+    public function getToken(): IToken;
 }

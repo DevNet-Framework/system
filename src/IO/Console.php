@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -8,8 +9,8 @@
 
 namespace DevNet\System\IO;
 
-if(!defined('STDIN'))  define('STDIN',  fopen('php://stdin',  'r'));
-if(!defined('STDOUT')) define('STDOUT', fopen('php://stdout', 'w'));
+if (!defined('STDIN'))  define('STDIN',  fopen('php://stdin',  'r'));
+if (!defined('STDOUT')) define('STDOUT', fopen('php://stdout', 'w'));
 
 class Console
 {
@@ -45,8 +46,7 @@ class Console
 
     public static function readLine(string $string = null)
     {
-        if ($string != null)
-        {
+        if ($string != null) {
             fwrite(STDOUT, $string);
         }
 
@@ -69,8 +69,7 @@ class Console
     {
         $color = self::FGCOLORS[$fgColor] ?? null;
 
-        if ($color != null)
-        {
+        if ($color != null) {
             fwrite(STDOUT, "\e[${color}m");
         }
     }
@@ -79,8 +78,7 @@ class Console
     {
         $color = self::BGCOLORS[$bgColor] ?? null;
 
-        if ($color != null)
-        {
+        if ($color != null) {
             fwrite(STDOUT, "\e[${color}m");
         }
     }

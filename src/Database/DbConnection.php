@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -7,6 +8,7 @@
  */
 
 namespace DevNet\System\Database;
+
 use PDO;
 
 class DbConnection
@@ -32,12 +34,12 @@ class DbConnection
         }
     }
 
-    public function getConnector() : PDO
+    public function getConnector(): PDO
     {
         return $this->Connector;
     }
 
-    public function getState() : int
+    public function getState(): int
     {
         return $this->State;
     }
@@ -47,7 +49,7 @@ class DbConnection
         return new DbTransaction($this);
     }
 
-    public function createCommand(string $sql = null) : DbCommand
+    public function createCommand(string $sql = null): DbCommand
     {
         return new DbCommand($this, $sql);
     }

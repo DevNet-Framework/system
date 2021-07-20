@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -27,33 +28,31 @@ class Node implements IComponent
         $this->Values[] = $node;
     }
 
-    public function getName() : string
+    public function getName(): string
     {
         return $this->Name;
     }
 
     public function getValue(int $index)
     {
-        if ($this->Values[$index])
-        {
+        if ($this->Values[$index]) {
             return $this->Values[$index];
         }
     }
 
-    public function getValues() : array
+    public function getValues(): array
     {
         return $this->Values;
     }
 
-    public function getType() : string
+    public function getType(): string
     {
         return get_class($this);;
     }
 
     public function getIterator()
     {
-        foreach ($this->Values as $value)
-        {
+        foreach ($this->Values as $value) {
             yield $value;
         }
     }

@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -40,9 +41,8 @@ class DebugInspector
     public function handleFatalError()
     {
         $error = error_get_last();
-        if ( $error["type"] === E_ERROR )
-        {
-            $this->handleError( $error["type"], $error["message"], $error["file"], $error["line"] );
+        if ($error["type"] === E_ERROR) {
+            $this->handleError($error["type"], $error["message"], $error["file"], $error["line"]);
         }
     }
 

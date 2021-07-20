@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -49,7 +50,7 @@ class Enumerator implements Iterator, Countable
         return $this->Key ?? null;
     }
 
-    public function count() : int
+    public function count(): int
     {
         return count($this->Array);
     }

@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -15,6 +16,6 @@ interface IToken extends IComponent
     const SKIPPED = 'SKIPPED';
     const UNKNOWN = 'UNKNOWN';
     const EOI     = 'EOI';
-    
-    public function getValue() : string;
+
+    public function getValue(): string;
 }

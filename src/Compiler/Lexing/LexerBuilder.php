@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -17,7 +18,7 @@ class LexerBuilder
         $this->definitions[] = new TokenDefenition($name, $pattern);
     }
 
-    public function build() : Lexer
+    public function build(): Lexer
     {
         $this->definitions[] = new TokenDefenition(Token::SKIPPED, "\s+");
         $this->definitions[] = new TokenDefenition(Token::UNKNOWN, "[^\s]+");

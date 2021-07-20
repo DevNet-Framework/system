@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -10,11 +11,11 @@ namespace DevNet\System\Collections;
 
 interface IDictionary extends IEnumerable
 {
-    public function add($key, $value) : void;
+    public function add($key, $value): void;
 
-    public function contains($key) : bool;
+    public function contains($key): bool;
 
-    public function remove($key) : void;
+    public function remove($key): void;
 
     public function getValue($key);
 }

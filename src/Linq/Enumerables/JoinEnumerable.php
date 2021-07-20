@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -15,7 +16,7 @@ use Closure;
 class JoinEnumerable implements IEnumerable
 {
     use \DevNet\System\Extension\ExtensionTrait;
-    
+
     private IEnumerable $Enumerable;
     private array $Array = [];
 
@@ -28,21 +29,17 @@ class JoinEnumerable implements IEnumerable
     {
         $innerJoin = [];
         $joinResult = [];
-        foreach ($this->Enumerable as $key => $outerElement)
-        {
+        foreach ($this->Enumerable as $key => $outerElement) {
             $outerKey = $outerSelector($outerElement);
-            foreach ($innerCollection as $innerElement)
-            {
+            foreach ($innerCollection as $innerElement) {
                 $innerKey = $innerSelector($innerElement);
-                if ($outerKey == $innerKey)
-                {
-                    $innerJoin [$key] = [$outerElement, $innerElement];
+                if ($outerKey == $innerKey) {
+                    $innerJoin[$key] = [$outerElement, $innerElement];
                 }
             }
         }
 
-        foreach ($innerJoin as $key => $element)
-        {
+        foreach ($innerJoin as $key => $element) {
             $joinResult[$key] = $resultSelector($element[0], $element[1]);
         }
 
@@ -50,7 +47,7 @@ class JoinEnumerable implements IEnumerable
         return $this;
     }
 
-    public function getIterator() : Enumerator
+    public function getIterator(): Enumerator
     {
         return new Enumerator($this->Array);
     }

@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -12,42 +13,41 @@ class Launcher extends LauncherProperties
 {
     private static ?Launcher $Instance = null;
 
-    public static function getLauncher() : Launcher
+    public static function getLauncher(): Launcher
     {
-        if (!self::$Instance)
-        {
+        if (!self::$Instance) {
             self::$Instance = new self;
         }
 
         return self::$Instance;
     }
 
-    public function workspace(string $workspace) : void
+    public function workspace(string $workspace): void
     {
         self::$Workspace = $workspace;
     }
 
-    public function namespace(string $namespace) : void
+    public function namespace(string $namespace): void
     {
         self::$Namespace = $namespace;
     }
 
-    public function entryPoint(string $entryPoint) : void
+    public function entryPoint(string $entryPoint): void
     {
         self::$EntryPoint = $entryPoint;
     }
 
-    public function Arguments(array $args) : void
+    public function Arguments(array $args): void
     {
         self::$Arguments = $args;
     }
 
-    public function environmoment(string $env) : void
+    public function environmoment(string $env): void
     {
         self::$Envirement = $env;
     }
-    
-    public function Launch() : void
+
+    public function Launch(): void
     {
         self::$Loader = new ClassLoader(self::$Workspace, ["/" => self::$Namespace]);
         self::$Loader->register();
@@ -56,9 +56,9 @@ class Launcher extends LauncherProperties
         array_shift($inputArgs);
 
         $inputArgs = $inputArgs + self::$Arguments;
-        $mainClass = self::$Namespace.'\\'.self::$EntryPoint;
+        $mainClass = self::$Namespace . '\\' . self::$EntryPoint;
         $runner    = new MainClassRunner($mainClass, $inputArgs);
-        
+
         $runner->run();
     }
 }

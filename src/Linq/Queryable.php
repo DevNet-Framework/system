@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -14,49 +15,49 @@ use Closure;
 
 abstract class Queryable
 {
-    public static function where(IQueryable $queryable, Closure $predicate) : IQueryable
+    public static function where(IQueryable $queryable, Closure $predicate): IQueryable
     {
         $lambda = Expression::Lambda($predicate);
         $expression = Expression::call(null, 'Where', [$queryable->Expression, $lambda]);
         return $queryable->Provider->createQuery($queryable->EntityType, $expression);
     }
 
-    public static function orderBy(IQueryable $queryable, Closure $predicate) : IQueryable
+    public static function orderBy(IQueryable $queryable, Closure $predicate): IQueryable
     {
         $lambda = Expression::Lambda($predicate);
         $expression = Expression::call(null, 'OrderBy', [$queryable->Expression, $lambda]);
         return $queryable->Provider->createQuery($queryable->EntityType, $expression);
     }
 
-    public static function orderByDescending(IQueryable $queryable, Closure $predicate) : IQueryable
+    public static function orderByDescending(IQueryable $queryable, Closure $predicate): IQueryable
     {
         $lambda = Expression::Lambda($predicate);
         $expression = Expression::call(null, 'OrderByDescending', [$queryable->Expression, $lambda]);
         return $queryable->Provider->createQuery($queryable->EntityType, $expression);
     }
 
-    public static function thenBy(IQueryable $queryable, Closure $predicate) : IQueryable
+    public static function thenBy(IQueryable $queryable, Closure $predicate): IQueryable
     {
         $lambda = Expression::Lambda($predicate);
         $expression = Expression::call(null, 'ThenBy', [$queryable->Expression, $lambda]);
         return $queryable->Provider->createQuery($queryable->EntityType, $expression);
     }
 
-    public static function thenByDescending(IQueryable $queryable, Closure $predicate) : IQueryable
+    public static function thenByDescending(IQueryable $queryable, Closure $predicate): IQueryable
     {
         $lambda = Expression::Lambda($predicate);
         $expression = Expression::call(null, 'ThenByDescending', [$queryable->Expression, $lambda]);
         return $queryable->Provider->createQuery($queryable->EntityType, $expression);
     }
 
-    public static function skip(IQueryable $queryable, int $offset) : IQueryable
+    public static function skip(IQueryable $queryable, int $offset): IQueryable
     {
         $constant = Expression::constant($offset);
         $expression = Expression::call(null, 'skip', [$queryable->Expression, $constant]);
         return $queryable->Provider->createQuery($queryable->EntityType, $expression);
     }
 
-    public static function take(IQueryable $queryable, int $limit) : IQueryable
+    public static function take(IQueryable $queryable, int $limit): IQueryable
     {
         $constant = Expression::constant($limit);
         $expression = Expression::call(null, 'take', [$queryable->Expression, $constant]);
@@ -75,7 +76,7 @@ abstract class Queryable
     {
         $array      = $queryable->getIterator()->toArray();
         $element    = end($array);
-        
+
         return $element ? $element : null;
     }
 }

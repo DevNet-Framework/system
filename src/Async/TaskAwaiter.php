@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -20,17 +21,14 @@ class TaskAwaiter
     {
         $data          = base64_encode($data);
         $workspace     = escapeshellarg(LauncherProperties::getWorkspace());
-        $this->Process = new Process('php '.__DIR__.'/Worker.php '.$workspace.' '.$data);
+        $this->Process = new Process('php ' . __DIR__ . '/Worker.php ' . $workspace . ' ' . $data);
     }
 
     public function __get(string $name)
     {
-        if ($name == 'IsComplited')
-        {
-            if (!$this->IsComplited)
-            {
-                if (!$this->Process->isRunning())
-                {
+        if ($name == 'IsComplited') {
+            if (!$this->IsComplited) {
+                if (!$this->Process->isRunning()) {
                     $this->getResult();
                 }
             }
@@ -41,16 +39,14 @@ class TaskAwaiter
 
     public function getResult()
     {
-        if (!$this->IsComplited)
-        {
+        if (!$this->IsComplited) {
             $output = $this->Process->read();
             $result = $this->Process->report();
 
             $this->Result = unserialize($result);
             $this->Process->close();
 
-            if ($output)
-            {
+            if ($output) {
                 echo $output;
             }
 
@@ -60,12 +56,10 @@ class TaskAwaiter
         return $this->Result;
     }
 
-    public function stop() : void
+    public function stop(): void
     {
-        if (!$this->IsComplited)
-        {
-            if ($this->Process->isRunning())
-            {
+        if (!$this->IsComplited) {
+            if ($this->Process->isRunning()) {
                 $this->Process->stop();
                 $this->Result = new TaskException('The task was canceled');
                 $this->IsComplited = true;

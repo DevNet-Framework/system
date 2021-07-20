@@ -1,4 +1,5 @@
-<?php declare(strict_types = 1);
+<?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -29,25 +30,22 @@ class Stream
 
     public function getSize()
     {
-        if (null === $this->Resource)
-        {
+        if (null === $this->Resource) {
             return null;
         }
 
         $stats = fstat($this->Resource);
-        
-        if ($stats !== false)
-        {
+
+        if ($stats !== false) {
             return $stats['size'];
         }
 
         return null;
     }
 
-    public function isSeekable() : bool
+    public function isSeekable(): bool
     {
-        if (! $this->Resource)
-        {
+        if (!$this->Resource) {
             return false;
         }
 
@@ -57,13 +55,11 @@ class Stream
 
     public function seek($offset, $whence = SEEK_SET)
     {
-        if (! $this->Resource)
-        {
+        if (!$this->Resource) {
             throw new \Exception("Missing Resource");
         }
 
-        if (! $this->isSeekable())
-        {
+        if (!$this->isSeekable()) {
             throw new \Exception("Resource is not seekable");
         }
 
@@ -71,11 +67,10 @@ class Stream
 
         return $result;
     }
-    
-    public function isReadable() : bool
+
+    public function isReadable(): bool
     {
-        if (! $this->Resource)
-        {
+        if (!$this->Resource) {
             return false;
         }
 
@@ -87,111 +82,96 @@ class Stream
 
     public function read(int $buffer = null)
     {
-        if (! $this->Resource)
-        {
+        if (!$this->Resource) {
             throw new \Exception('Missing resource');
         }
 
-        if (! $this->isReadable())
-        {
-            throw new \Exception ('Not readable');
+        if (!$this->isReadable()) {
+            throw new \Exception('Not readable');
         }
 
-        if ($buffer == null)
-        {
+        if ($buffer == null) {
             $buffer = $this->getSize();
             $this->seek(0);
         }
 
         $result = fread($this->Resource, $buffer);
 
-        if (false === $result)
-        {
+        if (false === $result) {
             throw new \Exception('Unable to read from resource');
         }
 
         return $result;
     }
 
-    public function isWritable() : bool
+    public function isWritable(): bool
     {
-        if (! $this->Resource)
-        {
+        if (!$this->Resource) {
             return false;
         }
 
         $meta = stream_get_meta_data($this->Resource);
         $mode = $meta['mode'];
 
-        return (
-            strstr($mode, 'x')
+        return (strstr($mode, 'x')
             || strstr($mode, 'w')
             || strstr($mode, 'c')
             || strstr($mode, 'a')
-            || strstr($mode, '+')
-        );
+            || strstr($mode, '+'));
     }
 
-    public function write(string $string) : int
+    public function write(string $string): int
     {
-        if (! $this->Resource)
-        {
+        if (!$this->Resource) {
             throw new \Exception('Missing resource');
         }
 
-        if (! $this->isWritable())
-        {
+        if (!$this->isWritable()) {
             throw new \Exception('not writible');
         }
 
         $result = fwrite($this->Resource, $string);
 
-        if (false === $result)
-        {
+        if (false === $result) {
             throw new \Exception('Unable to write to resource');
         }
 
         return $result;
     }
 
-    public function eof() : bool
+    public function eof(): bool
     {
-        if (! $this->Resource)
-        {
+        if (!$this->Resource) {
             return true;
         }
 
         return feof($this->Resource);
     }
 
-    public function close() : void
+    public function close(): void
     {
-        if ($this->Resource)
-        {
+        if ($this->Resource) {
             fclose($this->Resource);
         }
     }
 
     public function __toString()
     {
-        if (!$this->isSeekable())
-        {
+        if (!$this->isSeekable()) {
             return '';
         }
 
-        if (!$this->isReadable())
-        {
+        if (!$this->isReadable()) {
             return '';
         }
 
         $this->seek(0);
         $result = stream_get_contents($this->Resource);
 
-        if ($result == false)
-        {
+        if ($result == false) {
             throw new \Exception("Unable to read from the stream");
         }
-        
+
         return $result;
     }
 }
