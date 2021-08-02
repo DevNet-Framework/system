@@ -11,25 +11,28 @@ namespace DevNet\System\Event;
 
 class EventArgs
 {
-    protected array $Attributes;
+    protected array $Attributes = [];
 
-    public function setAttribute(string $name, $atribute): void
+    public function __construct(array $attributes = [])
     {
-        $this->Attributes[$name] = $atribute;
+        $this->Attributes = $attributes;
     }
 
-    public function getAttribute(string $name)
+    public function __set(string $name, $value)
     {
-        return $this->Attributes[$name] ?? null;
+        if (property_exists($this, $name)) {
+            $this->$name = $value;
+        } else {
+            $this->Attributes[$name] = $value;
+        }
     }
 
-    public function hasAttribute(string $name): bool
+    public function __get(string $name)
     {
-        return isset($this->Attributes[$name]);
-    }
-
-    public function getAttributes(): array
-    {
-        return $this->Attributes;
+        if (property_exists($this, $name)) {
+            return $this->$name;
+        } else {
+            return $this->Attributes[$name] ?? null;
+        }
     }
 }
