@@ -100,7 +100,7 @@ abstract class Delegate implements IEnumerable
         return new Enumerator($this->Actions);
     }
 
-    public function __invoke(...$arguments)
+    public function invokeArgs(array $arguments)
     {
         foreach ($this->Actions as $action) {
             $result = $action->invokeArgs($arguments);
@@ -109,5 +109,15 @@ abstract class Delegate implements IEnumerable
         if (isset($result)) {
             return $result;
         }
+    }
+
+    public function invoke(...$args)
+    {
+        return $this->invokeArgs($args);
+    }
+
+    public function __invoke(...$args)
+    {
+        return $this->invokeArgs($args);
     }
 }
