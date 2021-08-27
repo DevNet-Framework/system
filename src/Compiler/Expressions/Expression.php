@@ -10,7 +10,6 @@
 namespace DevNet\System\Compiler\Expressions;
 
 use DevNet\System\Compiler\ExpressionStringBuilder;
-use DevNet\System\Compiler\ExpressionVisitor;
 
 abstract class Expression
 {
