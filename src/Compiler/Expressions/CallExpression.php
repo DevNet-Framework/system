@@ -9,8 +9,6 @@
 
 namespace DevNet\System\Compiler\Expressions;
 
-use DevNet\System\Compiler\ExpressionVisitor;
-
 class CallExpression extends Expression
 {
     public ?ParameterExpression $Object;
