@@ -7,9 +7,7 @@
  * @link        https://github.com/DevNet-Framework
  */
 
-namespace DevNet\System\Compiler;
-
-use DevNet\System\Compiler\Expressions\Expression;
+namespace DevNet\System\Compiler\Expressions;
 
 abstract class ExpressionVisitor
 {
