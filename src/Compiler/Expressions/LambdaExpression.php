@@ -10,7 +10,6 @@
 namespace DevNet\System\Compiler\Expressions;
 
 use DevNet\System\Compiler\ExpressionParser;
-use DevNet\System\Compiler\ExpressionVisitor;
 use Closure;
 
 class LambdaExpression extends Expression
