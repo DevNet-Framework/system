@@ -11,6 +11,7 @@ namespace DevNet\System\Compiler;
 
 use DevNet\System\Compiler\Expressions\Expression;
 use DevNet\System\Compiler\Expressions\ConstantExpression;
+use DevNet\System\Compiler\Expressions\ExpressionVisitor;
 use DevNet\System\Compiler\Expressions\ParameterExpression;
 
 class ExpressionStringBuilder extends ExpressionVisitor
