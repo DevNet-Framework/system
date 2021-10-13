@@ -29,19 +29,31 @@ class DbCommand
         $this->Parameters = $parameters;
     }
 
-    public function execute(): int
+    public function execute() : ?int
     {
-        if ($this->Connection->getState() === 0) {
+        if ($this->Connection->getState() === 0)
+        {
             throw new \Exception("DB connection is closed");
         }
 
-        if ($this->Parameters) {
+        if ($this->Parameters)
+        {
             $statement = $this->Connection->getConnector()->prepare($this->Sql);
-            $statement->execute($this->Parameters);
-            return $statement->rowCount();
-        } else {
-            return $this->Connection->getConnector()->exec($this->Sql);
+            $result = $statement->execute($this->Parameters);
+            if ($result) {
+                $result = $statement->rowCount();
+            }
         }
+        else
+        {
+            $result = $this->Connection->getConnector()->exec($this->Sql);
+        }
+
+        if ($result === false) {
+            $result = null;
+        }
+
+        return $result;
     }
 
     public function executeReader(): ?DbReader
@@ -52,16 +64,12 @@ class DbCommand
 
         if ($this->Parameters) {
             $statement = $this->Connection->getConnector()->prepare($this->Sql);
-            $statement->execute($this->Parameters);
+            $result = $statement->execute($this->Parameters);
         } else {
-            $statement = $this->Connection->getConnector()->query($this->Sql);
+            $result = $statement = $this->Connection->getConnector()->query($this->Sql);
         }
 
-        if (!$statement) {
-            return null;
-        }
-
-        if ($statement->rowCount() === 0) {
+        if ($result === false) {
             return null;
         }
 
