@@ -15,6 +15,12 @@ class DbTransaction
 
     public function __construct(DbConnection $connection)
     {
+        $connector = $connection->getConnector();
+        if (!$connector) {
+            throw new \Exception("DB connection is closed");
+        }
+
+        $connector->beginTransaction();
         $this->Connection = $connection;
     }
 
