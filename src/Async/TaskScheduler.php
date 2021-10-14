@@ -13,44 +13,77 @@ class TaskScheduler
 {
     private static TaskScheduler $Scheduler;
 
+    private int $MaxConcurrency;
     private array $Tasks = [];
 
-    public function __construct()
+    public function __get(string $name)
     {
+        return $this->$name;
+    }
+
+    public function __construct(int $maxConcurrency = 16)
+    {
+        $this->MaxConcurrency = $maxConcurrency;
         register_shutdown_function([$this, 'onShutdown']);
     }
 
-    public static function getDefaultScheduler(): TaskScheduler
+    public function add(Task $task): void
     {
-        if (!isset(self::$Scheduler)) {
-            self::$Scheduler = new TaskScheduler();
+        if (isset($this->Tasks[$task->Id])) {
+            return;
         }
 
-        return self::$Scheduler;
-    }
-
-    public function add(Task $task)
-    {
         $this->Tasks[$task->Id] = $task;
     }
 
-    public function remove(Task $task): bool
+    public function remove(Task $task): void
     {
         if (isset($this->Tasks[$task->Id])) {
             unset($this->Tasks[$task->Id]);
-            return true;
         }
 
-        return false;
+        $tasks   = $this->getScheduledTasks();
+        $vacancy = $this->MaxConcurrency - count($this->getActiveTasks());
+
+        $count = 1;
+        foreach ($tasks as $task) {
+            $task->start();
+            $count++;
+            if ($count > $vacancy) {
+                break;
+            }
+        }
+    }
+
+    public function getActiveTasks(): array
+    {
+        $activeTasks = [];
+        foreach ($this->Tasks as $task) {
+            if ($task->Awaiter->Process->isRunning()) {
+                $activeTasks[] = $task;
+            }
+        }
+
+        return $activeTasks;
+    }
+
+    public function getScheduledTasks(): array
+    {
+        $scheduledTasks = [];
+        foreach ($this->Tasks as $task) {
+            if ($task->Status == Task::Created) {
+                $scheduledTasks[] = $task;
+            }
+        }
+
+        return $scheduledTasks;
     }
 
     public function wait()
     {
         while ($this->Tasks) {
             foreach ($this->Tasks as $task) {
-                if ($task->Status == Task::Completed || $task->Status == Task::Canceled || $task->Status == Task::Faulted) {
-                    $this->remove($task);
-                }
+                $task->wait();
             }
         }
     }
@@ -60,5 +93,14 @@ class TaskScheduler
         foreach ($this->Tasks as $task) {
             $task->Awaiter->Stop();
         }
+    }
+
+    public static function getDefaultScheduler(): TaskScheduler
+    {
+        if (!isset(self::$Scheduler)) {
+            self::$Scheduler = new TaskScheduler();
+        }
+
+        return self::$Scheduler;
     }
 }

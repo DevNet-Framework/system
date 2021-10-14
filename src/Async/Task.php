@@ -64,21 +64,13 @@ class Task
         }
 
         if ($this->Status === self::Created) {
+            $count = count($this->Scheduler->getActiveTasks());
+            if ($count <= $this->Scheduler->MaxConcurrency) {
+                $this->Awaiter->Process->start();
+                $this->Status = self::Started;
+            }
             $this->Scheduler->add($this);
-            $this->Awaiter->Process->start();
-            $this->Status = self::Started;
         }
-    }
-
-    public function then(Closure $next, ?TaskCancelationToken $token = null)
-    {
-        $this->wait();
-        $precedent = $this;
-        $next = function () use ($next, $precedent) {
-            return $next($precedent);
-        };
-
-        return Task::run($next, $token);
     }
 
     public function wait(): void
@@ -98,7 +90,20 @@ class Task
             } else {
                 $this->Status = self::Completed;
             }
+
+            $this->Scheduler->remove($this);
         }
+    }
+
+    public function then(Closure $next, ?TaskCancelationToken $token = null): Task
+    {
+        $this->wait();
+        $precedent = $this;
+        $next = function () use ($next, $precedent) {
+            return $next($precedent);
+        };
+
+        return Task::run($next, $token);
     }
 
     public static function run(Closure $action, ?TaskCancelationToken $token = null): Task
