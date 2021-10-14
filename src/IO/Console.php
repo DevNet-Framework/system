@@ -53,16 +53,34 @@ class Console
         return str_replace(PHP_EOL, '', fgets(STDIN));
     }
 
-    public static function write(...$parameters)
+    public static function write(string $format, ...$args)
     {
-        $string = call_user_func_array('sprintf', $parameters);
+        // overide the arguments if the fist argument is an array
+        if (isset($args[0]) && is_array($args[0])) {
+            $args = $args[0];
+        }
+        
+        $replace = [];
+        foreach ($args as $key => $value) {
+            // map the arguments if the value can be casted to string
+            if (!is_array($value) && (!is_object($value) || method_exists($value, '__toString'))) {
+                $replace['{' . $key . '}'] = $value;
+            }
+        }
+
+        // interpolate replacement values into the string format
+        $string = strtr($format, $replace);
         fwrite(STDOUT, $string);
     }
 
-    public static function writeline(string $string = "")
+    public static function writeline(string $format = "", ...$args)
     {
-        $string = $string . PHP_EOL;
-        fwrite(STDOUT, $string);
+        // overide the arguments if the fist argument is an array
+        if (isset($args[0]) && is_array($args[0])) {
+            $args = $args[0];
+        }
+
+        self::write($format . PHP_EOL, $args);
     }
 
     public static function foregroundColor(int $fgColor)
