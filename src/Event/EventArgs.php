@@ -11,28 +11,8 @@ namespace DevNet\System\Event;
 
 class EventArgs
 {
-    protected array $Attributes = [];
-
-    public function __construct(array $attributes = [])
+    public static function empty(): EventArgs
     {
-        $this->Attributes = $attributes;
-    }
-
-    public function __set(string $name, $value)
-    {
-        if (property_exists($this, $name)) {
-            $this->$name = $value;
-        } else {
-            $this->Attributes[$name] = $value;
-        }
-    }
-
-    public function __get(string $name)
-    {
-        if (property_exists($this, $name)) {
-            return $this->$name;
-        } else {
-            return $this->Attributes[$name] ?? null;
-        }
+        return new EventArgs;
     }
 }
