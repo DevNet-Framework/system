@@ -9,15 +9,12 @@
 
 namespace DevNet\System\Command;
 
-use DevNet\System\Event\EventArgs;
-
 interface ICommandHandler
 {
     /**
      * Execute and handle arguments.
      * @param object $sender, the command that raised the event.
-     * @param EventArgs $args event with property Input as array of raw argument,
-     * and property Parametres as a collection of parsed arguments <IcommandArgument|ICommandOption>.
+     * @param EventArgs $args, a collection of parsed arguments <IcommandArgument|ICommandOption>.
      */
-    public function execute(object $sender,  EventArgs $args): void;
+    public function execute(object $sender, CommandEventArgs $args): void;
 }
