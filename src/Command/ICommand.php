@@ -60,6 +60,7 @@ interface ICommand
     /**
      * Parse the input arguments to ICommand, ICommandArgument and ICommandOption,
      * Invoke the matched command else invoke the current command by invoking the EventHandler.
+     * Return false if didn't match any criteria.
      */
-    public function invoke(array $args = []);
+    public function invoke(array $args): bool;
 }
