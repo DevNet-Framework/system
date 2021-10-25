@@ -9,19 +9,14 @@
 
 namespace DevNet\System\Command;
 
-class CommandOption extends CommandArgument implements ICommandOption
+class CommandOption extends CommandArgument
 {
-    protected ?string $Alias;
+    public ?string $Alias;
 
     public function __construct(?string $name = null, ?string $alias = null, ?string $value = null)
     {
         $this->Name  = $name;
         $this->Alias = $alias;
         $this->Value = $value;
-    }
-
-    public function setAlias(string $alias): void
-    {
-        $this->Alias = $alias;
     }
 }
