@@ -21,12 +21,12 @@ class CommandEventArgs extends EventArgs
         $this->Parameters = $parameters;
     }
 
-    public function set(string $name, ICommandArgument $parameter): void
+    public function set(string $name, CommandArgument $parameter): void
     {
         $this->Parameters[$name] = $parameter;
     }
 
-    public function get(string $name): ?ICommandArgument
+    public function get(string $name): ?CommandArgument
     {
         return $this->Parameters[$name] ?? null;
     }
