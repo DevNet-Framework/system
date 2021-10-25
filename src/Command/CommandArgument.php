@@ -9,35 +9,14 @@
 
 namespace DevNet\System\Command;
 
-use DevNet\System\Exceptions\PropertyException;
-
-class CommandArgument implements ICommandArgument
+class CommandArgument
 {
-    protected ?string $Name;
-    protected $Value;
-
-    public function __get(string $name)
-    {
-        if (!property_exists($this, $name)) {
-            throw new PropertyException("The property {$name} doesn\'t exist.");
-        }
-
-        return $this->$name;
-    }
+    public ?string $Name;
+    public $Value = null;
 
     public function __construct(?string $name = null, ?string $value = null)
     {
         $this->Name  = $name;
-        $this->Value = $value;
-    }
-
-    public function setName(string $name): void
-    {
-        $this->Name = $name;
-    }
-
-    public function setValue($value): void
-    {
         $this->Value = $value;
     }
 }
