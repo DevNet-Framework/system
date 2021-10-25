@@ -38,19 +38,19 @@ interface ICommand
     public function setDescription(string $description): void;
 
     /**
-     * add ICommandOption to the property Commands array<ICommand>;
+     * add CommandArgument to to the property Arguments array<CommandArgument>;
+     */
+    public function addArgument(CommandArgument $argument): void;
+
+    /**
+     * add CommandOption to to the property Options array<CommandOption>;
+     */
+    public function addOption(CommandOption $option): void;
+
+    /**
+     * add ICommand to the property Commands array<ICommand>;
      */
     public function addCommand(ICommand $command): void;
-
-    /**
-     * add ICommandOption to to the property Arguments array<ICommandArgument>;
-     */
-    public function addArgument(ICommandArgument $argument): void;
-
-    /**
-     * add ICommandOption to to the property Options array<ICommandOption>;
-     */
-    public function addOption(ICommandOption $option): void;
 
     /**
      * add ICommandHandler to command's property EventHandler;
@@ -58,7 +58,7 @@ interface ICommand
     public function addHandler(ICommandHandler $handler): void;
 
     /**
-     * Parse the input arguments to ICommand, ICommandArgument and ICommandOption,
+     * Parse the input arguments to ICommand, CommandArgument and CommandOption,
      * Invoke the matched command else invoke the current command by invoking the EventHandler.
      * Return false if didn't match any criteria.
      */
