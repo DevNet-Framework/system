@@ -7,7 +7,7 @@
  * @link        https://github.com/DevNet-Framework
  */
 
-namespace DevNet\System\IO;
+namespace DevNet\System;
 
 class ConsoleColor
 {

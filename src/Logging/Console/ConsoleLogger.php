@@ -8,8 +8,8 @@
 
 namespace DevNet\System\Logging\Console;
 
-use DevNet\System\IO\Console;
-use DevNet\System\IO\ConsoleColor;
+use DevNet\System\Console;
+use DevNet\System\ConsoleColor;
 use DevNet\System\Logging\ILogger;
 use DevNet\System\Logging\LogLevel;
 
