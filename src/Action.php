@@ -7,7 +7,7 @@
  * @link        https://github.com/DevNet-Framework
  */
 
-namespace DevNet\System\Event;
+namespace DevNet\System;
 
 use DevNet\System\Exceptions\MethodException;
 use ReflectionFunction;
@@ -44,7 +44,7 @@ class Action
 
     public function __invoke(...$args)
     {
-        $this->invokeArgs($args);
+        return $this->invokeArgs($args);
     }
 
     public function invokeArgs(array $args = [])

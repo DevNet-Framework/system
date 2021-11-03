@@ -9,6 +9,7 @@
 
 namespace DevNet\System\Event;
 
+use DevNet\System\Action;
 use DevNet\System\Collections\IEnumerable;
 use DevNet\System\Collections\Enumerator;
 use DevNet\System\Exceptions\MethodException;
