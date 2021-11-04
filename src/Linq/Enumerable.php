@@ -89,13 +89,17 @@ class Enumerable
 
     public static function first(IEnumerable $enumerable)
     {
-        $take = new TakeEnumerable($enumerable);
-        return $take->first();
+        $array   = $enumerable->getIterator()->toArray();
+        $element = reset($array);
+
+        return $element ? $element : null;
     }
 
     public static function last(IEnumerable $enumerable)
     {
-        $take = new TakeEnumerable($enumerable);
-        return $take->last();
+        $array   = $enumerable->getIterator()->toArray();
+        $element = end($array);
+
+        return $element ? $element : null;
     }
 }
