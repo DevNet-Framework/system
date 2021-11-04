@@ -66,16 +66,16 @@ abstract class Queryable
 
     public static function first(IQueryable $queryable)
     {
-        $array      = $queryable->getIterator()->toArray();
-        $element    = reset($array);
+        $array   = $queryable->getIterator()->toArray();
+        $element = reset($array);
 
         return $element ? $element : null;
     }
 
     public static function last(IQueryable $queryable)
     {
-        $array      = $queryable->getIterator()->toArray();
-        $element    = end($array);
+        $array   = $queryable->getIterator()->toArray();
+        $element = end($array);
 
         return $element ? $element : null;
     }
