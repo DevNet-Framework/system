@@ -7,7 +7,7 @@
  * @link        https://github.com/DevNet-Framework
  */
 
-namespace DevNet\System;
+namespace DevNet\System\IO;
 
 if (!defined('STDIN'))  define('STDIN',  fopen('php://stdin',  'r'));
 if (!defined('STDOUT')) define('STDOUT', fopen('php://stdout', 'w'));
