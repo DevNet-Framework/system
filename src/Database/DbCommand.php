@@ -29,48 +29,56 @@ class DbCommand
         $this->Parameters = $parameters;
     }
 
-    public function execute() : ?int
+    public function execute() : int
     {
         if ($this->Connection->getState() === 0)
         {
-            throw new \Exception("DB connection is closed");
+            throw new \PDOException('Database connection is closed');
         }
 
         if ($this->Parameters)
         {
             $statement = $this->Connection->getConnector()->prepare($this->Sql);
             $result = $statement->execute($this->Parameters);
-            if ($result) {
-                $result = $statement->rowCount();
+
+            if (!$result) {
+                $errorInfo = $statement->errorInfo();
+                throw new \PDOException("[{$errorInfo[0]}] {$errorInfo[2]}", $errorInfo[1]);
             }
+
+            $result = $statement->rowCount();
         }
         else
         {
             $result = $this->Connection->getConnector()->exec($this->Sql);
-        }
-
-        if ($result === false) {
-            $result = null;
+            if (!$result) {
+                $errorInfo = $this->Connection->getConnector()->errorInfo();
+                throw new \PDOException("[{$errorInfo[0]}] {$errorInfo[2]}", $errorInfo[1]);
+            }
         }
 
         return $result;
     }
 
-    public function executeReader(): ?DbReader
+    public function executeReader(): DbReader
     {
         if ($this->Connection->getState() == 0) {
-            throw new \Exception("DB connection is closed");
+            throw new \PDOException('Database connection is closed');
         }
 
         if ($this->Parameters) {
             $statement = $this->Connection->getConnector()->prepare($this->Sql);
             $result = $statement->execute($this->Parameters);
+            if (!$result) {
+                $errorInfo = $statement->errorInfo();
+                throw new \PDOException("[{$errorInfo[0]}] {$errorInfo[2]}", $errorInfo[1]);
+            }
         } else {
-            $result = $statement = $this->Connection->getConnector()->query($this->Sql);
-        }
-
-        if ($result === false) {
-            return null;
+            $statement = $this->Connection->getConnector()->query($this->Sql);
+            if (!$statement) {
+                $errorInfo = $this->Connection->getConnector()->errorInfo();
+                throw new \PDOException("[{$errorInfo[0]}] {$errorInfo[2]}", $errorInfo[1]);
+            }
         }
 
         $this->Statement = $statement;
