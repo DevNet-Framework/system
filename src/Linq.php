@@ -141,4 +141,14 @@ class Linq
 
         return Enumerable::last($enumerable);
     }
+
+    public static function toArray(IEnumerable $enumerable): array
+    {
+        $interfaces = class_implements($enumerable);
+        if (in_array(IQueryable::class, $interfaces)) {
+            return Queryable::toArray($enumerable);
+        }
+
+        return Enumerable::toArray($enumerable);
+    }
 }

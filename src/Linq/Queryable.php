@@ -79,4 +79,9 @@ abstract class Queryable
 
         return $element ? $element : null;
     }
+
+    public static function toArray(IQueryable $queryable): array
+    {
+        return $queryable->getIterator()->toArray();
+    }
 }

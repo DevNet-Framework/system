@@ -102,4 +102,9 @@ class Enumerable
 
         return $element ? $element : null;
     }
+
+    public static function toArray(IEnumerable $enumerable): array
+    {
+        return $enumerable->getIterator()->toArray();
+    }
 }
