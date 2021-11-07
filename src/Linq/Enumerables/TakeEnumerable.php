@@ -59,16 +59,6 @@ class TakeEnumerable implements IEnumerable
         return $this;
     }
 
-    public function first()
-    {
-        return reset($this->Array);
-    }
-
-    public function last()
-    {
-        return end($this->Array);
-    }
-
     public function getIterator(): Enumerator
     {
         return new Enumerator($this->Array);
