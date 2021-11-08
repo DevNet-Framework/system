@@ -19,7 +19,7 @@ use DevNet\System\Linq\Enumerables\CountEnumerable;
 use DevNet\System\Linq\Enumerables\TakeEnumerable;
 use Closure;
 
-class Enumerable
+abstract class Enumerable
 {
     public static function select(IEnumerable $enumerable, Closure $predecate)
     {
