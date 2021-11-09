@@ -15,10 +15,10 @@
     },
     "autoload": {
         "psr-4": {
-            "DevNet\\System\\" : "src/"
+            "DevNet\\System\\" : "lib/"
         },
         "files": [
-            "src/Functions.php"
+            "lib/Functions.php"
         ]
     }
 }
