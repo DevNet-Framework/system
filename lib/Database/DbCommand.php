@@ -51,7 +51,7 @@ class DbCommand
         else
         {
             $result = $this->Connection->getConnector()->exec($this->Sql);
-            if (!$result) {
+            if ($result === false) {
                 $errorInfo = $this->Connection->getConnector()->errorInfo();
                 throw new \PDOException("[{$errorInfo[0]}] {$errorInfo[2]}", $errorInfo[1]);
             }
