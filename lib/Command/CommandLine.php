@@ -24,7 +24,7 @@ class CommandLine implements ICommand
     public function __get(string $name)
     {
         if (!property_exists($this, $name)) {
-            throw new PropertyException("The property {$name} doesn\'t exist.");
+            throw new PropertyException("The property {$name} doesn't exist.");
         }
 
         return $this->$name;
@@ -72,13 +72,14 @@ class CommandLine implements ICommand
         $this->Handler = new EventHandler($handler, 'execute');
     }
 
-    public function invoke(array $args): bool
+    public function invoke(array $args): void
     {
         $inputs = $args;
-        $commandName = array_shift($args);
+        $commandName = (string) array_shift($args);
         if (isset($this->Commands[$commandName])) {
             $command = $this->Commands[$commandName];
-            return $command->invoke($args);
+            $command->invoke($args);
+            return;
         }
 
         $parser = new CommandParser();
@@ -92,14 +93,8 @@ class CommandLine implements ICommand
         }
 
         $eventArgs = $parser->parse($inputs);
-        
-        if (!$eventArgs) {
-            return false;
-        }
-        
+
         $eventArgs->Inputs = $inputs;
         $this->Handler->invoke($this, $eventArgs);
-
-        return true;
     }
 }

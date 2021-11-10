@@ -62,5 +62,5 @@ interface ICommand
      * Invoke the matched command else invoke the current command by invoking the EventHandler.
      * Return false if didn't match any criteria.
      */
-    public function invoke(array $args): bool;
+    public function invoke(array $args): void;
 }

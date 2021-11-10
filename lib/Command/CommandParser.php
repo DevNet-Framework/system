@@ -56,7 +56,7 @@ class CommandParser
         return null;
     }
 
-    public function parse(array $args): ?CommandEventArgs
+    public function parse(array $args): CommandEventArgs
     {
         $inputs     = $args;
         $arguments  = $this->Arguments;
@@ -90,11 +90,11 @@ class CommandParser
             }
         }
 
-        // if there are remaining inputs, it means doesn't match.
+        $eventArgs = new CommandEventArgs($parameters);
         if ($inputs) {
-            return null;
+            $eventArgs->Residual = $inputs;
         }
 
-        return new CommandEventArgs($parameters);
+        return $eventArgs;
     }
 }

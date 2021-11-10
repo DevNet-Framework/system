@@ -14,6 +14,7 @@ use DevNet\System\Event\EventArgs;
 class CommandEventArgs extends EventArgs
 {
     public array $Inputs = [];
+    public array $Residual = [];
     protected array $Parameters;
 
     public function __construct(array $parameters = [])
