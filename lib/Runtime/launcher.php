@@ -47,6 +47,11 @@ class Launcher extends LauncherProperties
         self::$Envirement = $env;
     }
 
+    public function provider(object $provider): void
+    {
+        self::$Provider = $provider;
+    }
+
     public function Launch(): void
     {
         self::$Loader = new ClassLoader(self::$Workspace, ["/" => self::$Namespace]);

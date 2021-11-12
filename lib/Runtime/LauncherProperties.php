@@ -17,6 +17,7 @@ class LauncherProperties
     protected static string $EntryPoint = 'Program';
     protected static array $Arguments = [];
     protected static string $Envirement;
+    protected static ?object $Provider = null;
 
     public static function getLoader(): ?ClassLoader
     {
@@ -46,5 +47,10 @@ class LauncherProperties
     public static function getEnvironmoment(): string
     {
         return self::$Envirement;
+    }
+
+    public static function getProvider(): ?object
+    {
+        return self::$Provider;
     }
 }
