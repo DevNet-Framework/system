@@ -1,5 +1,5 @@
-# DevNet System
-This dependency is the common system library of **DevNet Framework**, and it includes the following components:
+# DevNet Core
+This dependency is the core system of **DevNet Framework**, which includes the following common library:
 
 - IO Stream
 - Event Delegate
@@ -8,7 +8,7 @@ This dependency is the common system library of **DevNet Framework**, and it inc
 - Extension Method
 - Linq Method
 - Database Connector
-- Error Handler
+- Event Logging
 - Generic compiler
 - Boot Loader
 
@@ -20,11 +20,11 @@ This dependency is the common system library of **DevNet Framework**, and it inc
 You can install DevNet System as a third-party library with any framework or project, by running the following command in the terminal:
 
 ```bash
-composer require devnet/system
+composer require devnet/core
 ```
 
 ## Documentation
 Full documentation on how to use **DevNet Framework** is available at [devnet-framework.github.io](https://devnet-framework.github.io)
 
 ## License
-This library is licensed under the MIT license. See [License File](https://github.com/DevNet-Framework/system/blob/master/LICENSE) in the root folder for more information.
+This library is licensed under the MIT license. See [License File](https://github.com/DevNet-Framework/core/blob/master/LICENSE) in the root folder for more information.
