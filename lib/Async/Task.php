@@ -113,6 +113,14 @@ class Task
         return $task;
     }
 
+    public static function delay(int $microseconds): Task
+    {
+        return new Task(function () use ($microseconds) {
+            usleep($microseconds);
+            return true;
+        });
+    }
+
     public static function fromResult($result): Task
     {
         return new Task(function () use ($result) {
