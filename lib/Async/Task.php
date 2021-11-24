@@ -115,24 +115,30 @@ class Task
 
     public static function delay(int $microseconds): Task
     {
-        return new Task(function () use ($microseconds) {
+        $task = new Task(function () use ($microseconds) {
             usleep($microseconds);
             return true;
         });
+        $task->start();
+        return $task;
     }
 
     public static function fromResult($result): Task
     {
-        return new Task(function () use ($result) {
+        $task = new Task(function () use ($result) {
             return $result;
         });
+        $task->wait();
+        return $task;
     }
 
     public static function fromException(string $message, int $code = 0): Task
     {
-        return new Task(function () use ($message, $code) {
+        $task = new Task(function () use ($message, $code) {
             return new TaskException($message, $code);
         });
+        $task->wait();
+        return $task;
     }
 
     public static function completedTask()
