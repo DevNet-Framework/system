@@ -55,7 +55,7 @@ abstract class Delegate implements IEnumerable
 
     public function matchSignature(Action $action): bool
     {
-        if ($this->MethodInfo->getReturnType() != $action->ActionInfo->getReturnType()) {
+        if ($this->MethodInfo->getReturnType() && $this->MethodInfo->getReturnType() != $action->ActionInfo->getReturnType()) {
             return false;
         }
 
