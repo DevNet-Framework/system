@@ -44,7 +44,7 @@ abstract class Delegate implements IEnumerable
             $actionName = '__invoke';
         }
 
-        $action = new Action($target, $actionName);
+        $action = new Action([$target, $actionName]);
 
         if (!$this->matchSignature($action)) {
             throw new \Exception("incompatible signature, function must be compatible with : {$this->getSignature()}");
@@ -55,12 +55,12 @@ abstract class Delegate implements IEnumerable
 
     public function matchSignature(Action $action): bool
     {
-        if ($this->MethodInfo->getReturnType() && $this->MethodInfo->getReturnType() != $action->ActionInfo->getReturnType()) {
+        if ($this->MethodInfo->getReturnType() && $this->MethodInfo->getReturnType() != $action->MethodInfo->getReturnType()) {
             return false;
         }
 
         $parameterIndex = 0;
-        $actionParameters = $action->ActionInfo->getParameters();
+        $actionParameters = $action->MethodInfo->getParameters();
 
         foreach ($this->Parameters as $parameter) {
             if ($parameter->getType() != $actionParameters[$parameterIndex]->getType()) {
