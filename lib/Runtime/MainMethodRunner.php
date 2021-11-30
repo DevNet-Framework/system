@@ -11,7 +11,7 @@ namespace DevNet\System\Runtime;
 
 use DevNet\System\Async\TaskScheduler;
 
-class MainClassRunner
+class MainMethodRunner
 {
     private string $MainClass;
     private array $Args;

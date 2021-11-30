@@ -62,7 +62,7 @@ class Launcher extends LauncherProperties
 
         $inputArgs = $inputArgs + self::$Arguments;
         $mainClass = self::$Namespace . '\\' . self::$EntryPoint;
-        $runner    = new MainClassRunner($mainClass, $inputArgs);
+        $runner    = new MainMethodRunner($mainClass, $inputArgs);
 
         $runner->run();
     }
