@@ -7,7 +7,7 @@
  * @link        https://github.com/DevNet-Framework
  */
 
-require __DIR__ . '/../../../../../vendor/autoload.php';
+require __DIR__ . '/../../../../../../vendor/autoload.php';
 
 use DevNet\System\Runtime\ClassLoader;
 use DevNet\System\Async\TaskException;
