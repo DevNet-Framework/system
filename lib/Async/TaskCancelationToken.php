@@ -13,22 +13,22 @@ use Closure;
 
 class TaskCancelationToken
 {
-    private TaskCancelationSource $Canceler;
+    private TaskCancelationSource $Source;
     private Closure $Action;
-    private bool $IsCanceled = false;
-
-    public function __construct($canceler)
-    {
-        $this->Canceler = $canceler;
-    }
+    private bool $IsCancellationRequested = false;
 
     public function __get(string $name)
     {
-        if ($name == 'IsCanceled') {
-            return $this->Canceler->IsCanceled;
+        if ($name == 'IsCancellationRequested') {
+            return $this->Source->IsCancellationRequested;
         }
 
         return $this->$name;
+    }
+
+    public function __construct($source)
+    {
+        $this->Source = $source;
     }
 
     public function register(Closure $action)
