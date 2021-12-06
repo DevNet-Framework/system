@@ -12,20 +12,20 @@ namespace DevNet\System\Async;
 class TaskCancelationSource
 {
     private TaskCancelationToken $Token;
-    private bool $IsCanceled = false;
-
-    public function __construct()
-    {
-        $this->Token = new TaskCancelationToken($this);
-    }
+    private bool $IsCancellationRequested = false;
 
     public function __get(string $name)
     {
         return $this->$name;
     }
 
+    public function __construct()
+    {
+        $this->Token = new TaskCancelationToken($this);
+    }
+
     public function cancel(): void
     {
-        $this->IsCanceled = true;
+        $this->IsCancellationRequested = true;
     }
 }
