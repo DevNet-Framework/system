@@ -7,20 +7,18 @@
  * @link        https://github.com/DevNet-Framework
  */
 
-namespace DevNet\System\Async;
+namespace DevNet\System;
 
 class Process
 {
-    private string $Command;
     private array $Descriptors;
     private array $Pipes = [];
     private ?string $Cwd;
     private ?array $Env;
     private $Process;
 
-    public function __construct(string $command, ?string $cwd = null, array $env = null)
+    public function __construct(?string $cwd = null, array $env = null)
     {
-        $this->Command = $command;
         $this->Descriptors = [
             0 => ["pipe", "r"],
             1 => ["pipe", "w"],
@@ -29,12 +27,12 @@ class Process
 
         $this->Cwd = $cwd;
         $this->Env = $env;
-        $this->Env = $env;
     }
 
-    public function start()
+    public function start(string ...$command)
     {
-        $this->Process = proc_open($this->Command, $this->Descriptors, $this->Pipes, $this->Cwd, $this->Env);
+        $command = implode(' ', $command);
+        $this->Process = proc_open($command, $this->Descriptors, $this->Pipes, $this->Cwd, $this->Env);
 
         if (!is_resource($this->Process)) {
             throw new \RuntimeException("Error Processing Request");
@@ -94,7 +92,7 @@ class Process
         return $result;
     }
 
-    public function stop()
+    public function kill()
     {
         if ($this->isRunning()) {
             if (function_exists('proc_terminate')) {
