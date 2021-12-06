@@ -13,57 +13,20 @@ use DevNet\System\Runtime\LauncherProperties;
 
 class TaskAwaiter
 {
-    private Process $Process;
-    private bool $IsComplited = false;
-    private $Result = null;
+    private Task $Task;
 
-    public function __construct(string $data)
+    public function __construct(Task $task)
     {
-        $data          = base64_encode($data);
-        $workspace     = escapeshellarg(LauncherProperties::getWorkspace());
-        $this->Process = new Process('php ' . __DIR__ . '/Worker.php ' . $workspace . ' ' . $data);
-    }
-
-    public function __get(string $name)
-    {
-        if ($name == 'IsComplited') {
-            if (!$this->IsComplited) {
-                if (!$this->Process->isRunning()) {
-                    $this->getResult();
-                }
-            }
-        }
-
-        return $this->$name;
+        $this->Task = $task;
     }
 
     public function getResult()
     {
-        if (!$this->IsComplited) {
-            $output = $this->Process->read();
-            $result = $this->Process->report();
-
-            $this->Result = unserialize($result);
-            $this->Process->close();
-
-            if ($output) {
-                echo $output;
-            }
-
-            $this->IsComplited = true;
-        }
-
-        return $this->Result;
+        return $this->Task->Result;
     }
 
-    public function stop(): void
+    function isComplited(): bool
     {
-        if (!$this->IsComplited) {
-            if ($this->Process->isRunning()) {
-                $this->Process->stop();
-                $this->Result = new TaskException('The task was canceled');
-                $this->IsComplited = true;
-            }
-        }
+        return $this->Task->IsComplited;
     }
 }
