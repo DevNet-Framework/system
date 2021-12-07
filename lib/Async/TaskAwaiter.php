@@ -25,8 +25,8 @@ class TaskAwaiter
         return $this->Task->Result;
     }
 
-    function isComplited(): bool
+    function isCompleted(): bool
     {
-        return $this->Task->IsComplited;
+        return $this->Task->IsCompleted;
     }
 }
