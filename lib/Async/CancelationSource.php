@@ -11,7 +11,7 @@ namespace DevNet\System\Async;
 
 class CancelationSource
 {
-    private TaskCancelationToken $Token;
+    private CancelationToken $Token;
     private bool $IsCancellationRequested = false;
 
     public function __get(string $name)
@@ -21,7 +21,7 @@ class CancelationSource
 
     public function __construct()
     {
-        $this->Token = new TaskCancelationToken($this);
+        $this->Token = new CancelationToken($this);
     }
 
     public function cancel(): void

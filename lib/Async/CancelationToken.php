@@ -11,9 +11,9 @@ namespace DevNet\System\Async;
 
 use Closure;
 
-class TaskCancelationToken
+class CancelationToken
 {
-    private TaskCancelationSource $Source;
+    private CancelationSource $Source;
     private Closure $Action;
     private bool $IsCancellationRequested = false;
 
