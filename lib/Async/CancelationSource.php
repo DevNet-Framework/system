@@ -9,7 +9,7 @@
 
 namespace DevNet\System\Async;
 
-class TaskCancelationSource
+class CancelationSource
 {
     private TaskCancelationToken $Token;
     private bool $IsCancellationRequested = false;
