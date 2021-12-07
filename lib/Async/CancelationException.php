@@ -11,6 +11,6 @@ namespace DevNet\System\Async;
 
 use Exception;
 
-class TaskCanceledException extends Exception
+class CancelationException extends Exception
 {
 }
