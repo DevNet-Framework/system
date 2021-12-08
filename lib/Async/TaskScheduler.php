@@ -13,85 +13,62 @@ class TaskScheduler
 {
     private static TaskScheduler $Scheduler;
 
-    private int $MaxConcurrency;
-    private array $Tasks = [];
+    protected int $MaxConcurrency = 0;
+    protected array $Tasks = [];
 
     public function __get(string $name)
     {
         return $this->$name;
     }
 
-    public function __construct(int $maxConcurrency = 16)
+    public function __construct(int $maxConcurrency = 0)
     {
         $this->MaxConcurrency = $maxConcurrency;
-        register_shutdown_function([$this, 'onShutdown']);
+        register_shutdown_function([$this, 'shutdown']);
     }
 
-    public function add(Task $task): void
+    public function enqueue(Task $task): void
     {
         if (isset($this->Tasks[$task->Id])) {
             return;
         }
-
         $this->Tasks[$task->Id] = $task;
     }
 
-    public function remove(Task $task): void
+    public function dequeue(Task $task): void
     {
         if (isset($this->Tasks[$task->Id])) {
             unset($this->Tasks[$task->Id]);
         }
 
-        $tasks   = $this->getScheduledTasks();
-        $vacancy = $this->MaxConcurrency - count($this->getActiveTasks());
-
-        $count = 1;
-        foreach ($tasks as $task) {
-            $task->start();
-            $count++;
+        $count = 0;
+        $vacancy = $this->MaxConcurrency - count($this->getScheduledTasks());
+        foreach ($this->Tasks as $task) {
             if ($count > $vacancy) {
                 break;
             }
-        }
-    }
-
-    public function getActiveTasks(): array
-    {
-        $activeTasks = [];
-        foreach ($this->Tasks as $task) {
-            if ($task->Awaiter->Process->isRunning()) {
-                $activeTasks[] = $task;
+            if ($task->Status == Task::Pending) {
+                $task->start();
+                $count++;
             }
         }
-
-        return $activeTasks;
     }
 
     public function getScheduledTasks(): array
     {
-        $scheduledTasks = [];
+        $tasks = [];
         foreach ($this->Tasks as $task) {
-            if ($task->Status == Task::Created) {
-                $scheduledTasks[] = $task;
+            if ($task->Status == Task::Running && !$task->IsCompleted) {
+                $tasks[] = $task;
             }
         }
-
-        return $scheduledTasks;
+        return $tasks;
     }
 
-    public function wait()
-    {
-        while ($this->Tasks) {
-            foreach ($this->Tasks as $task) {
-                $task->wait();
-            }
-        }
-    }
-
-    public function onShutdown(): void
+    public function shutdown(): void
     {
         foreach ($this->Tasks as $task) {
-            $task->Awaiter->Stop();
+            $task->wait();
         }
     }
 
