@@ -9,52 +9,72 @@
 
 namespace DevNet\System\Async;
 
+use DevNet\System\Runtime\LauncherProperties;
+use DevNet\System\Process;
 use Opis\Closure\SerializableClosure;
 use Closure;
 
 class Task
 {
     public const Created   = 0;
-    public const Started   = 1;
-    public const Completed = 2;
+    public const Pending   = 1;
+    public const Running   = 2;
+    public const Succeeded = 3;
     public const Canceled  = -1;
-    public const Faulted   = -2;
+    public const Failed    = -2;
 
     private int $Id;
-    private int $Status;
+    private int $Status = 0;
+    private Process $Process;
     private TaskScheduler $Scheduler;
     private ?TaskAwaiter $Awaiter = null;
+    private ?CancelationToken $Token = null;
+    private bool $IsCompleted = false;
     private $Action = null;
     private $Result = null;
 
-    public function __construct(Closure $action = null, ?TaskCancelationToken $token = null)
-    {
-        $this->Id        = spl_object_id($this);
-        $this->Status    = Self::Completed;
-        $this->Scheduler = TaskScheduler::getDefaultScheduler();
-
-        if ($action) {
-            $this->Action  = new SerializableClosure($action);
-            $this->Awaiter = new TaskAwaiter(serialize($this->Action));
-            $this->Status  = Self::Created;
-        }
-
-        if ($token) {
-            $token->Awaiters->add($this->TaskAwaiter);
-        }
-    }
-
     public function __get(string $name)
     {
-        if ($name == 'Status') {
-            if ($this->Status == self::Started) {
-                if ($this->Awaiter->IsComplited) {
+        switch ($name) {
+            case 'Status':
+                if ($this->Process->isRunning() && $this->Status != Task::Pending) {
+                    $this->IsCompleted = !$this->Process->isRunning();
+                }
+                break;
+            case 'IsCompleted':
+                if (!$this->Process->isRunning() && $this->Status != Task::Pending) {
+                    $this->IsCompleted = !$this->Process->isRunning();
+                }
+                break;
+            case 'Result':
+                if ($this->Status == self::Pending || $this->Status == self::Running) {
                     $this->wait();
                 }
-            }
+                break;
         }
 
         return $this->$name;
+    }
+
+    public function __construct(callable $action = null, ?CancelationToken $token = null)
+    {
+        $this->Id        = spl_object_id($this);
+        $this->Status    = Self::Succeeded;
+        $this->Scheduler = TaskScheduler::getDefaultScheduler();
+        $this->Awaiter   = new TaskAwaiter($this);
+        $this->Token     = $token;
+
+        if ($action) {
+            $this->Action  = Closure::fromCallable($action);
+            $this->Action  = new SerializableClosure($this->Action);
+            $this->Process = new Process();
+            $this->Status  = Self::Created;
+        }
+    }
+
+    public function getAwaiter(): TaskAwaiter
+    {
+        return $this->Awaiter;
     }
 
     public function start(TaskScheduler $taskScheduler = null): void
@@ -63,39 +83,53 @@ class Task
             $this->Scheduler = $taskScheduler;
         }
 
-        if ($this->Status === self::Created) {
-            $count = count($this->Scheduler->getActiveTasks());
-            if ($count <= $this->Scheduler->MaxConcurrency) {
-                $this->Awaiter->Process->start();
-                $this->Status = self::Started;
-            }
-            $this->Scheduler->add($this);
+        $this->Status = Self::Pending;
+        $this->Scheduler->enqueue($this);
+
+        if ($this->Scheduler->MaxConcurrency == 0 || $this->Scheduler->MaxConcurrency - count($this->Scheduler->getScheduledTasks()) > 0) {
+            $action        = serialize($this->Action);
+            $action        = base64_encode($action);
+            $workspace     = escapeshellarg(LauncherProperties::getWorkspace());
+            $this->Process->start('php '. __DIR__ . '/Internal/Worker.php '. $workspace.' '. $action);
+            $this->Status = Task::Running;
         }
     }
 
     public function wait(): void
     {
-        if ($this->Status == self::Created || $this->Status == self::Started) {
-            if ($this->Status == self::Created) {
-                $action = $this->Action->getClosure();
-                $this->Result = $action();
-            } else if ($this->Status == self::Started) {
-                $this->Result = $this->Awaiter->getResult();
+        if ($this->Status == Task::Pending) {
+            if ($this->Token && $this->Token->IsCancellationRequested) {
+                $this->Status == Task::Canceled;
+                throw new CancelationException('The task was canncled');
             }
+            $action = $this->Action;
+            $this->Result = $action();
+            return;
+        }
 
-            if ($this->Result instanceof TaskCanceledException) {
+        if ($this->Status == Task::Running) {
+            $output = $this->Process->read();
+            $result = $this->Process->report();
+
+            $this->Result = unserialize($result);
+            $this->Process->close();
+            $this->Scheduler->dequeue($this);
+
+            if ($this->Result instanceof CancelationException) {
                 $this->Status = self::Canceled;
+                throw new CancelationException($this->Result->getMessage(), $this->Result->getCode());
             } else if ($this->Result instanceof TaskException) {
-                $this->Status = self::Faulted;
-            } else {
-                $this->Status = self::Completed;
+                $this->Status = self::Failed;
+                throw new TaskException($this->Result->getMessage(), $this->Result->getCode());
             }
 
-            $this->Scheduler->remove($this);
+            $this->Status = Task::Succeeded;
+            $this->IsCompleted = true;
+            echo $output;
         }
     }
 
-    public function then(Closure $next, ?TaskCancelationToken $token = null): Task
+    public function then(Closure $next, ?CancelationToken $token = null): Task
     {
         $this->wait();
         $precedent = $this;
@@ -106,7 +140,7 @@ class Task
         return Task::run($next, $token);
     }
 
-    public static function run(Closure $action, ?TaskCancelationToken $token = null): Task
+    public static function run(Closure $action, ?CancelationToken $token = null): Task
     {
         $task = new Task($action, $token);
         $task->start();
