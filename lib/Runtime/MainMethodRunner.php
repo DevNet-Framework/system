@@ -33,6 +33,5 @@ class MainMethodRunner
         }
 
         $this->MainClass::main($this->Args);
-        TaskScheduler::getDefaultScheduler()->wait();
     }
 }
