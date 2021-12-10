@@ -90,7 +90,7 @@ class Task
             $action        = serialize($this->Action);
             $action        = base64_encode($action);
             $workspace     = escapeshellarg(LauncherProperties::getWorkspace());
-            $this->Process->start('php '. __DIR__ . '/Internal/Worker.php '. $workspace.' '. $action);
+            $this->Process->start('php '. __DIR__ . '/Internal/TaskWorker.php '. $workspace.' '. $action);
             $this->Status = Task::Running;
         }
     }

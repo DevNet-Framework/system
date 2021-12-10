@@ -13,7 +13,7 @@ use DevNet\System\Runtime\ClassLoader;
 use DevNet\System\Async\TaskException;
 use Opis\Closure\SerializableClosure;
 
-class Worker
+class TaskWorker
 {
     private string $Data;
 
@@ -67,6 +67,6 @@ class Worker
     }
 }
 
-$worker = new Worker($argv);
+$worker = new TaskWorker($argv);
 $worker->execute();
 exit;
