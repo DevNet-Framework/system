@@ -7,7 +7,7 @@
  * @link        https://github.com/DevNet-Framework
  */
 
-namespace DevNet\System\Async;
+namespace DevNet\System\Async\Tasks;
 
 class TaskScheduler
 {

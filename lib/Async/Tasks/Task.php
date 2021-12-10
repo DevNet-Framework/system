@@ -7,10 +7,12 @@
  * @link        https://github.com/DevNet-Framework
  */
 
-namespace DevNet\System\Async;
+namespace DevNet\System\Async\Tasks;
 
 use DevNet\System\Runtime\LauncherProperties;
 use DevNet\System\Process;
+use DevNet\System\Async\CancelationException;
+use DevNet\System\Async\CancelationToken;
 use Opis\Closure\SerializableClosure;
 use Closure;
 
