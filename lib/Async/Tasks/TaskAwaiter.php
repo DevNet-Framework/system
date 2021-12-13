@@ -9,24 +9,92 @@
 
 namespace DevNet\System\Async\Tasks;
 
+use DevNet\System\Process;
+use DevNet\System\Async\IAwaiter;
+use DevNet\System\Async\CancelationException;
+use DevNet\System\Async\CancelationToken;
 use DevNet\System\Runtime\LauncherProperties;
+use Opis\Closure\SerializableClosure;
+use Closure;
 
-class TaskAwaiter
+class TaskAwaiter implements IAwaiter
 {
-    private Task $Task;
+    private Process $Process;
+    private ?CancelationToken $Token;
+    private ?Closure $OnCompleted = null;
+    private bool $IsCompleted = false;
+    private $Result = null;
 
-    public function __construct(Task $task)
+    public function __get(string $name)
     {
-        $this->Task = $task;
+        return $this->$name;
     }
 
-    public function getResult()
+    public function __construct(Closure $action, ?CancelationToken $token = null)
     {
-        return $this->Task->Result;
+        $action    = new SerializableClosure($action);
+        $action    = serialize($action);
+        $action    = base64_encode($action);
+        $workspace = escapeshellarg(LauncherProperties::getWorkspace());
+
+        $this->Token   = $token;
+        $this->Process = new Process();
+        $this->Process->start('php', __DIR__ . '/Internal/TaskWorker.php', $workspace, $action);
+    }
+
+    public function onCompleted(Closure $continuation): void
+    {
+        $this->OnCompleted = $continuation;
     }
 
     function isCompleted(): bool
     {
-        return $this->Task->IsCompleted;
+        if ($this->IsCompleted) {
+            return $this->IsCompleted;
+        }
+        
+        if ($this->Token && $this->Token->IsCancellationRequested) {
+            $this->IsCompleted = true;
+            $this->Process->kill();
+            $this->Process->close();
+            throw new CancelationException('A task was canceled');
+        }
+
+        $isRunning = $this->Process->isRunning();
+        if (!$isRunning) {
+            $this->IsCompleted = true;
+        }
+
+        return $this->IsCompleted;
+    }
+
+    public function getResult()
+    {
+        if ($this->Result) {
+            return $this->Result;
+        }
+
+        while (!$this->isCompleted()) {
+            // waiting for process to be completed.
+        }
+
+        $output = $this->Process->read();
+        $result = $this->Process->report();
+        $this->Process->close();
+        $this->Result = unserialize($result);
+        $this->IsCompleted = true;
+
+        if ($this->Result instanceof TaskException) {
+            throw new TaskException($this->Result->getMessage(), $this->Result->getCode());
+        }
+
+        echo $output;
+        if ($this->OnCompleted) {
+            $continuation = $this->OnCompleted;
+            $this->OnCompleted = null;
+            $continuation();
+        }
+
+        return $this->Result;
     }
 }
