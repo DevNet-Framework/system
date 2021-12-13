@@ -58,7 +58,7 @@ class TaskScheduler
     {
         $tasks = [];
         foreach ($this->Tasks as $task) {
-            if ($task->Status == Task::Running && !$task->IsCompleted) {
+            if ($task->Status == Task::Running) {
                 $tasks[] = $task;
             }
         }
