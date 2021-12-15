@@ -9,6 +9,7 @@
 
 namespace DevNet\System\Runtime;
 
+use DevNet\System\Async\AsyncFunction;
 use DevNet\System\Async\TaskScheduler;
 
 class MainMethodRunner
@@ -32,6 +33,8 @@ class MainMethodRunner
             throw new \Exception("Main Method does not exist or entry point not configured yet");
         }
 
-        $this->MainClass::main($this->Args);
+        $mainAsync = new AsyncFunction([$this->MainClass, 'main']);
+        $task = $mainAsync($this->Args);
+        $task->wait();
     }
 }
