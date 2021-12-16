@@ -9,12 +9,13 @@
 
 namespace DevNet\System\Async\Tasks;
 
+use DevNet\System\Action;
 use DevNet\System\Async\AsyncAwaiter;
 use DevNet\System\Async\CancelationException;
 use DevNet\System\Async\CancelationToken;
 use DevNet\System\Async\IAwaitable;
 use DevNet\System\Async\IAwaiter;
-use DevNet\System\Action;
+use DevNet\System\Exceptions\ArrayException;
 use Closure;
 
 class Task implements IAwaitable
@@ -124,7 +125,6 @@ class Task implements IAwaitable
                 $this->IsCompleted = true;
                 $this->Result = $this->Awaiter->getResult();
                 $this->Scheduler->dequeue($this);
-
             } catch (\Throwable $exception) {
                 if ($exception instanceof CancelationException) {
                     $this->Status = self::Canceled;
@@ -149,8 +149,7 @@ class Task implements IAwaitable
 
         $continuationTask = new Task($continuationAction, $token);
 
-        $this->Awaiter->onCompleted(function () use ($continuationTask)
-        {
+        $this->Awaiter->onCompleted(function () use ($continuationTask) {
             $continuationTask->wait();
         });
 
@@ -192,8 +191,22 @@ class Task implements IAwaitable
         return $task;
     }
 
-    public static function completedTask()
+    public static function completedTask(): Task
     {
         return new Task();
+    }
+
+    public static function waitAll(array $tasks): void
+    {
+        while ($tasks) {
+            foreach ($tasks as $index => $task) {
+                if (!$task instanceof Task) {
+                    throw new ArrayException("The Item of the index {$index}, must be of type " . Task::class);
+                }
+                if ($task->getAwaiter()->IsCompleted()) {
+                    unset($tasks[$index]);
+                }
+            }
+        }
     }
 }
