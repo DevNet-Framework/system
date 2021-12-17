@@ -13,7 +13,7 @@ use DevNet\System\Process;
 use DevNet\System\Async\IAwaiter;
 use DevNet\System\Async\CancelationException;
 use DevNet\System\Async\CancelationToken;
-use DevNet\System\Runtime\LauncherProperties;
+use DevNet\System\Loader\LauncherProperties;
 use Opis\Closure\SerializableClosure;
 use Closure;
 

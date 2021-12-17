@@ -9,7 +9,7 @@
 
 require __DIR__ . '/../../../../../../../vendor/autoload.php';
 
-use DevNet\System\Runtime\ClassLoader;
+use DevNet\System\Loader\ClassLoader;
 use DevNet\System\Async\Tasks\TaskException;
 use Opis\Closure\SerializableClosure;
 
