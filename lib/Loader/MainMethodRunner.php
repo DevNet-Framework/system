@@ -7,7 +7,7 @@
  * @link        https://github.com/DevNet-Framework
  */
 
-namespace DevNet\System\Runtime;
+namespace DevNet\System\Loader;
 
 use DevNet\System\Async\AsyncFunction;
 use DevNet\System\Async\TaskScheduler;
