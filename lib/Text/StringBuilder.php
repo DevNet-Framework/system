@@ -30,7 +30,7 @@ class StringBuilder
 
     public function appendLine(string $value = null): StringBuilder
     {
-        $this->Text .= $value . "\n";
+        $this->Text .= $value . PHP_EOL;
         return $this;
     }
 
