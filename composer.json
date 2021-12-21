@@ -1,6 +1,6 @@
 {
-    "name": "devnet/core",
-    "description": "The DevNet Core Library",
+    "name": "devnet/runtime",
+    "description": "The DevNet Runtime Library",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -15,7 +15,7 @@
     },
     "autoload": {
         "psr-4": {
-            "DevNet\\System\\" : "lib/"
+            "DevNet\\System\\": "lib/"
         },
         "files": [
             "lib/Functions.php"
