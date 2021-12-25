@@ -9,39 +9,11 @@
 
 namespace DevNet\System\IO;
 
-class Stream
+abstract class Stream
 {
-    public int $Position = 0;
-    public string $Filename;
-    public string $mode;
-    public $Resource;
-
-    public function __construct(string $filename, string $mode)
-    {
-        $this->Filename = $filename;
-        $this->Mode     = $mode;
-        $this->open();
-    }
-
-    public function open()
-    {
-        $this->Resource = fopen($this->Filename, $this->Mode);
-    }
-
-    public function getSize()
-    {
-        if (null === $this->Resource) {
-            return null;
-        }
-
-        $stats = fstat($this->Resource);
-
-        if ($stats !== false) {
-            return $stats['size'];
-        }
-
-        return null;
-    }
+    protected float $Timeout = 0;
+    protected bool $Blocking = true;
+    protected $Resource = null;
 
     public function isSeekable(): bool
     {
@@ -51,21 +23,6 @@ class Stream
 
         $meta = stream_get_meta_data($this->Resource);
         return $meta['seekable'];
-    }
-
-    public function seek($offset, $whence = SEEK_SET)
-    {
-        if (!$this->Resource) {
-            throw new \Exception("Missing Resource");
-        }
-
-        if (!$this->isSeekable()) {
-            throw new \Exception("Resource is not seekable");
-        }
-
-        $result = fseek($this->Resource, $offset, $whence);
-
-        return $result;
     }
 
     public function isReadable(): bool
@@ -78,30 +35,6 @@ class Stream
         $mode = $meta['mode'];
 
         return (strstr($mode, 'r') || strstr($mode, '+'));
-    }
-
-    public function read(int $buffer = null)
-    {
-        if (!$this->Resource) {
-            throw new \Exception('Missing resource');
-        }
-
-        if (!$this->isReadable()) {
-            throw new \Exception('Not readable');
-        }
-
-        if ($buffer == null) {
-            $buffer = $this->getSize();
-            $this->seek(0);
-        }
-
-        $result = fread($this->Resource, $buffer);
-
-        if (false === $result) {
-            throw new \Exception('Unable to read from resource');
-        }
-
-        return $result;
     }
 
     public function isWritable(): bool
@@ -118,6 +51,45 @@ class Stream
             || strstr($mode, 'c')
             || strstr($mode, 'a')
             || strstr($mode, '+'));
+    }
+
+    public function eof(): bool
+    {
+        if (!$this->Resource) {
+            return true;
+        }
+
+        return feof($this->Resource);
+    }
+
+    public function getSize(): ?int
+    {
+        if (null === $this->Resource) {
+            return null;
+        }
+
+        $stats = fstat($this->Resource);
+
+        if ($stats !== false) {
+            return $stats['size'];
+        }
+
+        return null;
+    }
+
+    public function seek($offset, $whence = SEEK_SET)
+    {
+        if (!$this->Resource) {
+            throw new \Exception("Missing Resource");
+        }
+
+        if (!$this->isSeekable()) {
+            throw new \Exception("Resource is not seekable");
+        }
+
+        $result = fseek($this->Resource, $offset, $whence);
+
+        return $result;
     }
 
     public function write(string $string): int
@@ -139,23 +111,69 @@ class Stream
         return $result;
     }
 
-    public function eof(): bool
+    public function read(int $buffer = null): ?string
     {
         if (!$this->Resource) {
-            return true;
+            throw new \Exception('Missing resource');
         }
 
-        return feof($this->Resource);
+        if (!$this->isReadable()) {
+            throw new \Exception('Not readable');
+        }
+
+        if ($buffer == null) {
+            if (!$this->getSize()) {
+                return null;
+            }
+            $buffer = $this->getSize();
+            $this->seek(0);
+        }
+
+        if ($this->Timeout) {
+            stream_set_timeout($this->Resource, (int) $this->Timeout, $this->Timeout * 1000000 % 1000000);
+        }
+
+        $result = fread($this->Resource, $buffer);
+
+        if ($result === false) {
+            return null;
+        }
+
+        return $result;
+    }
+
+    public function readLine(): ?string
+    {
+        if (!$this->Resource) {
+            throw new \Exception('Missing resource');
+        }
+
+        if (!$this->isReadable()) {
+            throw new \Exception('Not readable');
+        }
+
+        if ($this->Timeout) {
+            stream_set_timeout($this->Resource, (int) $this->Timeout, $this->Timeout * 1000000 % 1000000);
+        }
+
+        $result = fgets($this->Resource);
+
+        if ($result === false) {
+            return null;
+        }
+
+        return $result;
     }
 
     public function close(): void
     {
         if ($this->Resource) {
             fclose($this->Resource);
+            $this->Resource = null;
         }
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         if (!$this->isSeekable()) {
             return '';
