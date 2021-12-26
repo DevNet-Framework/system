@@ -66,6 +66,12 @@ class Task implements IAwaitable
         if ($action) {
             $this->Action = new Action($action);
             $this->Status = Self::Created;
+            if ($this->Action->MethodInfo->isGenerator()) {
+                $action = $this->Action->MethodInfo->getClosure();
+                $this->Awaiter = new AsyncAwaiter($action(), $this->Token);
+            } else {
+                $this->Awaiter = new TaskAwaiter($this->Action->MethodInfo->getClosure(), $this->Token);
+            }
         }
     }
 
@@ -89,12 +95,6 @@ class Task implements IAwaitable
 
         if ($this->Scheduler->MaxConcurrency == 0 || $this->Scheduler->MaxConcurrency - count($this->Scheduler->getScheduledTasks()) > 0) {
             $this->Status = Task::Running;
-            if ($this->Action->MethodInfo->isGenerator()) {
-                $action = $this->Action->MethodInfo->getClosure();
-                $this->Awaiter = new AsyncAwaiter($action(), $this->Token);
-            } else {
-                $this->Awaiter = new TaskAwaiter($this->Action->MethodInfo->getClosure(), $this->Token);
-            }
         }
 
         if ($continuationAction) {
@@ -143,7 +143,7 @@ class Task implements IAwaitable
     {
         $previousTask = $this;
         $continuationAction = function () use ($continuationAction, $previousTask) {
-            $previousTask->wait();
+            yield $previousTask;
             return $continuationAction($previousTask);
         };
 
