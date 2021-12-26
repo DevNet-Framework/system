@@ -165,6 +165,20 @@ abstract class Stream
         return $result;
     }
 
+    public function flush(): void
+    {
+        if (!$this->Resource) {
+            throw new \Exception('Missing resource');
+        }
+
+        if (!$this->isWritable()) {
+            throw new \Exception('not writible');
+        }
+
+        rewind($this->Resource);
+        fflush($this->Resource);
+    }
+
     public function close(): void
     {
         if ($this->Resource) {
