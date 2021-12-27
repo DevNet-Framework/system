@@ -70,7 +70,7 @@ class Task implements IAwaitable
                 $action = $this->Action->MethodInfo->getClosure();
                 $this->Awaiter = new AsyncAwaiter($action(), $this->Token);
             } else {
-                $this->Awaiter = new TaskAwaiter($this->Action->MethodInfo->getClosure(), $this->Token);
+                $this->Awaiter = new TaskAwaiter($this->Action, $this->Token);
             }
         }
     }
