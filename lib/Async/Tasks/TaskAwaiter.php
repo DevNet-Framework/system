@@ -14,7 +14,7 @@ use DevNet\System\Async\IAwaiter;
 use DevNet\System\Async\CancelationException;
 use DevNet\System\Async\CancelationToken;
 use DevNet\System\Loader\LauncherProperties;
-use Opis\Closure\SerializableClosure;
+use DevNet\System\Action;
 use Closure;
 
 class TaskAwaiter implements IAwaiter
@@ -30,9 +30,8 @@ class TaskAwaiter implements IAwaiter
         return $this->$name;
     }
 
-    public function __construct(Closure $action, ?CancelationToken $token = null)
+    public function __construct(Action $action, ?CancelationToken $token = null)
     {
-        $action    = new SerializableClosure($action);
         $action    = serialize($action);
         $action    = base64_encode($action);
         $workspace = escapeshellarg(LauncherProperties::getWorkspace());
