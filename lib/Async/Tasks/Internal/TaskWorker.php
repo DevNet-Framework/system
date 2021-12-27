@@ -9,9 +9,9 @@
 
 require __DIR__ . '/../../../../../../../vendor/autoload.php';
 
+use DevNet\System\Action;
 use DevNet\System\Loader\ClassLoader;
 use DevNet\System\Async\Tasks\TaskException;
-use Opis\Closure\SerializableClosure;
 
 class TaskWorker
 {
@@ -51,7 +51,7 @@ class TaskWorker
             $result = $action();
 
             if ($result instanceof Closure) {
-                $result = new SerializableClosure($result);
+                $result = new Action($result);
             }
 
             fwrite(STDERR, serialize($result));
