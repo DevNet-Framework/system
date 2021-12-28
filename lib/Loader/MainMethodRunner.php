@@ -10,7 +10,8 @@
 namespace DevNet\System\Loader;
 
 use DevNet\System\Async\AsyncFunction;
-use DevNet\System\Async\TaskScheduler;
+use DevNet\System\Async\Tasks\Task;
+use DevNet\System\Async\Tasks\TaskScheduler;
 
 class MainMethodRunner
 {
@@ -35,6 +36,8 @@ class MainMethodRunner
 
         $mainAsync = new AsyncFunction([$this->MainClass, 'main']);
         $task = $mainAsync($this->Args);
+
         $task->wait();
+        Task::waitAll(TaskScheduler::getDefaultScheduler()->Tasks);
     }
 }
