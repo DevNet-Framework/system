@@ -24,7 +24,6 @@ class TaskScheduler
     public function __construct(int $maxConcurrency = 0)
     {
         $this->MaxConcurrency = $maxConcurrency;
-        register_shutdown_function([$this, 'shutdown']);
     }
 
     public function enqueue(Task $task): void
@@ -63,13 +62,6 @@ class TaskScheduler
             }
         }
         return $tasks;
-    }
-
-    public function shutdown(): void
-    {
-        foreach ($this->Tasks as $task) {
-            $task->wait();
-        }
     }
 
     public static function getDefaultScheduler(): TaskScheduler
