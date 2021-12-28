@@ -66,12 +66,6 @@ class Task implements IAwaitable
         if ($action) {
             $this->Action = new Action($action);
             $this->Status = Self::Created;
-            if ($this->Action->MethodInfo->isGenerator()) {
-                $action = $this->Action->MethodInfo->getClosure();
-                $this->Awaiter = new AsyncAwaiter($action(), $this->Token);
-            } else {
-                $this->Awaiter = new TaskAwaiter($this->Action, $this->Token);
-            }
         }
     }
 
@@ -94,6 +88,12 @@ class Task implements IAwaitable
         $continuationAction = $this->Awaiter->OnCompleted;
 
         if ($this->Scheduler->MaxConcurrency == 0 || $this->Scheduler->MaxConcurrency - count($this->Scheduler->getScheduledTasks()) > 0) {
+            if ($this->Action->MethodInfo->isGenerator()) {
+                $action = $this->Action->MethodInfo->getClosure();
+                $this->Awaiter = new AsyncAwaiter($action(), $this->Token);
+            } else {
+                $this->Awaiter = new TaskAwaiter($this->Action, $this->Token);
+            }
             $this->Status = Task::Running;
         }
 
@@ -201,9 +201,10 @@ class Task implements IAwaitable
         while ($tasks) {
             foreach ($tasks as $index => $task) {
                 if (!$task instanceof Task) {
-                    throw new ArrayException("The Item of the index {$index}, must be of type " . Task::class);
+                    throw new ArrayException("The Item of the index {$index}, must be of type: " . Task::class);
                 }
                 if ($task->getAwaiter()->IsCompleted()) {
+                    $task->getAwaiter()->getResult();
                     unset($tasks[$index]);
                 }
             }
