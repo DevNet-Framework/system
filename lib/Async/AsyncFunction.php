@@ -9,22 +9,21 @@
 
 namespace DevNet\System\Async;
 
-use Closure;
 use DevNet\System\Action;
 use DevNet\System\Async\Tasks\Task;
+use DevNet\System\Async\Tasks\TaskScheduler;
 
 class AsyncFunction extends Action
 {
     public function invokeArgs(array $args = []): Task
     {
         $action = $this->MethodInfo;
-
         $task = new Task(function () use ($action, $args) {
             $result = yield $action->invokeArgs($args);
             return $result;
         });
 
-        $task->start();
+        $task->start(new TaskScheduler());
         return $task;
     }
 }
