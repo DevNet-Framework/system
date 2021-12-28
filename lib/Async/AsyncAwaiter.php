@@ -83,7 +83,11 @@ class AsyncAwaiter implements IAwaiter
         }
 
         if (!$this->Generator->valid()) {
-            $this->Result = $this->Generator->getReturn();
+            try {
+                $this->Result = $this->Generator->getReturn();
+            } catch (\Throwable $th) {
+                $this->Result = null;
+            }
             $this->IsCompleted = true;
             $this->IsRunning = false;
             return;
