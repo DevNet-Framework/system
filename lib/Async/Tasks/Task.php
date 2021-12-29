@@ -66,6 +66,13 @@ class Task implements IAwaitable
         if ($action) {
             $this->Action = new Action($action);
             $this->Status = Self::Created;
+            if ($this->Action->MethodInfo->isGenerator()) {
+                $this->Awaiter = new AsyncAwaiter($action(), $this->Token);
+            } else {
+                $this->Awaiter = new AsyncAwaiter(function () use ($action) {
+                    return yield $action();
+                }, $this->Token);
+            }
         }
     }
 
@@ -88,10 +95,7 @@ class Task implements IAwaitable
         $continuationAction = $this->Awaiter->OnCompleted;
 
         if ($this->Scheduler->MaxConcurrency == 0 || $this->Scheduler->MaxConcurrency - count($this->Scheduler->getScheduledTasks()) > 0) {
-            if ($this->Action->MethodInfo->isGenerator()) {
-                $action = $this->Action->MethodInfo->getClosure();
-                $this->Awaiter = new AsyncAwaiter($action(), $this->Token);
-            } else {
+            if (!$this->Action->MethodInfo->isGenerator()) {
                 $this->Awaiter = new TaskAwaiter($this->Action, $this->Token);
             }
             $this->Status = Task::Running;
@@ -111,12 +115,6 @@ class Task implements IAwaitable
         }
 
         if ($this->Status == Task::Created || $this->Status == Task::Pending) {
-            $continuationAction = $this->Awaiter->OnCompleted;
-            $action = $this->Action->MethodInfo->getClosure();
-            $this->Awaiter = new AsyncAwaiter($action(), $this->Token);
-            if ($continuationAction) {
-                $this->Awaiter->onCompleted($continuationAction);
-            }
             $this->Status = Task::Running;
         }
 
@@ -142,12 +140,10 @@ class Task implements IAwaitable
     public function then(Closure $continuationAction, ?CancelationToken $token = null): Task
     {
         $previousTask = $this;
-        $continuationAction = function () use ($continuationAction, $previousTask) {
+        $continuationTask = new Task(function () use ($continuationAction, $previousTask) {
             yield $previousTask;
             return $continuationAction($previousTask);
-        };
-
-        $continuationTask = new Task($continuationAction, $token);
+        }, $token);
 
         $this->Awaiter->onCompleted(function () use ($continuationTask) {
             $continuationTask->wait();
@@ -163,10 +159,13 @@ class Task implements IAwaitable
         return $task;
     }
 
-    public static function delay(int $microseconds): Task
+    public static function delay(float $seconds): Task
     {
-        $task = new Task(function () use ($microseconds) {
-            usleep($microseconds);
+        $task = new Task(function () use ($seconds) {
+            $startTime = microtime(true);
+            do {
+                $elapsedTime = yield microtime(true) - $startTime;
+            } while ($elapsedTime < $seconds);
             return true;
         });
         $task->start();
