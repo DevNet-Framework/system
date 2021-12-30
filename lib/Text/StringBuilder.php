@@ -46,25 +46,29 @@ class StringBuilder
         return $this;
     }
 
-    public function insert(int $index, string $value): StringBuilder
+    public function copy(int $index, int $length): StringBuilder
     {
-        $this->Text = substr_replace($this->Text, $value, $index);
+        $text   = substr($this->Text, $index, $length);
+        $string = new StringBuilder();
+        $string->append($text);
+        return $string;
+    }
+
+    public function insert(string $value, int $index, int $length = 0): StringBuilder
+    {
+        $this->Text = substr_replace($this->Text, $value, $index, $length);
         return $this;
     }
 
-    public function copy(int $sourceIndex, int $destinationIndex)
+    public function remove(int $index, int $length): StringBuilder
     {
+        $this->Text = substr_replace($this->Text, '', $index, $length);
+        return $this;
     }
 
     public function replace(string $oldValue, string $newValue): StringBuilder
     {
-        str_replace($oldValue, $newValue, $this->Text);
-        return $this;
-    }
-
-    public function remove(int $startIndex, int $length): StringBuilder
-    {
-        $this->Text = substr_replace($this->Text, '', $startIndex, $length);
+        $this->Text = str_replace($oldValue, $newValue, $this->Text);
         return $this;
     }
 
@@ -72,6 +76,11 @@ class StringBuilder
     {
         $this->Text = "";
         return $this;
+    }
+
+    public function getLength(): int
+    {
+        return strlen($this->Text);
     }
 
     public function __toString(): string
