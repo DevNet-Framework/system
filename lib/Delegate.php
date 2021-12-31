@@ -7,7 +7,7 @@
  * @link        https://github.com/DevNet-Framework
  */
 
-namespace DevNet\System\Event;
+namespace DevNet\System;
 
 use DevNet\System\Action;
 use DevNet\System\Collections\IEnumerable;
