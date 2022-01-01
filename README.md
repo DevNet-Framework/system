@@ -1,5 +1,5 @@
-# DevNet Runtime
-This dependency is the runtime library of **DevNet Framework**, which includes the following Base Class Library:
+# DevNet Core
+This dependency is the core library of **DevNet Framework**, which includes the following Base Class Library:
 
 - IO Stream
 - Event Delegate
@@ -7,6 +7,7 @@ This dependency is the runtime library of **DevNet Framework**, which includes t
 - Generic Collection
 - Extension Method
 - Linq Method
+- Dependency Injection
 - Database Connector
 - Event Logging
 - Generic compiler
@@ -17,14 +18,14 @@ This dependency is the runtime library of **DevNet Framework**, which includes t
 - Composer the dependency manager from [getcomposer.org](https://getcomposer.org/)
 
 ## Installation
-You can install DevNet Runtime as a third-party library with any framework or project, by running the following command in the terminal:
+You can install DevNet Core as a third-party library with any framework or project, by running the following command in the terminal:
 
 ```bash
-composer require devnet/runtime
+composer require devnet/core
 ```
 
 ## Documentation
 Full documentation on how to use **DevNet Framework** is available at [devnet-framework.github.io](https://devnet-framework.github.io)
 
 ## License
-This library is licensed under the MIT license. See [License File](https://github.com/DevNet-Framework/runtime/blob/master/LICENSE) in the root folder for more information.
+This library is licensed under the MIT license. See [License File](https://github.com/DevNet-Framework/core/blob/master/LICENSE) in the root folder for more information.

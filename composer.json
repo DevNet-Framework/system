@@ -1,6 +1,6 @@
 {
-    "name": "devnet/runtime",
-    "description": "The DevNet Runtime Library",
+    "name": "devnet/core",
+    "description": "The DevNet Core Library",
     "type": "library",
     "license": "MIT",
     "authors": [
