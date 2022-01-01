@@ -9,9 +9,6 @@
 
 namespace DevNet\System\Dependency;
 
-use DevNet\System\Activator;
-use DevNet\System\IServiceProvider;
-
 class ServiceProvider implements IServiceProvider
 {
     protected array $InstanceServices = [];

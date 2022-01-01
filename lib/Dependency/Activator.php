@@ -7,7 +7,7 @@
  * @link        https://github.com/DevNet-Framework
  */
 
-namespace DevNet\System;
+namespace DevNet\System\Dependency;
 
 use DevNet\System\Exceptions\ClassException;
 use ReflectionClass;
