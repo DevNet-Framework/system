@@ -10,7 +10,7 @@
 require __DIR__ . '/../../../../../../../vendor/autoload.php';
 
 use DevNet\System\Action;
-use DevNet\System\Loader\ClassLoader;
+use DevNet\System\Runtime\ClassLoader;
 use DevNet\System\Async\Tasks\TaskException;
 
 class TaskWorker

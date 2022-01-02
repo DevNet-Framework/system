@@ -9,12 +9,12 @@
 
 namespace DevNet\System\Async\Tasks;
 
-use DevNet\System\Process;
+use DevNet\System\Action;
 use DevNet\System\Async\IAwaiter;
 use DevNet\System\Async\CancelationException;
 use DevNet\System\Async\CancelationToken;
-use DevNet\System\Loader\LauncherProperties;
-use DevNet\System\Action;
+use DevNet\System\Process;
+use DevNet\System\Runtime\LauncherProperties;
 use Closure;
 
 class TaskAwaiter implements IAwaiter
