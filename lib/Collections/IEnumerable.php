@@ -10,8 +10,9 @@
 namespace DevNet\System\Collections;
 
 use IteratorAggregate;
+use Traversable;
 
 interface IEnumerable extends IteratorAggregate
 {
-    public function getIterator(): Enumerator;
+    public function getIterator(): Traversable;
 }
