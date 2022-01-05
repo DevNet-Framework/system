@@ -23,19 +23,19 @@ class Enumerator implements Iterator, Countable
         $this->Key = key($this->Array);
     }
 
-    public function rewind()
+    public function rewind(): void
     {
         reset($this->Array);
         $this->Key = key($this->Array);
     }
 
-    public function next()
+    public function next(): void
     {
         next($this->Array);
         $this->Key = key($this->Array);
     }
 
-    public function valid()
+    public function valid(): bool
     {
         return isset($this->Array[$this->Key]);
     }
@@ -55,7 +55,7 @@ class Enumerator implements Iterator, Countable
         return count($this->Array);
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return $this->Array;
     }
