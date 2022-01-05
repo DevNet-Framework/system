@@ -11,7 +11,6 @@ namespace DevNet\System\Collections;
 
 use DevNet\System\Type;
 use DevNet\System\Text\StringBuilder;
-use DevNet\System\Exceptions\ErrorMessageExtension;
 use DevNet\System\Exceptions\TypeException;
 
 trait ArrayTrait
@@ -23,7 +22,7 @@ trait ArrayTrait
     /** 
      * set to the array an element with the provided key and value.
      */
-    public function offsetSet($key, $value)
+    public function offsetSet($key, $value): void
     {
         $genericType = $this->getType();
         $result = $genericType->validateArguments($key ?? 0, $value);
@@ -62,7 +61,7 @@ trait ArrayTrait
     /**
      * unset an element associated with the specified key
      */
-    public function offsetUnset($key)
+    public function offsetUnset($key): void
     {
         unset($this->Array[$key]);
     }
