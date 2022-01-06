@@ -48,7 +48,7 @@ class CommandParser
 
         $name = strtolower($name);
         foreach ($this->Options as $option) {
-            if (strtolower($option->Name) == $name || strtolower($option->Alias) == $name) {
+            if (strtolower((string)$option->Name) == $name || strtolower((string)$option->Alias) == $name) {
                 return $option;
             }
         }
