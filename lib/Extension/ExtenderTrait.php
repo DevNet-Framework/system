@@ -11,7 +11,7 @@ namespace DevNet\System\Extension;
 
 use BadMethodCallException;
 
-trait ExtensionTrait
+trait ExtenderTrait
 {
     public function __call($methodName, $args)
     {
