@@ -11,7 +11,7 @@ namespace DevNet\System\Text;
 
 class StringBuilder
 {
-    use \DevNet\System\Extension\ExtensionTrait;
+    use \DevNet\System\Extension\ExtenderTrait;
 
     private int $Capacity;
     private string $Text;

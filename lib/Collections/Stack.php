@@ -16,7 +16,7 @@ use DevNet\System\Exceptions\ErrorMessageExtension;
 
 class Stack implements IEnumerable
 {
-    use \DevNet\System\Extension\ExtensionTrait;
+    use \DevNet\System\Extension\ExtenderTrait;
 
     private array $Array = [];
     private Type $GenericType;

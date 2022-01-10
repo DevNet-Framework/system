@@ -16,7 +16,7 @@ use DevNet\System\Exceptions\ArrayException;
 class ArrayList implements ArrayAccess, IList
 {
     use \DevNet\System\Collections\ArrayTrait;
-    use \DevNet\System\Extension\ExtensionTrait;
+    use \DevNet\System\Extension\ExtenderTrait;
 
     private Type $GenericType;
 

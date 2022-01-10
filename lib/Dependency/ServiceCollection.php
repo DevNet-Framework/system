@@ -14,7 +14,7 @@ use Traversable;
 
 class ServiceCollection implements IServiceCollection
 {
-    use \DevNet\System\Extension\ExtensionTrait;
+    use \DevNet\System\Extension\ExtenderTrait;
 
     private array $Services = [];
 

@@ -12,7 +12,7 @@ use DevNet\System\Logging\Console\ConsoleLoggerFactory;
 
 class LoggerProvider
 {
-    use \DevNet\System\Extension\ExtensionTrait;
+    use \DevNet\System\Extension\ExtenderTrait;
     
     private array $Factories = [];
 

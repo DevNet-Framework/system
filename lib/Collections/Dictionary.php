@@ -16,7 +16,7 @@ use DevNet\System\Exceptions\ArrayException;
 class Dictionary implements ArrayAccess, IDictionary
 {
     use \DevNet\System\Collections\ArrayTrait;
-    use \DevNet\System\Extension\ExtensionTrait;
+    use \DevNet\System\Extension\ExtenderTrait;
 
     public function __construct(string $keyType, string $valueType)
     {
