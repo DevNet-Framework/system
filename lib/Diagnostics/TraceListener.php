@@ -9,11 +9,19 @@
 
 namespace DevNet\System\Diagnostics;
 
+use DevNet\System\IO\Stream;
+
 abstract class TraceListener
 {
+    protected Stream $Writer;
     protected int $IndentLevel = 0;
     protected int $IndentSize = 4;
     protected bool $NeedIndent = false;
+
+    public function __construct(Stream $writer)
+    {
+        $this->Writer = $writer;
+    }
 
     public function indent(): void
     {
@@ -25,7 +33,14 @@ abstract class TraceListener
         $this->IndentLevel--;
     }
 
-    public abstract function write($vakue, ?string $category): void;
+    public function flush(): void
+    {
+        $this->Writer->flush();
+    }
 
-    public abstract function writeLine($vakue, ?string $category): void;
+    public abstract function write($value, ?string $category): void;
+
+    public abstract function writeLine($value, ?string $category): void;
+
+    public abstract function caller(int $skipFrames): void;
 }
