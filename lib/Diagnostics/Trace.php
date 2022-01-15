@@ -9,13 +9,28 @@
 
 namespace DevNet\System\Diagnostics;
 
+use DevNet\System\Exceptions\PropertyException;
+
 class Trace
 {
     protected TraceListenerCollection $Listeners;
+    protected int $IndentSize = 4;
 
     public function __get(string $name)
     {
         return $this->$name;
+    }
+
+    public function __set(string $name, $value)
+    {
+        if (!$name == 'IndentSize') {
+            throw new PropertyException("The property {$name} doesn't exist");
+        }
+
+        $this->IndentSize = $value;
+        foreach ($this->Listeners as $listener) {
+            $listener->IndentSize = $value;
+        }
     }
 
     public function __construct()
