@@ -14,9 +14,9 @@ use DevNet\System\IO\Stream;
 abstract class TraceListener
 {
     protected Stream $Writer;
-    protected int $IndentLevel = 0;
-    protected int $IndentSize = 4;
     protected bool $NeedIndent = false;
+    protected int $IndentLevel = 0;
+    public int $IndentSize = 4;
 
     public function __construct(Stream $writer)
     {
