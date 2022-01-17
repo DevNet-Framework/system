@@ -7,6 +7,18 @@
  * @link        https://github.com/DevNet-Framework
  */
 
+use DevNet\System\Diagnostics\Debug;
+
+/**
+ * add debug helper.
+ */
+if (!function_exists("debug")) {
+    function debug(): Debug
+    {
+        return new Debug();
+    }
+}
+
 /**
  * add some PHP 8 features to PHP 7.
  */
