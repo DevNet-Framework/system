@@ -78,13 +78,13 @@ class WriterTraceListener extends TraceListener
         $skipFrames++;
         $stack  = new StackTrace($skipFrames);
         $frame  = $stack->getFrame(0);
-        $file   = substr(strrchr($frame->FileName, DIRECTORY_SEPARATOR), 1) . ':' . $frame->LineNumber;
+        $file   = $frame->FileName . ':' . $frame->LineNumber;
         $frame  = $stack->getFrame(1);
         $caller = $frame->FunctionName . '()';
         if ($frame->ClassName) {
             $caller = $frame->ClassName . '::' . $caller;
         }
 
-        $this->writeLine($caller.' '.$file);
+        $this->writeLine($caller . ' in ' . $file);
     }
 }
