@@ -10,9 +10,9 @@
 namespace DevNet\System\Logging\Console;
 
 use DevNet\System\Logging\ILogger;
-use DevNet\System\Logging\ILoggerFactory;
+use DevNet\System\Logging\ILoggerProvider;
 
-class ConsoleLoggerFactory implements ILoggerFactory
+class ConsoleLoggerProvider implements ILoggerProvider
 {
     public function createLogger(string $category): ILogger
     {
