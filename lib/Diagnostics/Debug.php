@@ -13,9 +13,8 @@ use DateTime;
 use DevNet\System\IO\Console;
 use DevNet\System\IO\ConsoleColor;
 
-class Debug
+class Debug extends Trace
 {
-    private Trace $Trace;
     private int $FrameLevel = 0;
 
     public function _get(string $name)
@@ -25,19 +24,19 @@ class Debug
 
     public function __construct()
     {
-        $this->Trace = new Trace();
-        $this->Trace->Listeners->add(new DefaultTraceListener());
+        $this->Listeners = new TraceListenerCollection();
+        $this->Listeners->add(new DefaultTraceListener());
     }
 
     public function log($value, ?string $category = null): void
     {
         $time = DateTime::createFromFormat('U.u', microtime(TRUE));
-        $this->Trace->write('[' . $time->format('H:i:s.v') . '] ');
-        $this->Trace->writeLine($value, $category);
-        $this->Trace->indent();
-        $this->Trace->write('at ');
-        $this->Trace->caller(1);
-        $this->Trace->unindent();
+        $this->write('[' . $time->format('H:i:s.v') . '] ');
+        $this->writeLine($value, $category);
+        $this->indent();
+        $this->write('at ');
+        $this->caller(1);
+        $this->unindent();
     }
 
     public function notice(string $message): void
@@ -51,13 +50,13 @@ class Debug
         ) {
             Console::foregroundColor(ConsoleColor::Green);
             $time = DateTime::createFromFormat('U.u', microtime(TRUE));
-            $this->Trace->write('[' . $time->format('H:i:s.v') . '] ');
-            $this->Trace->writeLine($message, 'Notice');
+            $this->write('[' . $time->format('H:i:s.v') . '] ');
+            $this->writeLine($message, 'Notice');
             Console::foregroundColor(ConsoleColor::Green);
-            $this->Trace->indent();
-            $this->Trace->write('at ');
-            $this->Trace->caller(1);
-            $this->Trace->unindent();
+            $this->indent();
+            $this->write('at ');
+            $this->caller(1);
+            $this->unindent();
             Console::resetColor();
         }
     }
@@ -73,13 +72,13 @@ class Debug
         ) {
             Console::foregroundColor(ConsoleColor::Yellow);
             $time = DateTime::createFromFormat('U.u', microtime(TRUE));
-            $this->Trace->write('[' . $time->format('H:i:s.v') . '] ');
-            $this->Trace->writeLine($message, 'Wraning');
+            $this->write('[' . $time->format('H:i:s.v') . '] ');
+            $this->writeLine($message, 'Wraning');
             Console::foregroundColor(ConsoleColor::Yellow);
-            $this->Trace->indent();
-            $this->Trace->write('at ');
-            $this->Trace->caller(1);
-            $this->Trace->unindent();
+            $this->indent();
+            $this->write('at ');
+            $this->caller(1);
+            $this->unindent();
             Console::resetColor();
         }
     }
@@ -95,13 +94,13 @@ class Debug
         ) {
             Console::foregroundColor(ConsoleColor::Red);
             $time = DateTime::createFromFormat('U.u', microtime(TRUE));
-            $this->Trace->write('[' . $time->format('H:i:s.v') . '] ');
-            $this->Trace->writeLine($message, 'Error');
+            $this->write('[' . $time->format('H:i:s.v') . '] ');
+            $this->writeLine($message, 'Error');
             Console::foregroundColor(ConsoleColor::Red);
-            $this->Trace->indent();
-            $this->Trace->write('at ');
-            $this->Trace->caller(1);
-            $this->Trace->unindent();
+            $this->indent();
+            $this->write('at ');
+            $this->caller(1);
+            $this->unindent();
             Console::resetColor();
         }
     }
@@ -111,13 +110,13 @@ class Debug
         if (!$condition) {
             Console::foregroundColor(ConsoleColor::Red);
             $time = DateTime::createFromFormat('U.u', microtime(TRUE));
-            $this->Trace->write('[' . $time->format('H:i:s.v') . '] ');
-            $this->Trace->writeLine($message, 'Assertion Failed');
+            $this->write('[' . $time->format('H:i:s.v') . '] ');
+            $this->writeLine($message, 'Assertion Failed');
             Console::foregroundColor(ConsoleColor::Red);
-            $this->Trace->indent();
-            $this->Trace->write('at ');
-            $this->Trace->caller(1);
-            $this->Trace->unindent();
+            $this->indent();
+            $this->write('at ');
+            $this->caller(1);
+            $this->unindent();
             Console::resetColor();
         }
     }
