@@ -15,11 +15,22 @@ class LoggingBuilder
 {
     use \DevNet\System\Extension\ExtenderTrait;
 
+    private array $Filters = ['' => 2];
     private array $Providers = [];
 
     public function __get(string $name)
     {
         return $this->Providers;
+    }
+
+    public function setMinimumLevel(int $level)
+    {
+        $this->addFilter('', $level);
+    }
+    
+    public function addFilter(string $category, int $level)
+    {
+        $this->Filters[$category] = $level;
     }
 
     public function addProvider(ILoggerProvider $provider): void
