@@ -15,12 +15,12 @@ class LoggingBuilder
 {
     use \DevNet\System\Extension\ExtenderTrait;
 
-    private array $Filters = ['' => 2];
+    private array $Filters = [];
     private array $Providers = [];
 
     public function __get(string $name)
     {
-        return $this->Providers;
+        return $this->$name;
     }
 
     public function setMinimumLevel(int $level)
