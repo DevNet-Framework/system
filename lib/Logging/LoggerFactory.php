@@ -16,12 +16,15 @@ use Closure;
 class LoggerFactory implements ILoggerFactory
 {
     private array $Providers = [];
+    private array $Filters = [];
 
-    public function __construct(array $providers)
+    public function __construct(array $providers, array $filters)
     {
         foreach ($providers as $provider) {
             $this->addProvider($provider);
         }
+
+        $this->Filters = $filters;
     }
 
     public function addProvider(ILoggerProvider $provider)
@@ -35,13 +38,21 @@ class LoggerFactory implements ILoggerFactory
         foreach ($this->Providers as $provider) {
             $loggers[] = $provider->createLogger($category);
         }
-        return new Logger($loggers);
+
+        $filters = [];
+        foreach ($this->Filters as $prefix => $level) {
+            if (str_starts_with($category, $prefix)) {
+                $filters[$prefix] = $level;
+            }
+        }
+
+        return new Logger($loggers, $filters);
     }
 
     public static function create(Closure $configure)
     {
         $builder = new LoggingBuilder();
         $configure($builder);
-        return new LoggerFactory($builder->Providers);
+        return new LoggerFactory($builder->Providers, $builder->Filters);
     }
 }
