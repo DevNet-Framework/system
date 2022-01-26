@@ -11,6 +11,11 @@ namespace DevNet\System\Logging;
 interface LogLevel
 {
     /**
+     * Logs that contain the most detailed messages.
+     */
+    const Trace = 0;
+
+    /**
      * Logs that are used for interactive investigation during development.
      */
     const Debug = 1;
@@ -33,6 +38,11 @@ interface LogLevel
     /**
      * Logs that describe a system crash, or a catastrophic failure that requires immediate attention.
      */
-    const Critical = 5;
+    const Fatal = 5;
+
+    /**
+     * Logs that not used for writing log messages.
+     */
+    const None = 6;
 
 }
