@@ -11,67 +11,64 @@ namespace DevNet\System\Logging;
 
 class Logger implements ILogger
 {
+    private int $MinimumLevel;
     private array $Loggers;
 
-    public function __construct(array $loggers)
+    public function __construct(array $loggers, array $filters)
     {
-        $this->Loggers  = $loggers;
+        $this->MinimumLevel = $filters[''] ?? 0;
+        $this->Loggers = $loggers;
+        $longestPrefix = '';
+        
+        foreach ($filters as $prefix => $level) {
+            if (strlen($prefix) > strlen($longestPrefix)) {
+                $longestPrefix = $prefix;
+                $this->MinimumLevel = $level;
+            }
+        }
     }
 
-    public function log(int $level, string $message, array $args): void
+    public function log(int $level, string $message, array $args = []): void
     {
-        foreach ($this->Loggers as $logger) {
-            $logger->log($level, $message, $args);
+        // overide the arguments if the fist and only argument is an array
+        if (count($args) == 1 && isset($args[0]) && is_array($args[0])) {
+            $args = $args[0];
         }
+
+        foreach ($this->Loggers as $logger) {
+            if ($level >= $this->MinimumLevel) {
+                $logger->log($level, $message, $args);
+            }
+        }
+    }
+
+    public function trace(string $message, ...$args): void
+    {
+        $this->log(LogLevel::Trace, $message, $args);
     }
 
     public function debug(string $message, ...$args): void
     {
-        // overide the arguments if the fist argument is an array
-        if (isset($args[0]) && is_array($args[0])) {
-            $args = $args[0];
-        }
-        
         $this->log(LogLevel::Debug, $message, $args);
     }
 
-    public function notice(string $message, ...$args): void
+    public function info(string $message, ...$args): void
     {
-        // overide the arguments if the fist argument is an array
-        if (isset($args[0]) && is_array($args[0])) {
-            $args = $args[0];
-        }
-        
-        $this->log(LogLevel::Notice, $message, $args);
+        $this->log(LogLevel::Info, $message, $args);
     }
 
     public function warning(string $message, ...$args): void
     {
-        // overide the arguments if the fist argument is an array
-        if (isset($args[0]) && is_array($args[0])) {
-            $args = $args[0];
-        }
-
         $this->log(LogLevel::Warning, $message, $args);
     }
 
     public function error(string $message, ...$args): void
     {
-        // overide the arguments if the fist argument is an array
-        if (isset($args[0]) && is_array($args[0])) {
-            $args = $args[0];
-        }
-
         $this->log(LogLevel::Error, $message, $args);
     }
 
-    public function critical(string $message, ...$args): void
+    public function fatal(string $message, ...$args): void
     {
-        // overide the arguments if the fist argument is an array
-        if (isset($args[0]) && is_array($args[0])) {
-            $args = $args[0];
-        }
-
-        $this->log(LogLevel::Critical, $message, $args);
+        $this->log(LogLevel::Fatal, $message, $args);
     }
 }
