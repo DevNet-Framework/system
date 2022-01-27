@@ -11,7 +11,7 @@ namespace DevNet\System\Logging;
 
 use DevNet\System\Logging\Console\ConsoleLoggerProvider;
 
-class LoggingBuilder
+class LoggerOptions
 {
     use \DevNet\System\Extension\ExtenderTrait;
 
