@@ -23,7 +23,7 @@ interface LogLevel
     /**
      * Logs that track the general flow of the application.
      */
-    const Notice = 2;
+    const Information = 2;
 
     /**
      * Logs that highlight the abnormal in the application flow, without stopping the execution.
