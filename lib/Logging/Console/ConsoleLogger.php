@@ -8,6 +8,7 @@
 
 namespace DevNet\System\Logging\Console;
 
+use DateTime;
 use DevNet\System\IO\Console;
 use DevNet\System\IO\ConsoleColor;
 use DevNet\System\Logging\ILogger;
@@ -22,39 +23,54 @@ class ConsoleLogger implements ILogger
         $this->Category = $category;
     }
 
-    public function log(int $level, string $message, array $args): void
+    public function log(int $level, string $message, array $args = []): void
     {
         switch ($level) {
+            case LogLevel::Trace:
+                $severity = 'Trace: ';
+                break;
             case LogLevel::Debug:
                 Console::foregroundColor(ConsoleColor::Blue);
-                Console::write('Debug:');
-                Console::resetColor();
+                $severity = 'Debug: ';
                 break;
-            case LogLevel::Notice:
+            case LogLevel::Information:
                 Console::foregroundColor(ConsoleColor::Green);
-                Console::write('Notice:');
-                Console::resetColor();
+                $severity = 'Info: ';
                 break;
             case LogLevel::Warning:
                 Console::foregroundColor(ConsoleColor::Yellow);
-                Console::write('Warning:');
-                Console::resetColor();
+                $severity = 'Warn: ';
                 break;
             case LogLevel::Error:
                 Console::foregroundColor(ConsoleColor::Red);
-                Console::write('Error:');
-                Console::resetColor();
+                $severity = 'Error: ';
                 break;
-            case LogLevel::Critical:
+            case LogLevel::Fatal:
+                Console::foregroundColor(ConsoleColor::White);
                 Console::backgroundColor(ConsoleColor::Red);
-                Console::write('Critical:');
-                Console::resetColor();
+                $severity = 'Fatal: ';
                 break;
+            default:
+                return;
+                break;
+        }
+
+        $dateTime = DateTime::createFromFormat('U.u', microtime(TRUE));
+        $date = '[' . $dateTime->format('Y-M-d H:i:s.v') . '] ';
+
+        $replace = [];
+        foreach ($args as $key => $value) {
+            // map the arguments if the value can be casted to string
+            if (!is_array($value) && (!is_object($value) || method_exists($value, '__toString'))) {
+                $replace['{' . $key . '}'] = $value;
             }
-            
-        Console::write(' ');
-        Console::writeline($this->Category);
-        Console::writeline($message, $args);
-        Console::writeline();
+        }
+
+        // interpolate replacement values into the string format
+        $message = strtr($message, $replace);
+
+        Console::writeLine($date . $this->Category);
+        Console::writeLine('    '. $severity. $message);
+        Console::resetColor();
     }
 }
