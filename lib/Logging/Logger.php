@@ -54,7 +54,7 @@ class Logger implements ILogger
 
     public function info(string $message, ...$args): void
     {
-        $this->log(LogLevel::Info, $message, $args);
+        $this->log(LogLevel::Information, $message, $args);
     }
 
     public function warning(string $message, ...$args): void
