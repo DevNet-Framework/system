@@ -14,18 +14,10 @@ class Logger implements ILogger
     private int $MinimumLevel;
     private array $Loggers;
 
-    public function __construct(array $loggers, array $filters)
+    public function __construct(array $loggers, int $minimumLevel = 0)
     {
-        $this->MinimumLevel = $filters[''] ?? 0;
+        $this->MinimumLevel = $minimumLevel;
         $this->Loggers = $loggers;
-        $longestPrefix = '';
-        
-        foreach ($filters as $prefix => $level) {
-            if (strlen($prefix) > strlen($longestPrefix)) {
-                $longestPrefix = $prefix;
-                $this->MinimumLevel = $level;
-            }
-        }
     }
 
     public function log(int $level, string $message, array $args = []): void
