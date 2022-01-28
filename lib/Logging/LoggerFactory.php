@@ -39,20 +39,31 @@ class LoggerFactory implements ILoggerFactory
             $loggers[] = $provider->createLogger($category);
         }
 
-        $filters = [];
+        $longestPrefix = '';
         foreach ($this->Filters as $prefix => $level) {
             if (str_starts_with($category, $prefix)) {
-                $filters[$prefix] = $level;
+                if (strlen($prefix) > strlen($longestPrefix)) {
+                    $longestPrefix = $prefix;
+                }
             }
         }
 
-        return new Logger($loggers, $filters);
+        $minimumLevel = $this->Filters[$longestPrefix] ?? 0;
+        return new Logger($loggers, $minimumLevel);
     }
 
-    public static function create(Closure $configure)
+    public static function create(?Closure $configure = null)
     {
-        $builder = new LoggingBuilder();
-        $configure($builder);
-        return new LoggerFactory($builder->Providers, $builder->Filters);
+        $providers = [];
+        $filters = [];
+
+        if ($configure) {
+            $builder = new LoggerOptions();
+            $configure($builder);
+            $providers = $builder->Providers;
+            $filters = $builder->Filters;
+        }
+
+        return new LoggerFactory($providers, $filters);
     }
 }
