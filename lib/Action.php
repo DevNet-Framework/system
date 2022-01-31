@@ -9,13 +9,13 @@
 
 namespace DevNet\System;
 
+use Opis\Closure\SerializableClosure;
 use ReflectionFunction;
 use Closure;
 
 class Action
 {
     private ReflectionFunction $MethodInfo;
-    private array $StaticVariables = [];
     private string $Syntax = '';
 
     public function __get(string $name)
@@ -41,35 +41,16 @@ class Action
 
     public function  __serialize(): array
     {
-        $staticVariables = $this->MethodInfo->getStaticVariables();
-
-        $fileName = $this->MethodInfo->getFileName();
-        $startLine = $this->MethodInfo->getStartLine() - 1; // adjustment by - 1, because line 1 is in inedx 0
-        $endLine = $this->MethodInfo->getEndLine();
-        $length = $endLine - $startLine;
-
-        $source = file($fileName, FILE_IGNORE_NEW_LINES);
-        $lines = array_slice($source, $startLine, $length);
-        $syntax = implode(PHP_EOL, $lines);
-        preg_match("/(?i)function(.|\s)*\}/", $syntax, $matches);
-        if (!$matches[0]) {
-            throw new \Exception("Syntax Error, Closure can't be serialized");
-        }
-        $syntax = $matches[0] . ";";
-
-        return ['StaticVariables' => $staticVariables, 'Syntax' => $syntax];
+        $wrapper = new SerializableClosure($this->MethodInfo->getClosure());
+        $serialized = serialize($wrapper);
+        return ['Syntax' => $serialized];
     }
 
     public function __unserialize(array $data): void
     {
-        $this->StaticVariables = $data['StaticVariables'];
-        $this->Syntax = $data['Syntax'];
-
-        extract($this->StaticVariables);
-        $closure = eval("return " . $this->Syntax);
-        $this->__construct($closure);
-        
-        $this->Syntax = '';
-        $this->StaticVariables = [];
+        $syntax  = $data['Syntax'];
+        $wrapper = unserialize($syntax);
+        $closure = $wrapper->getClosure();
+        $this->MethodInfo = new ReflectionFunction($closure);
     }
 }
