@@ -10,6 +10,7 @@
 namespace DevNet\System\Logging;
 
 use DevNet\System\Logging\Console\ConsoleLoggerProvider;
+use DevNet\System\Logging\File\FileLoggerProvider;
 
 class LoggerOptions
 {
@@ -41,5 +42,10 @@ class LoggerOptions
     public function addConsole(): void
     {
         $this->addProvider(new ConsoleLoggerProvider());
+    }
+
+    public function addFile(string $fileName): void
+    {
+        $this->addProvider(new FileLoggerProvider($fileName));
     }
 }
