@@ -13,9 +13,19 @@ use DevNet\System\Diagnostics\Debug;
  * add debug helper.
  */
 if (!function_exists("debug")) {
-    function debug(): Debug
+    function debug($value = null): Debug
     {
-        return new Debug();
+        $debug = new Debug();
+        if (func_num_args()) {
+            $time = \DateTime::createFromFormat('U.u', microtime(TRUE));
+            $debug->write('[' . $time->format('H:i:s.v') . '] ');
+            $debug->writeLine($value, 'Debug');
+            $debug->indent();
+            $debug->write('at ');
+            $debug->caller(1);
+            $debug->unindent();
+        }
+        return $debug;
     }
 }
 
