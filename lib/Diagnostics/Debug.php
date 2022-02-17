@@ -10,11 +10,10 @@
 namespace DevNet\System\Diagnostics;
 
 use DateTime;
-use DevNet\System\IO\Console;
-use DevNet\System\IO\ConsoleColor;
 
 class Debug extends Trace
 {
+    private static ?Debug $Instance = null;
     private int $FrameLevel = 1;
 
     public function _get(string $name)
@@ -52,5 +51,14 @@ class Debug extends Trace
         $this->write('at ');
         $this->caller($this->FrameLevel);
         $this->unindent();
+    }
+
+    public static function getInstance(): Debug
+    {
+        if (!self::$Instance) {
+            self::$Instance = new Debug();
+        }
+        
+        return self::$Instance;
     }
 }
