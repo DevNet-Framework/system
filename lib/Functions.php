@@ -15,7 +15,7 @@ use DevNet\System\Diagnostics\Debug;
 if (!function_exists("debug")) {
     function debug($value = null): Debug
     {
-        $debug = new Debug();
+        $debug = Debug::getInstance();
         if (func_num_args()) {
             $time = \DateTime::createFromFormat('U.u', microtime(TRUE));
             $debug->write('[' . $time->format('H:i:s.v') . '] ');
