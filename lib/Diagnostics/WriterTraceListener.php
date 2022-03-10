@@ -22,7 +22,7 @@ class WriterTraceListener extends TraceListener
                 $message = 'null';
                 break;
             case 'boolean':
-                if ($type) {
+                if ($value) {
                     $message = 'true';
                 } else {
                     $message = 'false';
