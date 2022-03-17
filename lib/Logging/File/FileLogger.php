@@ -24,7 +24,7 @@ class FileLogger implements ILogger
     {
         $this->Category = $category;
         $this->Trace = new Trace();
-        $this->Trace->Providers->add(new WriterTraceListener(new FileStream($fileName, 'a')));
+        $this->Trace->Listeners->add(new WriterTraceListener(new FileStream($fileName, 'a')));
     }
 
     public function log(int $level, string $message, array $args = []): void
