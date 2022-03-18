@@ -9,7 +9,6 @@
 
 namespace DevNet\System\Logging;
 
-use DevNet\System\Logging\ILogger;
 use DevNet\System\Logging\ILoggerFactory;
 use Closure;
 
@@ -27,12 +26,12 @@ class LoggerFactory implements ILoggerFactory
         $this->Filters = $filters;
     }
 
-    public function addProvider(ILoggerProvider $provider)
+    public function addProvider(ILoggerProvider $provider): void
     {
         $this->Providers[get_class($provider)] = $provider;
     }
 
-    public function createLogger(string $category): ILogger
+    public function createLogger(string $category): Logger
     {
         $loggers = [];
         foreach ($this->Providers as $provider) {
@@ -52,7 +51,7 @@ class LoggerFactory implements ILoggerFactory
         return new Logger($loggers, $minimumLevel);
     }
 
-    public static function create(?Closure $configure = null)
+    public static function create(?Closure $configure = null): LoggerFactory
     {
         $providers = [];
         $filters = [];
