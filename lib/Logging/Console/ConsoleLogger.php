@@ -35,11 +35,11 @@ class ConsoleLogger implements ILogger
                 break;
             case LogLevel::Information:
                 Console::foregroundColor(ConsoleColor::Green);
-                $severity = 'Info: ';
+                $severity = 'Info : ';
                 break;
             case LogLevel::Warning:
                 Console::foregroundColor(ConsoleColor::Yellow);
-                $severity = 'Warn: ';
+                $severity = 'Warn : ';
                 break;
             case LogLevel::Error:
                 Console::foregroundColor(ConsoleColor::Red);
@@ -69,8 +69,7 @@ class ConsoleLogger implements ILogger
         // interpolate replacement values into the string format
         $message = strtr($message, $replace);
 
-        Console::writeLine($date . $this->Category);
-        Console::writeLine('    '. $severity. $message);
+        Console::writeLine($date . $severity. $message);
         Console::resetColor();
     }
 }
