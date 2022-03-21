@@ -37,10 +37,10 @@ class FileLogger implements ILogger
                 $severity = 'Debug: ';
                 break;
             case LogLevel::Information:
-                $severity = 'Info: ';
+                $severity = 'Info : ';
                 break;
             case LogLevel::Warning:
-                $severity = 'Warn: ';
+                $severity = 'Warn : ';
                 break;
             case LogLevel::Error:
                 $severity = 'Error: ';
@@ -67,7 +67,6 @@ class FileLogger implements ILogger
         // interpolate replacement values into the string format
         $message = strtr($message, $replace);
 
-        $this->Trace->writeLine($date . $this->Category);
-        $this->Trace->writeLine('    '. $severity. $message);
+        $this->Trace->writeLine($date . $severity. $message);
     }
 }
