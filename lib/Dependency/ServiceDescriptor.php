@@ -11,24 +11,31 @@ namespace DevNet\System\Dependency;
 
 use Closure;
 use DevNet\System\Exceptions\ClassException;
+use DevNet\System\Exceptions\PropertyException;
 
 class ServiceDescriptor
 {
-    const Singleton = 1;
-    const Transient = 2;
+    public const Singleton = 1;
+    public const Transient = 2;
 
-    protected int $Lifetime;
-    protected string $ServiceType;
-    protected ?string $ImplimentationType = null;
-    protected ?object $ImplementationInstance = null;
-    protected ?Closure $ImplimentationFactory = null;
+    private int $lifetime;
+    private string $serviceType;
+    private ?string $implimentationType = null;
+    private ?object $implementationInstance = null;
+    private ?Closure $implimentationFactory = null;
 
-    /**
-     * Read-only for all properties.
-     */
     public function __get(string $name)
     {
-        return $this->$name;
+        if (in_array($name, ['Lifetime', 'ServiceType', 'ImplimentationType', 'ImplementationInstance', 'ImplimentationFactory'])) {
+            $property = lcfirst($name);
+            return $this->$property;
+        }
+
+        if (property_exists($this, $name)) {
+            throw new PropertyException("access to private property" . get_class($this) . "::" . $name);
+        }
+
+        throw new PropertyException("access to undefined property" . get_class($this) . "::" . $name);
     }
 
     public function __construct(int $lifetime, string $serviceType, $service)
@@ -55,9 +62,9 @@ class ServiceDescriptor
             throw new ClassException("The given service: " . get_class($implementationInstance) . " is not compatible with the declared type: {$serviceType}");
         }
 
-        $this->Lifetime               = $lifetime;
-        $this->ServiceType            = $serviceType;
-        $this->ImplementationInstance = $implementationInstance;
+        $this->lifetime               = $lifetime;
+        $this->serviceType            = $serviceType;
+        $this->implementationInstance = $implementationInstance;
     }
 
     public function describeType(int $lifetime, string $serviceType, string $implimentationType): void
@@ -75,9 +82,9 @@ class ServiceDescriptor
             throw new ClassException("The given service: {$implimentationType} is not compatible with the declared type: {$serviceType}");
         }
 
-        $this->Lifetime           = $lifetime;
-        $this->ServiceType        = $serviceType;
-        $this->ImplimentationType = $implimentationType;
+        $this->lifetime           = $lifetime;
+        $this->serviceType        = $serviceType;
+        $this->implimentationType = $implimentationType;
     }
 
     public function describeFactory(int $lifetime, string $serviceType, Closure $implimentationFactory): void
@@ -86,8 +93,8 @@ class ServiceDescriptor
             throw new ClassException("Can not find declared service type: {$serviceType}");
         }
 
-        $this->Lifetime              = $lifetime;
-        $this->ServiceType           = $serviceType;
-        $this->ImplimentationFactory = $implimentationFactory;
+        $this->lifetime              = $lifetime;
+        $this->serviceType           = $serviceType;
+        $this->implimentationFactory = $implimentationFactory;
     }
 }

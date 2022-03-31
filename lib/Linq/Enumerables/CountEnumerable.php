@@ -17,17 +17,17 @@ class CountEnumerable implements IEnumerable
 {
     use \DevNet\System\Extension\ExtenderTrait;
 
-    private IEnumerable $Enumerable;
+    private IEnumerable $enumerable;
 
     public function __construct(IEnumerable $enumerable)
     {
-        $this->Enumerable = $enumerable;
+        $this->enumerable = $enumerable;
     }
 
     public function count(Closure $predecate = null): int
     {
         $cout = 0;
-        foreach ($this->Enumerable as $element) {
+        foreach ($this->enumerable as $element) {
             if ($predecate) {
                 if ($predecate($element)) {
                     $cout++;
@@ -43,7 +43,7 @@ class CountEnumerable implements IEnumerable
     public function max(Closure $predecate = null)
     {
         $value = null;
-        foreach ($this->Enumerable as $element) {
+        foreach ($this->enumerable as $element) {
             if ($predecate) {
                 $element = $predecate($element);
             }
@@ -59,7 +59,7 @@ class CountEnumerable implements IEnumerable
     public function min(Closure $predecate = null)
     {
         $value = null;
-        foreach ($this->Enumerable as $element) {
+        foreach ($this->enumerable as $element) {
             if ($predecate) {
                 $element = $predecate($element);
             }
@@ -74,6 +74,6 @@ class CountEnumerable implements IEnumerable
 
     public function getIterator(): Enumerator
     {
-        return $this->Enumerable->getIterator();
+        return $this->enumerable->getIterator();
     }
 }

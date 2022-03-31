@@ -14,15 +14,15 @@ use DevNet\System\Logging\ILoggerProvider;
 
 class FileLoggerProvider implements ILoggerProvider
 {
-    private string $FileName;
+    private string $fileName;
 
     public function __construct(string $fileName)
     {
-        $this->FileName = $fileName;
+        $this->fileName = $fileName;
     }
 
     public function createLogger(string $category): ILogger
     {
-        return new FileLogger($category, $this->FileName);
+        return new FileLogger($category, $this->fileName);
     }
 }

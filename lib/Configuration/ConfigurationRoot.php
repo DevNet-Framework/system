@@ -9,25 +9,34 @@
 
 namespace DevNet\System\Configuration;
 
+use DevNet\System\Exceptions\PropertyException;
+
 class ConfigurationRoot implements IConfiguration
 {
-    private array $Settings = [];
+    private array $settings = [];
+
+    public function __get(string $name)
+    {
+        if ($name == 'Settings') {
+            return $this->settings;
+        }
+
+        if (property_exists($this, $name)) {
+            throw new PropertyException("access to private property" . get_class($this) . "::" . $name);
+        }
+
+        throw new PropertyException("access to undefined property" . get_class($this) . "::" . $name);
+    }
 
     public function __construct(array $settings = [])
     {
-        $this->Settings = $settings;
-    }
-
-    public function __get($name)
-    {
-        return $this->$name;
+        $this->settings = $settings;
     }
 
     public function getValue(string $key)
     {
-        $keys = explode(":", $key);
-
-        $value = $this->Settings;
+        $keys  = explode(":", $key);
+        $value = $this->settings;
 
         foreach ($keys as $key) {
             $value = $value[$key] ?? null;
@@ -54,7 +63,7 @@ class ConfigurationRoot implements IConfiguration
         $path = $key;
         $keys = explode(":", $key);
 
-        $settings = $this->Settings;
+        $settings = $this->settings;
 
         foreach ($keys as $key) {
             $settings = $settings[$key] ?? null;
@@ -64,8 +73,8 @@ class ConfigurationRoot implements IConfiguration
             }
         }
 
-        $children   = [];
-        $keys       = array_keys($settings);
+        $children = [];
+        $keys     = array_keys($settings);
 
         foreach ($keys as $key) {
             if ($path != '') {

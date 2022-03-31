@@ -41,9 +41,9 @@ class Grammar
         $this->state = $state;
         $matchedRules = [];
         foreach ($state as $rule) {
-            if (isset($rule->predecates[$position])) {
-                if ($rule->predecates[$position] == $itemName) {
-                    $matchedRules[$rule->index] = $rule;
+            if (isset($rule->Predecates[$position])) {
+                if ($rule->Predecates[$position] == $itemName) {
+                    $matchedRules[$rule->Index] = $rule;
                 }
             }
         }
@@ -55,9 +55,9 @@ class Grammar
     {
         $nextRules = [];
         foreach ($this->rules as $rule) {
-            if (isset($rule->predecates[0])) {
-                if ($rule->predecates[0] == $item && count($rule->predecates) > 1) {
-                    $nextRules[$rule->index] = $rule;
+            if (isset($rule->Predecates[0])) {
+                if ($rule->Predecates[0] == $item && count($rule->Predecates) > 1) {
+                    $nextRules[$rule->Index] = $rule;
                 }
             }
         }
@@ -66,9 +66,9 @@ class Grammar
         $item = $token->getName();
         $matchedRules = [];
         foreach ($nextRules as $rule) {
-            if (isset($rule->predecates[1])) {
-                if ($rule->predecates[1] == $item) {
-                    $matchedRules[$rule->index] = $rule;
+            if (isset($rule->Predecates[1])) {
+                if ($rule->Predecates[1] == $item) {
+                    $matchedRules[$rule->Index] = $rule;
                 }
             }
         }
@@ -80,9 +80,9 @@ class Grammar
     {
         $matchedRules = [];
         foreach ($this->rules as $rule) {
-            if (isset($rule->predecates[0])) {
-                if ($rule->predecates[0] == $itemName) {
-                    $matchedRules[$rule->index] = $rule;
+            if (isset($rule->Predecates[0])) {
+                if ($rule->Predecates[0] == $itemName) {
+                    $matchedRules[$rule->Index] = $rule;
                 }
             }
         }
@@ -104,9 +104,9 @@ class Grammar
                 $itemName = $token->getName();
                 $matchedRules = [];
                 foreach ($state as $rule) {
-                    if (isset($rule->predecates[$position])) {
-                        if ($rule->predecates[$position] == $itemName) {
-                            $matchedRules[$rule->index] = $rule;
+                    if (isset($rule->Predecates[$position])) {
+                        if ($rule->Predecates[$position] == $itemName) {
+                            $matchedRules[$rule->Index] = $rule;
                         }
                     }
                 }
@@ -117,15 +117,15 @@ class Grammar
                 }
 
                 foreach ($state as $rule) {
-                    if (isset($rule->predecates[$position])) {
+                    if (isset($rule->Predecates[$position])) {
                         foreach ($this->rules as $ruleMap) {
-                            if ($ruleMap->name == $rule->predecates[$position] && $ruleMap->predecates[0] != $rule->predecates[$position]) {
+                            if ($ruleMap->Name == $rule->Predecates[$position] && $ruleMap->Predecates[0] != $rule->Predecates[$position]) {
                                 $derivationRules = [];
-                                $derivationRules[$ruleMap->index] = $ruleMap;
+                                $derivationRules[$ruleMap->Index] = $ruleMap;
                                 $derivationRules = $this->derivation($derivationRules);
                                 foreach ($derivationRules as $derivationRule) {
-                                    if ($derivationRule->predecates[0] == $itemName) {
-                                        $matchedRules[$rule->index] = $rule;
+                                    if ($derivationRule->Predecates[0] == $itemName) {
+                                        $matchedRules[$rule->Index] = $rule;
                                     }
                                 }
                             }
@@ -148,8 +148,8 @@ class Grammar
             $matchedRules = [];
             foreach ($rules as $rule) {
                 foreach ($this->rules as $ruleMap) {
-                    if ($ruleMap->name == $rule->predecates[0] && $ruleMap->predecates[0] != $rule->predecates[0]) {
-                        $matchedRules[$ruleMap->index] = $ruleMap;
+                    if ($ruleMap->Name == $rule->Predecates[0] && $ruleMap->Predecates[0] != $rule->Predecates[0]) {
+                        $matchedRules[$ruleMap->Index] = $ruleMap;
                     }
                 }
             }
@@ -166,11 +166,11 @@ class Grammar
         $nextItemName = $token->getName();
 
         foreach ($state as $rule) {
-            $size = count($rule->predecates);
+            $size = count($rule->Predecates);
             if ($size == $position) {
-                if (isset($rule->predecates[$size - 1])) {
-                    if ($rule->predecates[$size - 1] == $itemName) {
-                        $rules[$rule->index] = $rule;
+                if (isset($rule->Predecates[$size - 1])) {
+                    if ($rule->Predecates[$size - 1] == $itemName) {
+                        $rules[$rule->Index] = $rule;
                     }
                 }
             }
@@ -193,10 +193,10 @@ class Grammar
 
                 $lastRuleName = null;
                 foreach ($lastState as $lastRule) {
-                    if (isset($lastRule->predecates[$lastPosition - 1])) {
-                        $lastRuleName = $lastRule->predecates[$lastPosition - 1];
+                    if (isset($lastRule->Predecates[$lastPosition - 1])) {
+                        $lastRuleName = $lastRule->Predecates[$lastPosition - 1];
                         foreach ($rules as $rule) {
-                            if ($rule->name == $lastRuleName) {
+                            if ($rule->Name == $lastRuleName) {
                                 return $rule;
                             }
                         }

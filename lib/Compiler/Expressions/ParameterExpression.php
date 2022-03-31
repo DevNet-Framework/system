@@ -13,7 +13,7 @@ class ParameterExpression extends Expression
 {
     public string $Name;
     public ?string $Type;
-    public $value;
+    public $Value;
 
     public function __construct(string $name, ?string $type = null, $value = null)
     {

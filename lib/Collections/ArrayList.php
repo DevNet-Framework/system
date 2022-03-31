@@ -18,11 +18,11 @@ class ArrayList implements ArrayAccess, IList
     use \DevNet\System\Collections\ArrayTrait;
     use \DevNet\System\Extension\ExtenderTrait;
 
-    private Type $GenericType;
+    private Type $genericType;
 
     public function __construct(string $valueType)
     {
-        $this->GenericType = new Type(self::class, new Type(Type::Integer), new Type($valueType));
+        $this->genericType = new Type(self::class, new Type(Type::Integer), new Type($valueType));
     }
 
     public function add($value): void
@@ -60,7 +60,7 @@ class ArrayList implements ArrayAccess, IList
 
     public function getType(): Type
     {
-        return $this->GenericType;
+        return $this->genericType;
     }
 
     public function toArray(): array

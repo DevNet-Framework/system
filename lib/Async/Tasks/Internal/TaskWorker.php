@@ -15,11 +15,11 @@ use DevNet\System\Async\Tasks\TaskException;
 
 class TaskWorker
 {
-    private string $Data;
+    private string $data;
 
     public function __construct(array $args)
     {
-        $this->Data = $args[2];
+        $this->data = $args[2];
         $this->load($args[1]);
         set_error_handler([$this, 'errorHandler']);
     }
@@ -47,7 +47,7 @@ class TaskWorker
     {
         try {
             $result = null;
-            $action = unserialize(base64_decode($this->Data));
+            $action = unserialize(base64_decode($this->data));
             $result = $action();
 
             if ($result instanceof Closure) {

@@ -9,16 +9,30 @@
 
 namespace DevNet\System\Async\Tasks;
 
+use DevNet\System\Exceptions\PropertyException;
+
 class TaskScheduler
 {
-    private static TaskScheduler $Scheduler;
+    private static TaskScheduler $scheduler;
 
     protected int $MaxConcurrency = 0;
     protected array $Tasks = [];
 
     public function __get(string $name)
     {
-        return $this->$name;
+        if ($name == 'MaxConcurrency') {
+            return $this->MaxConcurrency;
+        }
+
+        if ($name == 'Tasks') {
+            return $this->Tasks;
+        }
+        
+        if (property_exists($this, $name)) {
+            throw new PropertyException("access to private property" . get_class($this) . "::" . $name);
+        }
+
+        throw new PropertyException("access to undefined property" . get_class($this) . "::" . $name);
     }
 
     public function __construct(int $maxConcurrency = 0)
@@ -66,10 +80,10 @@ class TaskScheduler
 
     public static function getDefaultScheduler(): TaskScheduler
     {
-        if (!isset(self::$Scheduler)) {
-            self::$Scheduler = new TaskScheduler();
+        if (!isset(self::$scheduler)) {
+            self::$scheduler = new TaskScheduler();
         }
 
-        return self::$Scheduler;
+        return self::$scheduler;
     }
 }

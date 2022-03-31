@@ -15,58 +15,58 @@ use PDO;
 
 class DbReader implements IteratorAggregate
 {
-    private DbCommand $Command;
-    private array $Row = [];
+    private DbCommand $command;
+    private array $row = [];
 
     public function __construct(DbCommand $command)
     {
-        $this->Command = $command;
-        $this->Command->Statement->setFetchMode(PDO::FETCH_ASSOC);
+        $this->command = $command;
+        $this->command->Statement->setFetchMode(PDO::FETCH_ASSOC);
     }
 
     public function read(): bool
     {
-        if ($this->Command->Connection->getState() === 1) {
-            $row = $this->Command->Statement->fetch();
+        if ($this->command->Connection->getState() === 1) {
+            $row = $this->command->Statement->fetch();
 
             if ($row) {
-                $this->Row = $row;
+                $this->row = $row;
                 return true;
             }
         }
 
-        $this->Row = [];
-        $this->Command->Statement->closeCursor();
+        $this->row = [];
+        $this->command->Statement->closeCursor();
         return false;
     }
 
     public function getValue(string $name)
     {
-        return $this->Row[$name] ?? null;
+        return $this->row[$name] ?? null;
     }
 
     public function getName(int $ordinal): ?string
     {
-        $row = array_keys($this->Row);
+        $row = array_keys($this->row);
         return $row[$ordinal] ?? null;
     }
 
     public function reset()
     {
-        $this->Row = [];
-        $this->Command->Statement->closeCursor();
+        $this->row = [];
+        $this->command->Statement->closeCursor();
     }
 
     public function close()
     {
-        $this->Row = [];
-        $this->Command->Statement->closeCursor();
-        $this->Command->Statement = null;
-        $this->Command->Connection = null;
+        $this->row = [];
+        $this->command->Statement->closeCursor();
+        $this->command->Statement = null;
+        $this->command->Connection = null;
     }
 
-    public function getIterator(): iterable
+    public function getIterator(): Enumerator
     {
-        return new Enumerator($this->Command->Statement->fetchAll());
+        return new Enumerator($this->command->Statement->fetchAll());
     }
 }

@@ -11,18 +11,18 @@ namespace DevNet\System\Compiler\Parsing;
 
 class Parser
 {
-    const ERROR  = 0;
-    const GOTO   = 1;
-    const SHIFT  = 2;
-    const REDUCE = 3;
-    const ACCEPT = 4;
+    public const ERROR  = 0;
+    public const GOTO   = 1;
+    public const SHIFT  = 2;
+    public const REDUCE = 3;
+    public const ACCEPT = 4;
 
-    public int $action = 0;
+    public int $Action = 0;
+    private int $reduceId = 0;
+    private Stack $pointer;
     private Grammar $grammar;
-    public Stack $pointer;
     private Stack $state;
     private Stack $node;
-    public int $reduceId = 0;
     private int $position;
 
     public function __construct(Grammar $grammar)
@@ -36,7 +36,7 @@ class Parser
         $this->pointer  = new Stack();
         $this->state    = new Stack();
         $this->node     = new Stack();
-        $this->action   = 0;
+        $this->Action   = 0;
         $this->reduceId = 0;
         $this->pointer->push(0);
         $this->state->push([]);
@@ -46,7 +46,7 @@ class Parser
     public function advance()
     {
         if ($this->reduceId == 1) {
-            $this->action = self::ACCEPT;
+            $this->Action = self::ACCEPT;
         } else {
             $itemName = $this->node->peek()->getName();
             $state = $this->state->peek();
@@ -54,28 +54,28 @@ class Parser
             $nextState = null;
             $state = $this->grammar->match($state, $position, $itemName);
 
-            if ($state == true || $this->action == self::ERROR) {
+            if ($state == true || $this->Action == self::ERROR) {
                 $nextState = $this->grammar->lookAhead($itemName);
                 if ($nextState == true && $nextState != $state) {
-                    $this->action = self::GOTO;
+                    $this->Action = self::GOTO;
                 } else {
                     $rule = $this->grammar->canReduce($state, $position, $itemName, $this->state, $this->pointer);
                     if ($rule) {
-                        $this->action = self::REDUCE;
+                        $this->Action = self::REDUCE;
                     } else {
-                        $this->action = self::SHIFT;
+                        $this->Action = self::SHIFT;
                     }
                 }
             } else {
                 $newState = $this->grammar->goTo($itemName);
                 if ($newState) {
-                    $this->action = self::GOTO;
+                    $this->Action = self::GOTO;
                 } else {
-                    $this->action = self::ERROR;
+                    $this->Action = self::ERROR;
                 }
             }
 
-            switch ($this->action) {
+            switch ($this->Action) {
                 case self::GOTO:
                     if ($nextState) {
                         $this->pointer->push(1);
@@ -100,9 +100,9 @@ class Parser
                     if (count($items) == 1) {
                         $item = $items[0];
                         if (count($item->getValues()) == 1) {
-                            $this->node->push(new Node($rule->name, $item->getValues()));
+                            $this->node->push(new Node($rule->Name, $item->getValues()));
                         } else {
-                            $this->node->push(new Node($rule->name, [$item]));
+                            $this->node->push(new Node($rule->Name, [$item]));
                         }
                     } else {
                         foreach ($items as &$item) {
@@ -111,11 +111,11 @@ class Parser
                                 $item = $values[0];
                             }
                         }
-                        $this->node->push(new Node($rule->name, array_reverse($items)));
+                        $this->node->push(new Node($rule->Name, array_reverse($items)));
                     }
 
                     $this->state->pop();
-                    $this->reduceId = $rule->index;
+                    $this->reduceId = $rule->Index;
                     break;
             }
         }
@@ -123,7 +123,7 @@ class Parser
 
     public function getAction()
     {
-        return $this->action;
+        return $this->Action;
     }
 
     public function getReduceId()
@@ -140,9 +140,9 @@ class Parser
     {
         $dump = [
             'nodes'     => $this->node,
-            'action'    => $this->action,
+            'action'    => $this->Action,
             'position'  => $this->pointer->peek(),
-            'reducedId'    => $this->reduceId,
+            'reducedId' => $this->reduceId,
             //'state'     => $this->state->peek()
         ];
 

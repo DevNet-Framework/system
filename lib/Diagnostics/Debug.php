@@ -13,13 +13,8 @@ use DateTime;
 
 class Debug extends Trace
 {
-    private static ?Debug $Instance = null;
-    private int $FrameLevel = 1;
-
-    public function _get(string $name)
-    {
-        return $this->$name;
-    }
+    private static ?Debug $instance = null;
+    private int $frameLevel = 1;
 
     public function __construct()
     {
@@ -30,14 +25,14 @@ class Debug extends Trace
     public function assert(bool $condition, string $message): void
     {
         if (!$condition) {
-            $this->FrameLevel++;
+            $this->frameLevel++;
             $this->fail($message);
         }
     }
 
     public function fail(string $message): void
     {
-        $this->FrameLevel++;
+        $this->frameLevel++;
         $this->log($message, 'Assertion Failed');
         exit;
     }
@@ -49,16 +44,16 @@ class Debug extends Trace
         $this->writeLine($value, $category);
         $this->indent();
         $this->write('at ');
-        $this->caller($this->FrameLevel);
+        $this->caller($this->frameLevel);
         $this->unindent();
     }
 
     public static function getInstance(): Debug
     {
-        if (!self::$Instance) {
-            self::$Instance = new Debug();
+        if (!self::$instance) {
+            self::$instance = new Debug();
         }
         
-        return self::$Instance;
+        return self::$instance;
     }
 }

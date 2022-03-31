@@ -14,8 +14,8 @@ use Closure;
 
 class LoggerFactory implements ILoggerFactory
 {
-    private array $Providers = [];
-    private array $Filters = [];
+    private array $providers = [];
+    private array $filters = [];
 
     public function __construct(array $providers, array $filters)
     {
@@ -23,23 +23,23 @@ class LoggerFactory implements ILoggerFactory
             $this->addProvider($provider);
         }
 
-        $this->Filters = $filters;
+        $this->filters = $filters;
     }
 
     public function addProvider(ILoggerProvider $provider): void
     {
-        $this->Providers[get_class($provider)] = $provider;
+        $this->providers[get_class($provider)] = $provider;
     }
 
     public function createLogger(string $category): Logger
     {
         $loggers = [];
-        foreach ($this->Providers as $provider) {
+        foreach ($this->providers as $provider) {
             $loggers[] = $provider->createLogger($category);
         }
 
         $longestPrefix = '';
-        foreach ($this->Filters as $prefix => $level) {
+        foreach ($this->filters as $prefix => $level) {
             if (str_starts_with($category, $prefix)) {
                 if (strlen($prefix) > strlen($longestPrefix)) {
                     $longestPrefix = $prefix;
@@ -47,7 +47,7 @@ class LoggerFactory implements ILoggerFactory
             }
         }
 
-        $minimumLevel = $this->Filters[$longestPrefix] ?? 0;
+        $minimumLevel = $this->filters[$longestPrefix] ?? 0;
         return new Logger($loggers, $minimumLevel);
     }
 

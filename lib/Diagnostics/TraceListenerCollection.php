@@ -15,17 +15,17 @@ use Traversable;
 
 class TraceListenerCollection implements IteratorAggregate
 {
-    private array $Listeners = [];
+    private array $listeners = [];
 
     public function add(TraceListener $listener): void
     {
-        $this->Listeners[get_class($listener)] = $listener;
+        $this->listeners[get_class($listener)] = $listener;
     }
 
     public function remove(TraceListener $listener): bool
     {
-        if (isset($this->Listeners[get_class($listener)])) {
-            unset($this->Listeners[get_class($listener)]);
+        if (isset($this->listeners[get_class($listener)])) {
+            unset($this->listeners[get_class($listener)]);
             return true;
         }
 
@@ -34,6 +34,6 @@ class TraceListenerCollection implements IteratorAggregate
 
     public function getIterator(): Traversable
     {
-        return new Enumerator($this->Listeners);
+        return new Enumerator($this->listeners);
     }
 }

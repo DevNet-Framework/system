@@ -13,7 +13,7 @@ use DevNet\System\Exceptions\PropertyException;
 
 class DbConnectionStringBuilder
 {
-    private string $ConnectionString = "";
+    private string $connectionString = "";
     public ?string $Driver           = null;
     public ?string $Datasource       = null;
     public ?string $Database         = null;
@@ -21,26 +21,24 @@ class DbConnectionStringBuilder
     public ?string $Username         = null;
     public ?string $Password         = null;
 
+    public function __get(string $name)
+    {
+        if ($name == 'ConnectionString') {
+            return $this->connectionString;
+        }
+
+        if (property_exists($this, $name)) {
+            throw new PropertyException("access to private property" . get_class($this) . "::" . $name);
+        }
+
+        throw new PropertyException("access to undefined property" . get_class($this) . "::" . $name);
+    }
+
     public function __construct(string $connection = null)
     {
         if ($connection) {
             $this->parseUri($connection);
         }
-    }
-
-    public function __get(string $name)
-    {
-        return $this->$name;
-    }
-
-    public function __set(string $name, $value)
-    {
-        if ($name == "ConnectionString") {
-            $class = self::class;
-            throw new PropertyException("read onley property {$class}::ConnectionString");
-        }
-
-        $this->$name = $value;
     }
 
     public function parseUri(string $uri)

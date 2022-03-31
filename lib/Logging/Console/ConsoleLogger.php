@@ -16,11 +16,11 @@ use DevNet\System\Logging\LogLevel;
 
 class ConsoleLogger implements ILogger
 {
-    private string $Category;
+    private string $category;
     
     public function __construct(string $category)
     {
-        $this->Category = $category;
+        $this->category = $category;
     }
 
     public function log(int $level, string $message, array $args = []): void

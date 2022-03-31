@@ -17,19 +17,19 @@ class JoinEnumerable implements IEnumerable
 {
     use \DevNet\System\Extension\ExtenderTrait;
 
-    private IEnumerable $Enumerable;
-    private array $Array = [];
+    private IEnumerable $enumerable;
+    private array $array = [];
 
     public function __construct(IEnumerable $enumerable)
     {
-        $this->Enumerable = $enumerable;
+        $this->enumerable = $enumerable;
     }
 
     public function join($innerCollection, Closure $outerSelector, Closure $innerSelector, Closure $resultSelector)
     {
         $innerJoin = [];
         $joinResult = [];
-        foreach ($this->Enumerable as $key => $outerElement) {
+        foreach ($this->enumerable as $key => $outerElement) {
             $outerKey = $outerSelector($outerElement);
             foreach ($innerCollection as $innerElement) {
                 $innerKey = $innerSelector($innerElement);
@@ -43,12 +43,12 @@ class JoinEnumerable implements IEnumerable
             $joinResult[$key] = $resultSelector($element[0], $element[1]);
         }
 
-        $this->Array = $joinResult;
+        $this->array = $joinResult;
         return $this;
     }
 
     public function getIterator(): Enumerator
     {
-        return new Enumerator($this->Array);
+        return new Enumerator($this->array);
     }
 }

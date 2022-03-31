@@ -23,11 +23,15 @@ class CommandLine implements ICommand
 
     public function __get(string $name)
     {
-        if (!property_exists($this, $name)) {
-            throw new PropertyException("The property {$name} doesn't exist.");
+        if (in_array($name, ['Name', 'Description', 'Options', 'Commands', 'Handler'])) {
+            return $this->$name;
+        }
+        
+        if (property_exists($this, $name)) {
+            throw new PropertyException("access to private property" . get_class($this) . "::" . $name);
         }
 
-        return $this->$name;
+        throw new PropertyException("access to undefined property" . get_class($this) . "::" . $name);
     }
 
     public function __construct(?string $name = null, ?string $description = null)

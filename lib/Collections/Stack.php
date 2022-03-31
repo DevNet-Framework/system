@@ -18,65 +18,65 @@ class Stack implements IEnumerable
 {
     use \DevNet\System\Extension\ExtenderTrait;
 
-    private array $Array = [];
-    private Type $GenericType;
+    private array $array = [];
+    private Type $genericType;
 
     public function __construct(string $valueType)
     {
-        $this->GenericType = new Type(self::class, new Type($valueType));
+        $this->genericType = new Type(self::class, new Type($valueType));
     }
 
     public function push($value): void
     {
-        $index = $this->GenericType->validateArguments($value);
+        $index = $this->genericType->validateArguments($value);
         if ($index > 0) {
             $message = new StringBuilder();
-            $message->invalidArgumentType(get_class($this), 'push', $index, $this->GenericType->GenericTypeArgs[$index - 1]->Name);
+            $message->invalidArgumentType(get_class($this), 'push', $index, $this->genericType->GenericTypeArgs[$index - 1]->Name);
             throw new TypeException($message->__toString());
         }
 
-        $this->Array[$value];
+        $this->array[$value];
     }
 
     public function pop()
     {
-        return array_pop($this->Array);
+        return array_pop($this->array);
     }
 
     public function peek()
     {
-        return end($this->Array);
+        return end($this->array);
     }
 
     public function contains($item): bool
     {
-        return in_array($item, $this->Array);
+        return in_array($item, $this->array);
     }
 
     public function remove($item): void
     {
-        if (isset($this->Array[$item])) {
-            unset($this->Array[$item]);
+        if (isset($this->array[$item])) {
+            unset($this->array[$item]);
         }
     }
 
     public function clear(): void
     {
-        $this->Array = [];
+        $this->array = [];
     }
 
     public function getIterator(): Enumerator
     {
-        return new Enumerator($this->Array);
+        return new Enumerator($this->array);
     }
 
     public function toArray(): array
     {
-        return $this->Array;
+        return $this->array;
     }
 
     public function getType(): Type
     {
-        return $this->GenericType;
+        return $this->genericType;
     }
 }

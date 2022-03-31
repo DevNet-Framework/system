@@ -11,23 +11,23 @@ namespace DevNet\System\Compiler\Lexing;
 
 class Token implements IToken
 {
-    public string $name;
-    public ?string $value;
+    public string $Name;
+    public ?string $Value;
 
     public function __construct(string $name, string $value = null)
     {
-        $this->name  = $name;
-        $this->value = $value;
+        $this->Name  = $name;
+        $this->Value = $value;
     }
 
     public function getName(): string
     {
-        return $this->name;
+        return $this->Name;
     }
 
     public function getValue(): string
     {
-        return $this->value;
+        return $this->Value;
     }
 
     public function getType(): string

@@ -16,6 +16,7 @@ use DevNet\System\Async\CancelationToken;
 use DevNet\System\Async\IAwaitable;
 use DevNet\System\Async\IAwaiter;
 use DevNet\System\Exceptions\ArrayException;
+use DevNet\System\Exceptions\PropertyException;
 use Closure;
 
 class Task implements IAwaitable
@@ -27,113 +28,125 @@ class Task implements IAwaitable
     public const Canceled  = -1;
     public const Failed    = -2;
 
-    private int $Id;
-    private int $Status = 0;
-    private TaskScheduler $Scheduler;
+    private int $id;
+    private int $status = 0;
+    private TaskScheduler $scheduler;
     private ?Task $continuationTask = null;
-    private ?Action $Action = null;
-    private ?IAwaiter $Awaiter = null;
-    private ?CancelationToken $Token = null;
-    private bool $IsCompleted = false;
-    private $Result = null;
+    private ?Action $action = null;
+    private ?IAwaiter $awaiter = null;
+    private ?CancelationToken $token = null;
+    private bool $isCompleted = false;
+    private $result = null;
 
     public function __get(string $name)
     {
         switch ($name) {
+            case 'Id':
+                return $this->id;
+                break;
+            case 'Status':
+                return $this->status;
+                break;
             case 'IsCompleted':
-                if (!$this->IsCompleted && $this->Status == Task::Running) {
-                    $this->IsCompleted = $this->Awaiter->IsCompleted();
+                if (!$this->isCompleted && $this->status == Task::Running) {
+                    $this->isCompleted = $this->awaiter->IsCompleted();
                 }
+                return $this->isCompleted;
                 break;
             case 'Result':
-                if (!$this->IsCompleted) {
+                if (!$this->isCompleted) {
                     $this->wait();
                 }
+                return $this->result;
                 break;
         }
+        
+        if (property_exists($this, $name)) {
+            throw new PropertyException("access to private property" . get_class($this) . "::" . $name);
+        }
 
-        return $this->$name;
+        throw new PropertyException("access to undefined property" . get_class($this) . "::" . $name);
     }
 
     public function __construct(Closure $action = null, ?CancelationToken $token = null)
     {
-        $this->Id        = spl_object_id($this);
-        $this->Status    = Self::Succeeded;
-        $this->Scheduler = TaskScheduler::getDefaultScheduler();
-        $this->Awaiter   = new AsyncAwaiter();
-        $this->Token     = $token;
+        $this->id        = spl_object_id($this);
+        $this->status    = Self::Succeeded;
+        $this->scheduler = TaskScheduler::getDefaultScheduler();
+        $this->awaiter   = new AsyncAwaiter();
+        $this->token     = $token;
 
         if ($action) {
-            $this->Action = new Action($action);
-            $this->Status = Self::Created;
-            if ($this->Action->MethodInfo->isGenerator()) {
-                $this->Awaiter = new AsyncAwaiter($action(), $this->Token);
+            $this->action = new Action($action);
+            $this->status = Self::Created;
+            if ($this->action->MethodInfo->isGenerator()) {
+                $this->awaiter = new AsyncAwaiter($action(), $this->token);
             } else {
-                $this->Awaiter = new AsyncAwaiter(function () use ($action) {
+                $this->awaiter = new AsyncAwaiter(function () use ($action) {
                     return yield $action();
-                }, $this->Token);
+                }, $this->token);
             }
         }
     }
 
     public function getAwaiter(): IAwaiter
     {
-        return $this->Awaiter;
+        return $this->awaiter;
     }
 
     public function start(TaskScheduler $taskScheduler = null): void
     {
-        if ($this->Status == Task::Running || $this->IsCompleted) {
+        if ($this->status == Task::Running || $this->isCompleted) {
             return;
         }
 
         if ($taskScheduler) {
-            $this->Scheduler = $taskScheduler;
+            $this->scheduler = $taskScheduler;
         }
 
-        $this->Status = Self::Pending;
-        $continuationAction = $this->Awaiter->OnCompleted;
+        $this->status = Self::Pending;
+        $continuationAction = $this->awaiter->OnCompleted;
 
-        if ($this->Scheduler->MaxConcurrency == 0 || $this->Scheduler->MaxConcurrency - count($this->Scheduler->getScheduledTasks()) > 0) {
-            if (!$this->Action->MethodInfo->isGenerator()) {
-                $this->Awaiter = new TaskAwaiter($this->Action, $this->Token);
+        if ($this->scheduler->MaxConcurrency == 0 || $this->scheduler->MaxConcurrency - count($this->scheduler->getScheduledTasks()) > 0) {
+            if (!$this->action->MethodInfo->isGenerator()) {
+                $this->awaiter = new TaskAwaiter($this->action, $this->token);
             }
-            $this->Status = Task::Running;
+            $this->status = Task::Running;
         }
 
         if ($continuationAction) {
-            $this->Awaiter->onCompleted($continuationAction);
+            $this->awaiter->onCompleted($continuationAction);
         }
 
-        $this->Scheduler->enqueue($this);
+        $this->scheduler->enqueue($this);
     }
 
     public function wait(): void
     {
-        if ($this->IsCompleted) {
+        if ($this->isCompleted) {
             return;
         }
 
-        if ($this->Status == Task::Created || $this->Status == Task::Pending) {
-            $this->Status = Task::Running;
+        if ($this->status == Task::Created || $this->status == Task::Pending) {
+            $this->status = Task::Running;
         }
 
-        if ($this->Status == Task::Running) {
+        if ($this->status == Task::Running) {
             try {
-                $this->IsCompleted = true;
-                $this->Result = $this->Awaiter->getResult();
-                $this->Scheduler->dequeue($this);
+                $this->isCompleted = true;
+                $this->result = $this->awaiter->getResult();
+                $this->scheduler->dequeue($this);
             } catch (\Throwable $exception) {
                 if ($exception instanceof CancelationException) {
-                    $this->Status = self::Canceled;
+                    $this->status = self::Canceled;
                     throw $exception;
                 }
 
-                $this->Status = self::Failed;
+                $this->status = self::Failed;
                 throw $exception;
             }
 
-            $this->Status = Task::Succeeded;
+            $this->status = Task::Succeeded;
         }
     }
 
@@ -145,7 +158,7 @@ class Task implements IAwaitable
             return $continuationAction($previousTask);
         }, $token);
 
-        $this->Awaiter->onCompleted(function () use ($continuationTask) {
+        $this->awaiter->onCompleted(function () use ($continuationTask) {
             $continuationTask->wait();
         });
 

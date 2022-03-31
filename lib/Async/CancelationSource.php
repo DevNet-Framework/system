@@ -9,23 +9,37 @@
 
 namespace DevNet\System\Async;
 
+use DevNet\System\Exceptions\PropertyException;
+
 class CancelationSource
 {
-    private CancelationToken $Token;
-    private bool $IsCancellationRequested = false;
+    private CancelationToken $token;
+    private bool $isCancellationRequested = false;
 
     public function __get(string $name)
     {
-        return $this->$name;
+        if ($name == 'Token') {
+            return $this->token;
+        }
+
+        if ($name == 'IsCancellationRequested') {
+            return $this->isCancellationRequested;
+        }
+        
+        if (property_exists($this, $name)) {
+            throw new PropertyException("access to private property" . get_class($this) . "::" . $name);
+        }
+
+        throw new PropertyException("access to undefined property" . get_class($this) . "::" . $name);
     }
 
     public function __construct()
     {
-        $this->Token = new CancelationToken($this);
+        $this->token = new CancelationToken($this);
     }
 
     public function cancel(): void
     {
-        $this->IsCancellationRequested = true;
+        $this->isCancellationRequested = true;
     }
 }

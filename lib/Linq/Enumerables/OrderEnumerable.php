@@ -18,46 +18,46 @@ class OrderEnumerable implements IEnumerable
 {
     use \DevNet\System\Extension\ExtenderTrait;
 
-    private IEnumerable $Enumerable;
-    private array $Array = [];
-    private array $Sort  = [];
+    private IEnumerable $enumerable;
+    private array $array = [];
+    private array $sort  = [];
 
     public function __construct(IEnumerable $enumerable)
     {
-        $this->Enumerable = $enumerable;
+        $this->enumerable = $enumerable;
     }
 
     public function orderBy(Closure $predecate)
     {
-        $array       = $this->Enumerable->getIterator()->toArray();
-        $this->Sort  = $this->sort($array, $predecate);
-        $list        = $this->list($this->Sort);
-        $this->Array = $list;
+        $array       = $this->enumerable->getIterator()->toArray();
+        $this->sort  = $this->sort($array, $predecate);
+        $list        = $this->list($this->sort);
+        $this->array = $list;
         return $this;
     }
 
     public function orderByDescending(Closure $predecate)
     {
-        $array       = $this->Enumerable->getIterator()->toArray();
-        $this->Sort  = $this->sort($array, $predecate, true);
-        $list        = $this->list($this->Sort);
-        $this->Array = $list;
+        $array       = $this->enumerable->getIterator()->toArray();
+        $this->sort  = $this->sort($array, $predecate, true);
+        $list        = $this->list($this->sort);
+        $this->array = $list;
         return $this;
     }
 
     public function thenBy(Closure $predecate)
     {
-        $map         = $this->sort($this->Sort, $predecate);
+        $map         = $this->sort($this->sort, $predecate);
         $list        = $this->list($map);
-        $this->Array = $list;
+        $this->array = $list;
         return $this;
     }
 
     public function thenByDescending(Closure $predecate)
     {
-        $map         = $this->sort($this->Sort, $predecate, true);
+        $map         = $this->sort($this->sort, $predecate, true);
         $list        = $this->list($map);
-        $this->Array = $list;
+        $this->array = $list;
         return $this;
     }
 
@@ -110,6 +110,6 @@ class OrderEnumerable implements IEnumerable
 
     public function getIterator(): Enumerator
     {
-        return new Enumerator($this->Array);
+        return new Enumerator($this->array);
     }
 }

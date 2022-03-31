@@ -11,7 +11,7 @@ namespace DevNet\System\Compiler\Expressions;
 
 class ConstantExpression extends Expression
 {
-    public $value;
+    public $Value;
     public ?string $Type;
 
     public function __construct($value, ?string $type = null)

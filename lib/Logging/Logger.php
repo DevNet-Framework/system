@@ -9,15 +9,30 @@
 
 namespace DevNet\System\Logging;
 
+use DevNet\System\Exceptions\PropertyException;
+
 class Logger implements ILogger
 {
-    private int $MinimumLevel;
-    private array $Loggers;
+    private int $minimumLevel;
+    private array $loggers;
+    
+    public function __get(string $name)
+    {
+        if ($name == 'MinimumLevel') {
+            return $this->minimumLevel;
+        }
+        
+        if (property_exists($this, $name)) {
+            throw new PropertyException("access to private property" . get_class($this) . "::" . $name);
+        }
+
+        throw new PropertyException("access to undefined property" . get_class($this) . "::" . $name);
+    }
 
     public function __construct(array $loggers, int $minimumLevel = 0)
     {
-        $this->MinimumLevel = $minimumLevel;
-        $this->Loggers = $loggers;
+        $this->minimumLevel = $minimumLevel;
+        $this->loggers = $loggers;
     }
 
     public function log(int $level, string $message, array $args = []): void
@@ -27,8 +42,8 @@ class Logger implements ILogger
             $args = $args[0];
         }
 
-        foreach ($this->Loggers as $logger) {
-            if ($level >= $this->MinimumLevel) {
+        foreach ($this->loggers as $logger) {
+            if ($level >= $this->minimumLevel) {
                 $logger->log($level, $message, $args);
             }
         }

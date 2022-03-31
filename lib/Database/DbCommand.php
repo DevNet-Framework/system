@@ -9,37 +9,52 @@
 
 namespace DevNet\System\Database;
 
+use DevNet\System\Exceptions\PropertyException;
 use PDOStatement;
 
 class DbCommand
 {
-    public ?DbConnection $Connection = null;
-    public ?PDOStatement $Statement = null;
-    public string $Sql;
-    public array $Parameters = [];
+    private ?DbConnection $connection = null;
+    private ?PDOStatement $statement = null;
+    private string $sql;
+    private array $parameters = [];
+
+    public function __get(string $name)
+    {
+        if (in_array($name, ['Connection', 'Statement', 'Sql', 'Parameters'])) {
+            $property = lcfirst($name);
+            return $this->$property;
+        }
+        
+        if (property_exists($this, $name)) {
+            throw new PropertyException("access to private property" . get_class($this) . "::" . $name);
+        }
+
+        throw new PropertyException("access to undefined property" . get_class($this) . "::" . $name);
+    }
 
     public function __construct(DbConnection $connection, string $sql = null)
     {
-        $this->Connection = $connection;
-        $this->Sql = $sql;
+        $this->connection = $connection;
+        $this->sql = $sql;
     }
 
     public function addParameters(array $parameters)
     {
-        $this->Parameters = $parameters;
+        $this->parameters = $parameters;
     }
 
     public function execute() : int
     {
-        if ($this->Connection->getState() === 0)
+        if ($this->connection->getState() === 0)
         {
             throw new \PDOException('Database connection is closed');
         }
 
-        if ($this->Parameters)
+        if ($this->parameters)
         {
-            $statement = $this->Connection->getConnector()->prepare($this->Sql);
-            $result = $statement->execute($this->Parameters);
+            $statement = $this->connection->getConnector()->prepare($this->sql);
+            $result = $statement->execute($this->parameters);
 
             if (!$result) {
                 $errorInfo = $statement->errorInfo();
@@ -50,9 +65,9 @@ class DbCommand
         }
         else
         {
-            $result = $this->Connection->getConnector()->exec($this->Sql);
+            $result = $this->connection->getConnector()->exec($this->sql);
             if ($result === false) {
-                $errorInfo = $this->Connection->getConnector()->errorInfo();
+                $errorInfo = $this->connection->getConnector()->errorInfo();
                 throw new \PDOException("[{$errorInfo[0]}] {$errorInfo[2]}", $errorInfo[1]);
             }
         }
@@ -62,26 +77,26 @@ class DbCommand
 
     public function executeReader(): DbReader
     {
-        if ($this->Connection->getState() == 0) {
+        if ($this->connection->getState() == 0) {
             throw new \PDOException('Database connection is closed');
         }
 
-        if ($this->Parameters) {
-            $statement = $this->Connection->getConnector()->prepare($this->Sql);
-            $result = $statement->execute($this->Parameters);
+        if ($this->parameters) {
+            $statement = $this->connection->getConnector()->prepare($this->sql);
+            $result = $statement->execute($this->parameters);
             if (!$result) {
                 $errorInfo = $statement->errorInfo();
                 throw new \PDOException("[{$errorInfo[0]}] {$errorInfo[2]}", $errorInfo[1]);
             }
         } else {
-            $statement = $this->Connection->getConnector()->query($this->Sql);
+            $statement = $this->connection->getConnector()->query($this->sql);
             if (!$statement) {
-                $errorInfo = $this->Connection->getConnector()->errorInfo();
+                $errorInfo = $this->connection->getConnector()->errorInfo();
                 throw new \PDOException("[{$errorInfo[0]}] {$errorInfo[2]}", $errorInfo[1]);
             }
         }
 
-        $this->Statement = $statement;
+        $this->statement = $statement;
         return new DbReader($this);
     }
 }

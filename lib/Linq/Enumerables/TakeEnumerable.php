@@ -17,18 +17,18 @@ class TakeEnumerable implements IEnumerable
 {
     use \DevNet\System\Extension\ExtenderTrait;
 
-    private array $Array = [];
+    private array $array = [];
 
     public function __construct(IEnumerable $enumerable)
     {
-        $this->Array = $enumerable->getIterator()->toArray();
+        $this->array = $enumerable->getIterator()->toArray();
     }
 
     public function take(int $limit)
     {
         $i = 1;
         $elements = [];
-        foreach ($this->Array as $key => $element) {
+        foreach ($this->array as $key => $element) {
             $elements[$key] = $element;
 
             if ($i == $limit) {
@@ -38,7 +38,7 @@ class TakeEnumerable implements IEnumerable
             $i++;
         }
 
-        $this->Array = $elements;
+        $this->array = $elements;
         return $this;
     }
 
@@ -46,7 +46,7 @@ class TakeEnumerable implements IEnumerable
     {
         $i = 1;
         $elements = [];
-        foreach ($this->Array as $key => $element) {
+        foreach ($this->array as $key => $element) {
             if ($i <= $offset) {
                 $i++;
                 continue;
@@ -55,12 +55,12 @@ class TakeEnumerable implements IEnumerable
             $elements[$key] = $element;
         }
 
-        $this->Array = $elements;
+        $this->array = $elements;
         return $this;
     }
 
     public function getIterator(): Enumerator
     {
-        return new Enumerator($this->Array);
+        return new Enumerator($this->array);
     }
 }

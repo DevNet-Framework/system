@@ -17,28 +17,28 @@ class SelectEnumerable implements IEnumerable
 {
     use \DevNet\System\Extension\ExtenderTrait;
 
-    private IEnumerable $Enumerable;
-    private array $Array = [];
+    private IEnumerable $enumerable;
+    private array $array = [];
 
     public function __construct(IEnumerable $enumerable)
     {
-        $this->Enumerable = $enumerable;
+        $this->enumerable = $enumerable;
     }
 
     public function select(Closure $predecate)
     {
         $elements = [];
-        foreach ($this->Enumerable as $element) {
+        foreach ($this->enumerable as $element) {
             $object = $predecate($element);
             $elements[] = $object;
         }
 
-        $this->Array = $elements;
+        $this->array = $elements;
         return $this;
     }
 
     public function getIterator(): Enumerator
     {
-        return new Enumerator($this->Array);
+        return new Enumerator($this->array);
     }
 }

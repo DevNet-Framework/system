@@ -11,17 +11,17 @@ namespace DevNet\System\Command;
 
 class CommandParser
 {
-    private array $Options   = [];
-    private array $Arguments = [];
+    private array $options   = [];
+    private array $arguments = [];
 
     public function addArgument(CommandArgument $argument): void
     {
-        $this->Arguments[] = $argument;
+        $this->arguments[] = $argument;
     }
 
     public function addOption(CommandOption $option): void
     {
-        $this->Options[] = $option;
+        $this->options[] = $option;
     }
 
     public function getArgument(string $name): ?CommandArgument
@@ -31,7 +31,7 @@ class CommandParser
         }
 
         $name = strtolower($name);
-        foreach ($this->Arguments as $argument) {
+        foreach ($this->arguments as $argument) {
             if (strtolower($argument->Name) == $name) {
                 return $argument;
             }
@@ -47,7 +47,7 @@ class CommandParser
         }
 
         $name = strtolower($name);
-        foreach ($this->Options as $option) {
+        foreach ($this->options as $option) {
             if (strtolower((string)$option->Name) == $name || strtolower((string)$option->Alias) == $name) {
                 return $option;
             }
@@ -59,7 +59,7 @@ class CommandParser
     public function parse(array $args): CommandEventArgs
     {
         $inputs     = $args;
-        $arguments  = $this->Arguments;
+        $arguments  = $this->arguments;
         $parameters = [];
 
         while ($inputs != []) {

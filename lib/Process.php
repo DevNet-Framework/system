@@ -11,38 +11,38 @@ namespace DevNet\System;
 
 class Process
 {
-    private array $Descriptors;
-    private array $Pipes = [];
-    private ?string $Cwd;
-    private ?array $Env;
-    private $Process;
+    private array $descriptors;
+    private array $pipes = [];
+    private ?string $cwd;
+    private ?array $env;
+    private $process;
 
     public function __construct(?string $cwd = null, array $env = null)
     {
-        $this->Descriptors = [
+        $this->descriptors = [
             0 => ["pipe", "r"],
             1 => ["pipe", "w"],
             2 => ["pipe", "w"]
         ];
 
-        $this->Cwd = $cwd;
-        $this->Env = $env;
+        $this->cwd = $cwd;
+        $this->env = $env;
     }
 
     public function start(string ...$command)
     {
         $command = implode(' ', $command);
-        $this->Process = proc_open($command, $this->Descriptors, $this->Pipes, $this->Cwd, $this->Env);
+        $this->process = proc_open($command, $this->descriptors, $this->pipes, $this->cwd, $this->env);
 
-        if (!is_resource($this->Process)) {
+        if (!is_resource($this->process)) {
             throw new \RuntimeException("Error Processing Request");
         }
     }
 
     public function isRunning(): bool
     {
-        if (is_resource($this->Process)) {
-            $status = proc_get_status($this->Process);
+        if (is_resource($this->process)) {
+            $status = proc_get_status($this->process);
             return $status['running'];
         }
 
@@ -51,8 +51,8 @@ class Process
 
     public function getPid(): ?string
     {
-        if (is_resource($this->Process)) {
-            $status = proc_get_status($this->Process);
+        if (is_resource($this->process)) {
+            $status = proc_get_status($this->process);
             return $status['pid'];
         }
 
@@ -61,17 +61,17 @@ class Process
 
     public function write(string $data): void
     {
-        fwrite($this->Pipes[0], $data);
+        fwrite($this->pipes[0], $data);
     }
 
     public function read(int $chunk = 0): ?string
     {
         $result = null;
-        if (is_resource($this->Process)) {
+        if (is_resource($this->process)) {
             if ($chunk > 0) {
-                $result = fread($this->Pipes[1], 221024);
+                $result = fread($this->pipes[1], 221024);
             } else {
-                $result = stream_get_contents(($this->Pipes[1]));
+                $result = stream_get_contents(($this->pipes[1]));
             }
         }
 
@@ -81,11 +81,11 @@ class Process
     public function report(int $chunk = 0): ?string
     {
         $result = null;
-        if (is_resource($this->Process)) {
+        if (is_resource($this->process)) {
             if ($chunk > 0) {
-                $result = fread($this->Pipes[2], 221024);
+                $result = fread($this->pipes[2], 221024);
             } else {
-                $result = stream_get_contents(($this->Pipes[2]));
+                $result = stream_get_contents(($this->pipes[2]));
             }
         }
 
@@ -96,7 +96,7 @@ class Process
     {
         if ($this->isRunning()) {
             if (function_exists('proc_terminate')) {
-                proc_terminate($this->Process);
+                proc_terminate($this->process);
                 return;
             }
 
@@ -108,11 +108,11 @@ class Process
 
     public function close()
     {
-        if (is_resource($this->Process)) {
-            fclose($this->Pipes[0]);
-            fclose($this->Pipes[1]);
-            fclose($this->Pipes[2]);
-            proc_close($this->Process);
+        if (is_resource($this->process)) {
+            fclose($this->pipes[0]);
+            fclose($this->pipes[1]);
+            fclose($this->pipes[2]);
+            proc_close($this->process);
         }
     }
 }

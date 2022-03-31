@@ -14,49 +14,49 @@ use Countable;
 
 class Enumerator implements Iterator, Countable
 {
-    protected array $Array = [];
-    protected $Key;
+    private array $array = [];
+    private $key;
 
-    public function __construct(array $Array = [])
+    public function __construct(array $array = [])
     {
-        $this->Array = $Array;
-        $this->Key = key($this->Array);
+        $this->array = $array;
+        $this->key = key($this->array);
     }
 
     public function rewind(): void
     {
-        reset($this->Array);
-        $this->Key = key($this->Array);
+        reset($this->array);
+        $this->key = key($this->array);
     }
 
     public function next(): void
     {
-        next($this->Array);
-        $this->Key = key($this->Array);
+        next($this->array);
+        $this->key = key($this->array);
     }
 
     public function valid(): bool
     {
-        return isset($this->Array[$this->Key]);
+        return isset($this->array[$this->key]);
     }
 
     public function current()
     {
-        return $this->Array[$this->Key] ?? null;
+        return $this->array[$this->key] ?? null;
     }
 
     public function key()
     {
-        return $this->Key ?? null;
+        return $this->key ?? null;
     }
 
     public function count(): int
     {
-        return count($this->Array);
+        return count($this->array);
     }
 
     public function toArray(): array
     {
-        return $this->Array;
+        return $this->array;
     }
 }

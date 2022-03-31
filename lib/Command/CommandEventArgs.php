@@ -15,20 +15,20 @@ class CommandEventArgs extends EventArgs
 {
     public array $Inputs = [];
     public array $Residual = [];
-    protected array $Parameters;
+    private array $parameters;
 
     public function __construct(array $parameters = [])
     {
-        $this->Parameters = $parameters;
+        $this->parameters = $parameters;
     }
 
     public function set(string $name, CommandArgument $parameter): void
     {
-        $this->Parameters[$name] = $parameter;
+        $this->parameters[$name] = $parameter;
     }
 
     public function get(string $name): ?CommandArgument
     {
-        return $this->Parameters[$name] ?? null;
+        return $this->parameters[$name] ?? null;
     }
 }

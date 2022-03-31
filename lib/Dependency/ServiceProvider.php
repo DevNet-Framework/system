@@ -11,12 +11,12 @@ namespace DevNet\System\Dependency;
 
 class ServiceProvider implements IServiceProvider
 {
-    protected array $InstanceServices = [];
-    protected IserviceCollection $ServiceCollection;
+    private array $instanceServices = [];
+    private IserviceCollection $serviceCollection;
 
     public function __construct(IServiceCollection $serviceCollection)
     {
-        $this->ServiceCollection = $serviceCollection;
+        $this->serviceCollection = $serviceCollection;
     }
 
     /**
@@ -24,46 +24,46 @@ class ServiceProvider implements IServiceProvider
      */
     public function getService(string $serviceType): ?object
     {
-        foreach ($this->ServiceCollection as $serviceDescriptor) {
+        foreach ($this->serviceCollection as $serviceDescriptor) {
             if ($serviceType == $serviceDescriptor->ServiceType) {
                 if ($serviceDescriptor->ImplementationInstance) {
-                    if (isset($this->InstanceServices[$serviceType])) {
+                    if (isset($this->instanceServices[$serviceType])) {
                         if ($serviceDescriptor->Lifetime == 1) {
-                            return $this->InstanceServices[$serviceType];
+                            return $this->instanceServices[$serviceType];
                         }
 
                         if ($serviceDescriptor->Lifetime == 2) {
-                            return clone $this->InstanceServices[$serviceType];
+                            return clone $this->instanceServices[$serviceType];
                         }
                     }
-                    $this->InstanceServices[$serviceType] = $serviceDescriptor->ImplementationInstance;
+                    $this->instanceServices[$serviceType] = $serviceDescriptor->ImplementationInstance;
                     return $serviceDescriptor->ImplementationInstance;
                 }
 
                 if ($serviceDescriptor->ImplimentationType) {
-                    if (isset($this->InstanceServices[$serviceType])) {
+                    if (isset($this->instanceServices[$serviceType])) {
                         if ($serviceDescriptor->Lifetime == 1) {
-                            return $this->InstanceServices[$serviceType];
+                            return $this->instanceServices[$serviceType];
                         }
 
                         if ($serviceDescriptor->Lifetime == 2) {
-                            return clone $this->InstanceServices[$serviceType];
+                            return clone $this->instanceServices[$serviceType];
                         }
                     }
 
                     $instance = Activator::CreateInstance($serviceDescriptor->ImplimentationType, $this);
-                    $this->InstanceServices[$serviceType] = $instance;
+                    $this->instanceServices[$serviceType] = $instance;
                     return $instance;
                 }
 
                 if ($serviceDescriptor->ImplimentationFactory) {
-                    if (isset($this->InstanceServices[$serviceType])) {
+                    if (isset($this->instanceServices[$serviceType])) {
                         if ($serviceDescriptor->Lifetime == 1) {
-                            return $this->InstanceServices[$serviceType];
+                            return $this->instanceServices[$serviceType];
                         }
 
                         if ($serviceDescriptor->Lifetime == 2) {
-                            return clone $this->InstanceServices[$serviceType];
+                            return clone $this->instanceServices[$serviceType];
                         }
                     }
                     $factory = $serviceDescriptor->ImplimentationFactory;
@@ -73,7 +73,7 @@ class ServiceProvider implements IServiceProvider
                         throw new \Exception("Return value of factory function must be of the type '$serviceType'");
                     }
 
-                    $this->InstanceServices[$serviceType] = $instance;
+                    $this->instanceServices[$serviceType] = $instance;
                     return $instance;
                 }
             }
@@ -87,7 +87,7 @@ class ServiceProvider implements IServiceProvider
      */
     public function contains(string $serviceType): bool
     {
-        if (isset($this->InstanceServices[$serviceType])) {
+        if (isset($this->instanceServices[$serviceType])) {
             return true;
         } else {
             $service = $this->getService($serviceType);

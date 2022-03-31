@@ -19,21 +19,21 @@ use Closure;
 
 class ExpressionParser
 {
-    private static $Instance;
-    private Parser $Parser;
-    private int $StartLine;
-    private int $Position;
-    private array $OuterVariables = [];
+    private static $instance;
+    private Parser $parser;
+    private int $startLine;
+    private int $position;
+    private array $outerVariables = [];
 
     public function __construct(Parser $parser)
     {
-        $this->Parser = $parser;
+        $this->parser = $parser;
     }
 
     public static function getInstance()
     {
-        if (self::$Instance) {
-            return self::$Instance;
+        if (self::$instance) {
+            return self::$instance;
         }
 
         $lexerBuilder = new LexerBuilder();
@@ -108,40 +108,40 @@ class ExpressionParser
 
         $parser = $parserBuilder->build();
 
-        self::$Instance = new ExpressionParser($parser);
-        return self::$Instance;
+        self::$instance = new ExpressionParser($parser);
+        return self::$instance;
     }
 
     public function parse(Closure $function)
     {
-        $this->Position = 0;
-        $this->StartLine = 0;
-        $this->FunctionReflector = new \ReflectionFunction($function);
-        $this->OuterVariables =  $this->FunctionReflector->getStaticVariables();
+        $this->position = 0;
+        $this->startLine = 0;
+        $this->functionReflector = new \ReflectionFunction($function);
+        $this->outerVariables =  $this->functionReflector->getStaticVariables();
 
-        $fileName = $this->FunctionReflector->getFileName();
-        $startLine = $this->FunctionReflector->getStartLine() - 1; // adjustment by - 1, because line 1 is in inedx 0
-        $endLine = $this->FunctionReflector->getEndLine();
+        $fileName = $this->functionReflector->getFileName();
+        $startLine = $this->functionReflector->getStartLine() - 1; // adjustment by - 1, because line 1 is in inedx 0
+        $endLine = $this->functionReflector->getEndLine();
         $length = $endLine - $startLine;
 
         $source = file($fileName, FILE_IGNORE_NEW_LINES);
         $lines = array_slice($source, $startLine, $length);
         $functionLine = implode("\n", $lines);
 
-        if ($this->StartLine == $startLine) {
-            $position = $this->Position;
+        if ($this->startLine == $startLine) {
+            $position = $this->position;
         } else {
             $position = 0;
         }
 
         preg_match("/\((?:[^)(]+|(?R))*+\)/", $functionLine, $matches, PREG_OFFSET_CAPTURE, $position);
         if ($matches) {
-            $this->Position = $matches[0][1] + strlen($matches[0][0]);
-            $this->StartLine = $startLine;
+            $this->position = $matches[0][1] + strlen($matches[0][0]);
+            $this->startLine = $startLine;
             $body = preg_replace("/\(\s*fn\s*\(.*?\)\s*=>\s*(.*?)\)/", "\\1", $matches[0][0]);
         }
 
-        $this->Parser->consume($body);
+        $this->parser->consume($body);
     }
 
     public function getBody(): ?Expression
@@ -150,18 +150,18 @@ class ExpressionParser
         $expression = null;
         $stack = new Stack();
         do {
-            $this->Parser->advance();
+            $this->parser->advance();
 
-            if ($this->Parser->action == Parser::ERROR) {
-                $node = $this->Parser->getNode();
+            if ($this->parser->Action == Parser::ERROR) {
+                $node = $this->parser->getNode();
                 if ($node->getName() == 'UNKNOWN') {
                     throw new \Exception("UNKNOWN Token");
                 }
             }
 
-            if ($this->Parser->action == Parser::REDUCE) {
-                $ruleId = $this->Parser->getReduceId();
-                $node = $this->Parser->getNode();
+            if ($this->parser->Action == Parser::REDUCE) {
+                $ruleId = $this->parser->getReduceId();
+                $node = $this->parser->getNode();
                 $items = $node->getValues();
 
                 switch ($ruleId) {
@@ -183,21 +183,21 @@ class ExpressionParser
                         $parameter     = Expression::parameter($parameterName, $items[0]->getName());
                         $variableName  = ltrim($items[2]->getValue(), '$');
 
-                        if (!array_key_exists($variableName, $this->OuterVariables)) {
+                        if (!array_key_exists($variableName, $this->outerVariables)) {
                             throw new ParserException("Undefined property variable \${$parameterName}::${$variableName}");
                         }
 
-                        if (!is_string($this->OuterVariables[$variableName])) {
+                        if (!is_string($this->outerVariables[$variableName])) {
                             throw new ParserException("Variable property {$parameterName}::\${$variableName} must be of type string.");
                         }
 
-                        $propertyName = $this->OuterVariables[$variableName];
+                        $propertyName = $this->outerVariables[$variableName];
                         $expression   = Expression::property($parameter, $propertyName);
                         $stack->push($expression);
                         break;
                     case 32: // property
                         $name = ltrim($items[0]->getValue(), '$');
-                        $value = $this->OuterVariables[$name] ?? null;
+                        $value = $this->outerVariables[$name] ?? null;
                         $parameter = Expression::parameter($name, $items[0]->getName(), $value);
                         $expression = Expression::property($parameter, $items[2]->getValue());
                         $stack->push($expression);
@@ -221,12 +221,12 @@ class ExpressionParser
                         break;
                     case 19: // variable
                         $name  = ltrim($items[0]->getValue(), '$');
-                        $value = $this->OuterVariables[$name] ?? null;
+                        $value = $this->outerVariables[$name] ?? null;
 
                         if (is_array($value)) {
                             throw new ParserException("value of type array not supported yet, only object and scalar types are supported.");
                         }
-                        $value = $this->OuterVariables[$name];
+                        $value = $this->outerVariables[$name];
 
                         $expression = Expression::parameter($name, gettype($value), $value);
                         $stack->push($expression);
@@ -272,7 +272,7 @@ class ExpressionParser
                         break;
                 }
             }
-        } while ($this->Parser->action != Parser::ACCEPT && $this->Parser->action != Parser::ERROR);
+        } while ($this->parser->Action != Parser::ACCEPT && $this->parser->Action != Parser::ERROR);
 
         return $expression;
     }
@@ -280,7 +280,7 @@ class ExpressionParser
     public function getParameters()
     {
         $parameters = [];
-        foreach ($this->FunctionReflector->getParameters() as $paramReflector) {
+        foreach ($this->functionReflector->getParameters() as $paramReflector) {
             $parameterName = $paramReflector->getName();
             $parameterType = null;
             if ($paramReflector->getType()) {
@@ -294,6 +294,6 @@ class ExpressionParser
 
     public function getOuterVariables(): array
     {
-        return $this->OuterVariables;
+        return $this->outerVariables;
     }
 }

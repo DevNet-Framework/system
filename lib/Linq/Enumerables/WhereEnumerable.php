@@ -17,29 +17,29 @@ class WhereEnumerable implements IEnumerable
 {
     use \DevNet\System\Extension\ExtenderTrait;
 
-    private IEnumerable $Enumerable;
-    private array $Array = [];
+    private IEnumerable $enumerable;
+    private array $array = [];
 
     public function __construct(IEnumerable $enumerable)
     {
-        $this->Enumerable = $enumerable;
+        $this->enumerable = $enumerable;
     }
 
     public function where(Closure $predecate)
     {
         $elements = [];
-        foreach ($this->Enumerable as $key => $element) {
+        foreach ($this->enumerable as $key => $element) {
             if ($predecate($element) !== false) {
                 $elements[$key] = $element;
             }
         }
 
-        $this->Array = $elements;
+        $this->array = $elements;
         return $this;
     }
 
     public function getIterator(): Enumerator
     {
-        return new Enumerator($this->Array);
+        return new Enumerator($this->array);
     }
 }

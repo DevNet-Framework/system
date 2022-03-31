@@ -11,15 +11,15 @@ namespace DevNet\System\Async;
 
 class AsyncResult implements IAwaitable
 {
-    private IAwaiter $Awaiter;
+    private IAwaiter $awaiter;
 
     public function __construct($result = null, ?CancelationToken $token = null)
     {
-        $this->Awaiter = new AsyncAwaiter($result, $token);
+        $this->awaiter = new AsyncAwaiter($result, $token);
     }
 
     public function getAwaiter(): IAwaiter
     {
-        return $this->Awaiter;
+        return $this->awaiter;
     }
 }

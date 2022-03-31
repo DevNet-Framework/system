@@ -9,6 +9,7 @@
 
 namespace DevNet\System\Logging;
 
+use DevNet\System\Exceptions\PropertyException;
 use DevNet\System\Logging\Console\ConsoleLoggerProvider;
 use DevNet\System\Logging\File\FileLoggerProvider;
 
@@ -16,12 +17,24 @@ class LoggerOptions
 {
     use \DevNet\System\Extension\ExtenderTrait;
 
-    private array $Filters = [];
-    private array $Providers = [];
+    private array $filters = [];
+    private array $providers = [];
 
     public function __get(string $name)
     {
-        return $this->$name;
+        if ($name == 'Filters') {
+            return $this->filters;
+        }
+
+        if ($name == 'Providers') {
+            return $this->filters;
+        }
+        
+        if (property_exists($this, $name)) {
+            throw new PropertyException("access to private property" . get_class($this) . "::" . $name);
+        }
+
+        throw new PropertyException("access to undefined property" . get_class($this) . "::" . $name);
     }
 
     public function setMinimumLevel(int $level)
@@ -31,12 +44,12 @@ class LoggerOptions
     
     public function addFilter(string $category, int $level)
     {
-        $this->Filters[$category] = $level;
+        $this->filters[$category] = $level;
     }
 
     public function addProvider(ILoggerProvider $provider): void
     {
-        $this->Providers[get_class($provider)] = $provider;
+        $this->providers[get_class($provider)] = $provider;
     }
 
     public function addConsole(): void

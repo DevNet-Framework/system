@@ -11,27 +11,27 @@ namespace DevNet\System\Configuration;
 
 class ConfigurationBuilder
 {
-    private string $BasePath = '/';
-    private array $Settings = [];
+    private string $basePath = '/';
+    private array $settings = [];
 
     public function __construct(array $settings = [])
     {
-        $this->Settings = $settings;
+        $this->settings = $settings;
     }
 
     public function setBasePath(string $basePath)
     {
-        $this->BasePath = $basePath;
+        $this->basePath = $basePath;
     }
 
     public function addSetting(string $key, $value)
     {
-        $this->Settings[$key] = $value;
+        $this->settings[$key] = $value;
     }
 
     public function addJsonFile(string $path)
     {
-        $fullPath = $this->BasePath . "/" . $path;
+        $fullPath = $this->basePath . "/" . $path;
 
         if (!file_exists($fullPath)) {
             throw new \Exception("Not found file {$fullPath}");
@@ -39,11 +39,11 @@ class ConfigurationBuilder
 
         $settings = file_get_contents($fullPath);
         $settings = json_decode($settings, true);
-        $this->Settings = array_merge($this->Settings, $settings);
+        $this->settings = array_merge($this->settings, $settings);
     }
 
     public function build(): IConfiguration
     {
-        return new ConfigurationRoot($this->Settings);
+        return new ConfigurationRoot($this->settings);
     }
 }

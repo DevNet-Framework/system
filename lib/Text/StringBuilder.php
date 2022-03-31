@@ -13,42 +13,42 @@ class StringBuilder
 {
     use \DevNet\System\Extension\ExtenderTrait;
 
-    private int $Capacity;
-    private string $Text;
+    private int $capacity;
+    private string $text;
 
     public function __construct(int $capacity = 0)
     {
-        $this->Capacity = $capacity;
-        $this->Text = '';
+        $this->capacity = $capacity;
+        $this->text = '';
     }
 
     public function append(string $value): StringBuilder
     {
-        $this->Text .= $value;
+        $this->text .= $value;
         return $this;
     }
 
     public function appendLine(string $value = null): StringBuilder
     {
-        $this->Text .= $value . PHP_EOL;
+        $this->text .= $value . PHP_EOL;
         return $this;
     }
 
     public function appendJoin(string $separator, array $values): StringBuilder
     {
-        $this->Text .= implode($separator, $values);
+        $this->text .= implode($separator, $values);
         return $this;
     }
 
     public function appendFormat(string $format, array $values): StringBuilder
     {
-        $this->Text .= printf($format, $values);
+        $this->text .= printf($format, $values);
         return $this;
     }
 
     public function copy(int $index, int $length): StringBuilder
     {
-        $text   = substr($this->Text, $index, $length);
+        $text   = substr($this->text, $index, $length);
         $string = new StringBuilder();
         $string->append($text);
         return $string;
@@ -56,35 +56,35 @@ class StringBuilder
 
     public function insert(string $value, int $index, int $length = 0): StringBuilder
     {
-        $this->Text = substr_replace($this->Text, $value, $index, $length);
+        $this->text = substr_replace($this->text, $value, $index, $length);
         return $this;
     }
 
     public function remove(int $index, int $length): StringBuilder
     {
-        $this->Text = substr_replace($this->Text, '', $index, $length);
+        $this->text = substr_replace($this->text, '', $index, $length);
         return $this;
     }
 
     public function replace(string $oldValue, string $newValue): StringBuilder
     {
-        $this->Text = str_replace($oldValue, $newValue, $this->Text);
+        $this->text = str_replace($oldValue, $newValue, $this->text);
         return $this;
     }
 
     public function clear(): StringBuilder
     {
-        $this->Text = "";
+        $this->text = "";
         return $this;
     }
 
     public function getLength(): int
     {
-        return strlen($this->Text);
+        return strlen($this->text);
     }
 
     public function __toString(): string
     {
-        return $this->Text;
+        return $this->text;
     }
 }

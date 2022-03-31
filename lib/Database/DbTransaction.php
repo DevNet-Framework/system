@@ -11,7 +11,7 @@ namespace DevNet\System\Database;
 
 class DbTransaction
 {
-    private DbConnection $Connection;
+    private DbConnection $connection;
 
     public function __construct(DbConnection $connection)
     {
@@ -21,26 +21,26 @@ class DbTransaction
         }
 
         $connector->beginTransaction();
-        $this->Connection = $connection;
+        $this->connection = $connection;
     }
 
     public function commit()
     {
-        $poovider = $this->Connection->getConnector();
-        if (!$poovider) {
+        $connector = $this->connection->getConnector();
+        if (!$connector) {
             throw new \Exception("DB connection is closed");
         }
 
-        $poovider->commit();
+        $connector->commit();
     }
 
     public function rollBack()
     {
-        $poovider = $this->Connection->getConnector();
-        if (!$poovider) {
+        $connector = $this->connection->getConnector();
+        if (!$connector) {
             throw new \Exception("DB connection is closed");
         }
 
-        $poovider->rollBack();
+        $connector->rollBack();
     }
 }

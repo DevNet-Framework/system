@@ -9,115 +9,123 @@
 
 namespace DevNet\System\Async;
 
-use Closure;
-use Exception;
+use DevNet\System\Exceptions\PropertyException;
 use Generator;
+use Closure;
 
 class AsyncAwaiter implements IAwaiter
 {
-    private ?Generator $Generator = null;
-    private ?AsyncResult $AsyncResult = null;
-    private ?CancelationToken $Token = null;
-    private ?Closure $OnCompleted = null;
-    private bool $IsCompleted = false;
-    private bool $IsRunning = false;
-    private $Result = null;
+    private ?Generator $generator = null;
+    private ?AsyncResult $asyncResult = null;
+    private ?CancelationToken $token = null;
+    private ?Closure $onCompleted = null;
+    private bool $isCompleted = false;
+    private bool $isRunning = false;
+    private $result = null;
 
     public function __get(string $name)
     {
-        return $this->$name;
+        if ($name == 'OnCompleted') {
+            return $this->onCompleted;
+        }
+        
+        if (property_exists($this, $name)) {
+            throw new PropertyException("access to private property" . get_class($this) . "::" . $name);
+        }
+
+        throw new PropertyException("access to undefined property" . get_class($this) . "::" . $name);
     }
 
     public function __construct($result = null, ?CancelationToken $token = null)
     {
         if ($result instanceof Generator) {
-            $this->Generator = $result;
-            $this->Token = $token;
+            $this->generator = $result;
+            $this->token = $token;
         } else {
-            $this->Result = $result;
-            $this->IsCompleted = true;
+            $this->result = $result;
+            $this->isCompleted = true;
         }
     }
 
     public function onCompleted(Closure $continuation): void
     {
-        $this->OnCompleted = $continuation;
+        $this->onCompleted = $continuation;
     }
 
     public function isCompleted(): bool
     {
-        if ($this->IsCompleted) {
-            return $this->IsCompleted;
+        if ($this->isCompleted) {
+            return $this->isCompleted;
         }
 
-        if ($this->Token && $this->Token->IsCancellationRequested) {
-            $this->IsCompleted = true;
-            $this->Process->kill();
-            $this->Process->close();
+        if ($this->token && $this->token->IsCancellationRequested) {
+            $this->isCompleted = true;
+            $this->process->kill();
+            $this->process->close();
             throw new CancelationException('A task was canceled');
         }
 
         $this->next();
-        return $this->IsCompleted;
+        return $this->isCompleted;
     }
 
     public function getResult()
     {
-        while (!$this->IsCompleted) {
+        while (!$this->isCompleted) {
             $this->next();
         }
 
-        if ($this->OnCompleted) {
-            $continuation = $this->OnCompleted;
-            $this->OnCompleted = null;
+        if ($this->onCompleted) {
+            $continuation = $this->onCompleted;
+            $this->onCompleted = null;
             $continuation();
         }
 
-        return $this->Result;
+        return $this->result;
     }
 
     public function next(): void
     {
-        if (!$this->Generator) {
+        if (!$this->generator) {
             return;
         }
 
-        if (!$this->Generator->valid()) {
+        if (!$this->generator->valid()) {
             try {
-                $this->Result = $this->Generator->getReturn();
+                $this->result = $this->generator->getReturn();
             } catch (\Throwable $th) {
-                $this->Result = null;
+                $this->result = null;
             }
-            $this->IsCompleted = true;
-            $this->IsRunning = false;
+            $this->isCompleted = true;
+            $this->isRunning = false;
             return;
-        } else if (!$this->IsRunning) {
-            $this->IsRunning = true;
+        } else if (!$this->isRunning) {
+            $this->isRunning = true;
             return;
         }
 
-        $result = $this->Generator->current();
+        $result = $this->generator->current();
 
         if ($result instanceof Generator) {
-            if (!$this->AsyncResult) {
-                $this->AsyncResult = new AsyncResult($result);
+            if (!$this->asyncResult) {
+                $this->asyncResult = new AsyncResult($result);
             }
-            $result = $this->AsyncResult;
+            $result = $this->asyncResult;
         }
 
         if ($result instanceof IAwaitable) {
             try {
                 if ($result->getAwaiter()->isCompleted()) {
-                    $this->Generator->send($result->getAwaiter()->getResult());
-                    if ($this->AsyncResult) {
-                        $this->AsyncResult = null;
+                    $this->generator->send($result->getAwaiter()->getResult());
+                    if ($this->asyncResult) {
+                        $this->asyncResult = null;
                     }
                 }
             } catch (\Throwable $exception) {
-                $this->Generator->throw($exception);
+                $this->generator->throw($exception);
             }
         } else {
-            $this->Generator->send($result);
+            $this->generator->send($result);
         }
     }
 }

@@ -17,14 +17,14 @@ use DevNet\System\Logging\LogLevel;
 
 class FileLogger implements ILogger
 {
-    private string $Category;
-    private Trace $Trace;
+    private string $category;
+    private Trace $trace;
     
     public function __construct(string $category, string $fileName)
     {
-        $this->Category = $category;
-        $this->Trace = new Trace();
-        $this->Trace->Listeners->add(new WriterTraceListener(new FileStream($fileName, 'a')));
+        $this->category = $category;
+        $this->trace = new Trace();
+        $this->trace->Listeners->add(new WriterTraceListener(new FileStream($fileName, 'a')));
     }
 
     public function log(int $level, string $message, array $args = []): void
@@ -67,6 +67,6 @@ class FileLogger implements ILogger
         // interpolate replacement values into the string format
         $message = strtr($message, $replace);
 
-        $this->Trace->writeLine($date . $severity. $message);
+        $this->trace->writeLine($date . $severity. $message);
     }
 }

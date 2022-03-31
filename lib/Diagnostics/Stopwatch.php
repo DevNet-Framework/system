@@ -9,36 +9,50 @@
 
 namespace DevNet\System\Diagnostics;
 
+use DevNet\System\Exceptions\PropertyException;
+
 class Stopwatch
 {
-    private float $Elapsed = 0;
-    private float $StartTimeStamp = 0;
-    private bool $IsRunning = false;
+    private float $elapsed = 0;
+    private float $startTimeStamp = 0;
+    private bool $isRunning = false;
 
     public function __get(string $name)
     {
-        return $this->$name;
+        if ($name == 'Elapsed') {
+            return $this->elapsed;
+        }
+
+        if ($name == 'IsRunning') {
+            return $this->isRunning;
+        }
+        
+        if (property_exists($this, $name)) {
+            throw new PropertyException("access to private property" . get_class($this) . "::" . $name);
+        }
+
+        throw new PropertyException("access to undefined property" . get_class($this) . "::" . $name);
     }
 
     public function start()
     {
-        if (!$this->IsRunning) {
-            $this->StartTimeStamp = microtime(true);
-            $this->IsRunning = true;
+        if (!$this->isRunning) {
+            $this->startTimeStamp = microtime(true);
+            $this->isRunning = true;
         }
     }
 
     public function stop()
     {
-        if ($this->IsRunning) {
-            $this->Elapsed += microtime(true) - $this->StartTimeStamp;
-            $this->IsRunning = false;
+        if ($this->isRunning) {
+            $this->elapsed += microtime(true) - $this->startTimeStamp;
+            $this->isRunning = false;
         }
     }
 
     public function reset()
     {
         $this->stop();
-        $this->Elapsed = 0;
+        $this->elapsed = 0;
     }
 }

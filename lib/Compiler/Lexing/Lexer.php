@@ -33,13 +33,13 @@ class Lexer implements ILexer
             if ($this->input == '') {
                 $this->token = new Token(Token::EOI);
                 break;
-            } else if (preg_match('%^(' . $definition->pattern . ')%', $this->input, $matches)) {
+            } else if (preg_match('%^(' . $definition->Pattern . ')%', $this->input, $matches)) {
                 $tokenValue = $matches[0];
                 $tokenLength = strlen($tokenValue);
                 $this->offset += $tokenLength;
                 $this->input = substr($this->input, $tokenLength);
-                $this->token = new Token($definition->name, $tokenValue);
-                if ($definition->name == Token::SKIPPED) {
+                $this->token = new Token($definition->Name, $tokenValue);
+                if ($definition->Name == Token::SKIPPED) {
                     $this->advance();
                 }
                 break;
@@ -66,12 +66,12 @@ class Lexer implements ILexer
         while (strlen($this->input)) {
             $matches = null;
             foreach ($this->definitions as $definition) {
-                if (preg_match('%^' . $definition->pattern . '%', $this->input, $matches)) {
+                if (preg_match('%^' . $definition->Pattern . '%', $this->input, $matches)) {
                     $tokenValue = $matches[0];
                     $tokenLength = strlen($tokenValue);
                     $this->input = substr($this->input, $tokenLength);
-                    if ($definition->type != -1) {
-                        $tokens[] = new Token($tokenValue, $definition->type);
+                    if ($definition->Name != -1) {
+                        $tokens[] = new Token($tokenValue, $definition->Name);
                         ++$position;
                     }
                     break;

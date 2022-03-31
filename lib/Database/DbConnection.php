@@ -13,35 +13,35 @@ use PDO;
 
 class DbConnection
 {
-    private string $Datasource;
-    private string $Username;
-    private string $Password;
-    private ?PDO $Connector;
-    private int $State = 0;
+    private string $datasource;
+    private string $username;
+    private string $password;
+    private ?PDO $connector;
+    private int $state = 0;
 
     public function __construct(string $datasource, string $username = "", string $password = "")
     {
-        $this->Datasource   = $datasource;
-        $this->Username     = $username;
-        $this->Password     = $password;
+        $this->datasource = $datasource;
+        $this->username   = $username;
+        $this->password   = $password;
     }
 
     public function open()
     {
-        if ($this->State == 0) {
-            $this->Connector = new PDO($this->Datasource, $this->Username, $this->Password);
-            $this->State = 1;
+        if ($this->state == 0) {
+            $this->connector = new PDO($this->datasource, $this->username, $this->password);
+            $this->state = 1;
         }
     }
 
     public function getConnector(): PDO
     {
-        return $this->Connector;
+        return $this->connector;
     }
 
     public function getState(): int
     {
-        return $this->State;
+        return $this->state;
     }
 
     public function beginTransaction()
@@ -56,7 +56,7 @@ class DbConnection
 
     public function close()
     {
-        $this->Connector = null;
-        $this->State = 0;
+        $this->connector = null;
+        $this->state = 0;
     }
 }

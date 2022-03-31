@@ -11,12 +11,12 @@ namespace DevNet\System\Compiler\Lexing;
 
 class TokenDefenition
 {
-    public string $name;
-    public string $pattern;
+    public string $Name;
+    public string $Pattern;
 
     public function __construct(string $name, string $pattern)
     {
-        $this->name = $name;
-        $this->pattern = $pattern;
+        $this->Name = $name;
+        $this->Pattern = $pattern;
     }
 }

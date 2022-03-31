@@ -9,18 +9,27 @@
 
 namespace DevNet\System;
 
+use DevNet\System\Exceptions\PropertyException;
 use Opis\Closure\SerializableClosure;
 use ReflectionFunction;
 use Closure;
 
 class Action
 {
-    private ReflectionFunction $MethodInfo;
-    private string $Syntax = '';
+    protected ReflectionFunction $MethodInfo;
+    private string $syntax = '';
 
     public function __get(string $name)
     {
-        return $this->$name;
+        if ($name == 'MethodInfo') {
+            return $this->MethodInfo;
+        }
+        
+        if (property_exists($this, $name)) {
+            throw new PropertyException("access to private property" . get_class($this) . "::" . $name);
+        }
+
+        throw new PropertyException("access to undefined property" . get_class($this) . "::" . $name);
     }
 
     public function __construct(callable $action)
@@ -43,12 +52,12 @@ class Action
     {
         $wrapper = new SerializableClosure($this->MethodInfo->getClosure());
         $serialized = serialize($wrapper);
-        return ['Syntax' => $serialized];
+        return ['syntax' => $serialized];
     }
 
     public function __unserialize(array $data): void
     {
-        $syntax  = $data['Syntax'];
+        $syntax  = $data['syntax'];
         $wrapper = unserialize($syntax);
         $closure = $wrapper->getClosure();
         $this->MethodInfo = new ReflectionFunction($closure);

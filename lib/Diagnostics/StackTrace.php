@@ -11,7 +11,7 @@ namespace DevNet\System\Diagnostics;
 
 class StackTrace
 {
-    private array $Frames;
+    private array $frames;
 
     public function __construct(int $skipFrames = 0, array $trace = [])
     {
@@ -24,17 +24,17 @@ class StackTrace
         }
 
         foreach ($trace as $frame) {
-            $this->Frames[] = new StackFrame($frame);
+            $this->frames[] = new StackFrame($frame);
         }
     }
 
     public function getFrame(int $index): ?StackFrame
     {
-        return $this->Frames[$index] ?? null;
+        return $this->frames[$index] ?? null;
     }
 
     public function getFrames(): array
     {
-        return $this->Frames;
+        return $this->frames;
     }
 }

@@ -11,15 +11,15 @@ namespace DevNet\System\Runtime;
 
 class Launcher extends LauncherProperties
 {
-    private static ?Launcher $Instance = null;
+    private static ?Launcher $instance = null;
 
     public static function getLauncher(): Launcher
     {
-        if (!self::$Instance) {
-            self::$Instance = new self;
+        if (!self::$instance) {
+            self::$instance = new self;
         }
 
-        return self::$Instance;
+        return self::$instance;
     }
 
     public function workspace(string $workspace): void

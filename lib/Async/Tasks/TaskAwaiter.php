@@ -19,16 +19,11 @@ use Closure;
 
 class TaskAwaiter implements IAwaiter
 {
-    private Process $Process;
-    private ?CancelationToken $Token;
-    private ?Closure $OnCompleted = null;
-    private bool $IsCompleted = false;
-    private $Result = null;
-
-    public function __get(string $name)
-    {
-        return $this->$name;
-    }
+    private Process $process;
+    private ?CancelationToken $token;
+    private ?Closure $onCompleted = null;
+    private bool $isCompleted = false;
+    private $result = null;
 
     public function __construct(Action $action, ?CancelationToken $token = null)
     {
@@ -36,64 +31,64 @@ class TaskAwaiter implements IAwaiter
         $action    = base64_encode($action);
         $workspace = escapeshellarg(LauncherProperties::getWorkspace());
 
-        $this->Token   = $token;
-        $this->Process = new Process();
-        $this->Process->start('php', __DIR__ . '/Internal/TaskWorker.php', $workspace, $action);
+        $this->token   = $token;
+        $this->process = new Process();
+        $this->process->start('php', __DIR__ . '/Internal/TaskWorker.php', $workspace, $action);
     }
 
     public function onCompleted(Closure $continuation): void
     {
-        $this->OnCompleted = $continuation;
+        $this->onCompleted = $continuation;
     }
 
     function isCompleted(): bool
     {
-        if ($this->IsCompleted) {
-            return $this->IsCompleted;
+        if ($this->isCompleted) {
+            return $this->isCompleted;
         }
         
-        if ($this->Token && $this->Token->IsCancellationRequested) {
-            $this->IsCompleted = true;
-            $this->Process->kill();
-            $this->Process->close();
+        if ($this->token && $this->token->IsCancellationRequested) {
+            $this->isCompleted = true;
+            $this->process->kill();
+            $this->process->close();
             throw new CancelationException('A task was canceled');
         }
 
-        $isRunning = $this->Process->isRunning();
+        $isRunning = $this->process->isRunning();
         if (!$isRunning) {
-            $this->IsCompleted = true;
+            $this->isCompleted = true;
         }
 
-        return $this->IsCompleted;
+        return $this->isCompleted;
     }
 
     public function getResult()
     {
-        if ($this->Result) {
-            return $this->Result;
+        if ($this->result) {
+            return $this->result;
         }
 
         while (!$this->isCompleted()) {
             // waiting for process to be completed.
         }
 
-        $output = $this->Process->read();
-        $result = $this->Process->report();
-        $this->Process->close();
-        $this->Result = unserialize($result);
-        $this->IsCompleted = true;
+        $output = $this->process->read();
+        $result = $this->process->report();
+        $this->process->close();
+        $this->result = unserialize($result);
+        $this->isCompleted = true;
 
-        if ($this->Result instanceof TaskException) {
-            throw new TaskException($this->Result->getMessage(), $this->Result->getCode());
+        if ($this->result instanceof TaskException) {
+            throw new TaskException($this->result->getMessage(), $this->result->getCode());
         }
 
         echo $output;
-        if ($this->OnCompleted) {
-            $continuation = $this->OnCompleted;
-            $this->OnCompleted = null;
+        if ($this->onCompleted) {
+            $continuation = $this->onCompleted;
+            $this->onCompleted = null;
             $continuation();
         }
 
-        return $this->Result;
+        return $this->result;
     }
 }

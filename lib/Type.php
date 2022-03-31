@@ -9,32 +9,46 @@
 
 namespace DevNet\System;
 
+use DevNet\System\Exceptions\PropertyException;
+
 class Type
 {
-    const Boolean = 'boolean';
-    const Integer = 'integer';
-    const Float   = 'float';
-    const String  = 'string';
-    const Array   = 'array';
-    const Object  = 'object';
+    public const Boolean = 'boolean';
+    public const Integer = 'integer';
+    public const Float   = 'float';
+    public const String  = 'string';
+    public const Array   = 'array';
+    public const Object  = 'object';
 
-    private string $Name;
-    private array $GenericTypeArgs;
-
-    public function __construct(string $name, Type ...$argument)
-    {
-        $this->Name = $name;
-        $this->GenericTypeArgs = $argument;
-    }
+    private string $name;
+    private array $genericTypeArgs;
 
     public function __get(string $name)
     {
-        return $this->$name;
+        if ($name == 'Name') {
+            return $this->name;
+        }
+
+        if ($name == 'GenericTypeArgs') {
+            return $this->genericTypeArgs;
+        }
+
+        if (property_exists($this, $name)) {
+            throw new PropertyException("access to private property" . get_class($this) . "::" . $name);
+        }
+
+        throw new PropertyException("access to undefined property" . get_class($this) . "::" . $name);
+    }
+
+    public function __construct(string $name, Type ...$argument)
+    {
+        $this->name = $name;
+        $this->genericTypeArgs = $argument;
     }
 
     public function validateArguments(...$args): int
     {
-        foreach ($this->GenericTypeArgs as $index => $GenericTypeArg) {
+        foreach ($this->genericTypeArgs as $index => $GenericTypeArg) {
             if (isset($args[$index])) {
                 $arg = $args[$index];
                 if ($GenericTypeArg->Name == gettype($arg)) {
@@ -62,7 +76,7 @@ class Type
     public function isPrimitive(): bool
     {
         $types = ['boolean', 'integer', 'float', 'string', 'array', 'object'];
-        if (in_array($this->Name, $types)) {
+        if (in_array($this->name, $types)) {
             return true;
         }
 
@@ -71,7 +85,7 @@ class Type
 
     public function IsGeneric(): bool
     {
-        if ($this->GenericTypeArgs) {
+        if ($this->genericTypeArgs) {
             return true;
         }
 
@@ -80,7 +94,7 @@ class Type
 
     public function IsClass(): bool
     {
-        if (class_exists($this->Name)) {
+        if (class_exists($this->name)) {
             return true;
         }
 
@@ -89,7 +103,7 @@ class Type
 
     public function IsInterface(): bool
     {
-        if (interface_exists($this->Name)) {
+        if (interface_exists($this->name)) {
             return true;
         }
 

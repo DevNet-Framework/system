@@ -16,11 +16,11 @@ class ServiceCollection implements IServiceCollection
 {
     use \DevNet\System\Extension\ExtenderTrait;
 
-    private array $Services = [];
+    private array $services = [];
 
     public function add(ServiceDescriptor $serviceDescriptor): void
     {
-        $this->Services[$serviceDescriptor->ServiceType] =  $serviceDescriptor;
+        $this->services[$serviceDescriptor->ServiceType] =  $serviceDescriptor;
     }
 
     public function addSingleton(string $serviceType, $service = null)
@@ -43,11 +43,11 @@ class ServiceCollection implements IServiceCollection
 
     public function getIterator(): Traversable
     {
-        return new ArrayIterator($this->Services);
+        return new ArrayIterator($this->services);
     }
 
     public function clear()
     {
-        $this->Services = [];
+        $this->services = [];
     }
 }

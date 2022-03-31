@@ -11,13 +11,13 @@ namespace DevNet\System\Configuration;
 
 class ConfigurationSection implements IConfiguration
 {
-    private IConfiguration $Root;
-    private string $Path;
+    private IConfiguration $root;
+    private string $path;
 
     public function __construct(IConfiguration $root, string $path)
     {
-        $this->Root = $root;
-        $this->Path = $path;
+        $this->root = $root;
+        $this->path = $path;
     }
 
     public function __get($name)
@@ -27,16 +27,16 @@ class ConfigurationSection implements IConfiguration
 
     public function getValue(string $key)
     {
-        return $this->Root->getValue($this->Path . ":" . $key);
+        return $this->root->getValue($this->path . ":" . $key);
     }
 
     public function getSection(string $key): IConfiguration
     {
-        return new ConfigurationSection($this->Root, $this->Path . ":" . $key);
+        return new ConfigurationSection($this->root, $this->path . ":" . $key);
     }
 
     public function getChildren(): array
     {
-        return $this->Root->getChildren($this->Path);
+        return $this->root->getChildren($this->path);
     }
 }

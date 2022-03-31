@@ -11,19 +11,19 @@ namespace DevNet\System\Compiler\Parsing;
 
 class Rule
 {
-    public int $index;
-    public string $name;
-    public array $predecates;
+    public int $Index;
+    public string $Name;
+    public array $Predecates;
 
     public function __construct(int $index, string $name, array $predecates)
     {
-        $this->index = $index;
-        $this->name = $name;
-        $this->predecates = $predecates;
+        $this->Index = $index;
+        $this->Name = $name;
+        $this->Predecates = $predecates;
     }
 
     public function getIndex()
     {
-        return $this->index;
+        return $this->Index;
     }
 }
