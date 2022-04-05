@@ -42,7 +42,33 @@ class Type
 
     public function __construct(string $name, Type ...$argument)
     {
-        $this->name = $name;
+        switch (strtolower($name)) {
+            case 'boolean':
+            case 'bool':
+                $this->name = 'boolean';
+                break;
+            case 'integer':
+            case 'int':
+                $this->name = 'integer';
+                break;
+            case 'float':
+            case 'double':
+                $this->name = 'float';
+                break;
+            case 'string':
+                $this->name = 'string';
+                break;
+            case 'array':
+                $this->name = 'array';
+                break;
+            case 'object':
+                $this->name = 'object';
+                break;
+            default:
+                $this->name = $name;
+                break;
+        }
+        
         $this->genericTypeArgs = $argument;
     }
 
