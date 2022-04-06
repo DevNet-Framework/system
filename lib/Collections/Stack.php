@@ -23,7 +23,7 @@ class Stack implements IEnumerable
 
     public function __construct(string $valueType)
     {
-        $this->genericType = new Type(self::class, new Type($valueType));
+        $this->genericType = new Type(self::class, $valueType);
     }
 
     public function push($value): void

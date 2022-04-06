@@ -22,7 +22,7 @@ class ArrayList implements ArrayAccess, IList
 
     public function __construct(string $valueType)
     {
-        $this->genericType = new Type(self::class, new Type(Type::Integer), new Type($valueType));
+        $this->genericType = new Type(self::class, Type::Integer, $valueType);
     }
 
     public function add($value): void
