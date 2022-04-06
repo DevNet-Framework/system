@@ -21,7 +21,7 @@ class Type
     public const Object  = 'object';
 
     private string $name;
-    private array $genericTypeArgs;
+    private array $genericTypeArgs = [];
 
     public function __get(string $name)
     {
@@ -40,7 +40,7 @@ class Type
         throw new PropertyException("access to undefined property" . get_class($this) . "::" . $name);
     }
 
-    public function __construct(string $name, Type ...$argument)
+    public function __construct(string $name, string ...$arguments)
     {
         switch (strtolower($name)) {
             case 'boolean':
@@ -68,8 +68,11 @@ class Type
                 $this->name = $name;
                 break;
         }
-        
-        $this->genericTypeArgs = $argument;
+
+        foreach ($arguments as $argument) {
+            $this->genericTypeArgs[] = new Type($argument);
+        }
+
     }
 
     public function validateArguments(...$args): int
