@@ -21,16 +21,12 @@ class Type
     public const Object  = 'object';
 
     private string $name;
-    private array $genericTypeArgs = [];
+    private array $genericArgs = [];
 
     public function __get(string $name)
     {
         if ($name == 'Name') {
             return $this->name;
-        }
-
-        if ($name == 'GenericTypeArgs') {
-            return $this->genericTypeArgs;
         }
 
         if (property_exists($this, $name)) {
@@ -40,7 +36,7 @@ class Type
         throw new PropertyException("access to undefined property" . get_class($this) . "::" . $name);
     }
 
-    public function __construct(string $name, string ...$arguments)
+    public function __construct(string $name, array $arguments = [])
     {
         switch (strtolower($name)) {
             case 'boolean':
@@ -68,16 +64,20 @@ class Type
                 $this->name = $name;
                 break;
         }
-
+        
         foreach ($arguments as $argument) {
-            $this->genericTypeArgs[] = new Type($argument);
-        }
+            if (!is_string($argument)) {
+                $type = gettype($argument);
+                throw new \Exception("Generic parameter type name must be of type string, {$type} was given");
+            }
 
+            $this->genericArgs[] = new Type($argument);
+        }
     }
 
     public function validateArguments(...$args): int
     {
-        foreach ($this->genericTypeArgs as $index => $GenericTypeArg) {
+        foreach ($this->genericArgs as $index => $GenericTypeArg) {
             if (isset($args[$index])) {
                 $arg = $args[$index];
                 if ($GenericTypeArg->Name == gettype($arg)) {
@@ -104,7 +104,7 @@ class Type
 
     public function isPrimitive(): bool
     {
-        $types = ['boolean', 'integer', 'float', 'string', 'array', 'object'];
+        $types = ['boolean', 'integer', 'float', 'string'];
         if (in_array($this->name, $types)) {
             return true;
         }
@@ -112,31 +112,37 @@ class Type
         return false;
     }
 
-    public function IsGeneric(): bool
+    public function isInterface(): bool
     {
-        if ($this->genericTypeArgs) {
+        return interface_exists($this->name);
+    }
+
+    public function isClass(): bool
+    {
+        return class_exists($this->name);
+    }
+
+    public function isGeneric(): bool
+    {
+        if ($this->isClass() && $this->genericArgs) {
             return true;
         }
-
         return false;
     }
 
-    public function IsClass(): bool
+    public function isSubclassOf(Type $class): bool
     {
-        if (class_exists($this->name)) {
-            return true;
-        }
-
-        return false;
+        return is_subclass_of($this->name, $class->Name);
     }
 
-    public function IsInterface(): bool
+    public function getGenericArguments(): array
     {
-        if (interface_exists($this->name)) {
-            return true;
-        }
+        return $this->genericArgs;
+    }
 
-        return false;
+    public function __toString(): string
+    {
+        return $this->name;
     }
 
     public static function typeOf($value): string
