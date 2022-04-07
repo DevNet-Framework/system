@@ -13,15 +13,8 @@ use DevNet\System\Exceptions\PropertyException;
 
 class Type
 {
-    public const Boolean = 'boolean';
-    public const Integer = 'integer';
-    public const Float   = 'float';
-    public const String  = 'string';
-    public const Array   = 'array';
-    public const Object  = 'object';
-
     private string $name;
-    private array $genericArgs = [];
+    private array $arguments = [];
 
     public function __get(string $name)
     {
@@ -71,35 +64,8 @@ class Type
                 throw new \Exception("Generic parameter type name must be of type string, {$type} was given");
             }
 
-            $this->genericArgs[] = new Type($argument);
+            $this->arguments[] = new Type($argument);
         }
-    }
-
-    public function validateArguments(...$args): int
-    {
-        foreach ($this->genericArgs as $index => $GenericTypeArg) {
-            if (isset($args[$index])) {
-                $arg = $args[$index];
-                if ($GenericTypeArg->Name == gettype($arg)) {
-                    continue;
-                }
-
-                if (is_object($arg)) {
-                    $type = get_class($arg);
-                    if ($GenericTypeArg->Name == $type) {
-                        continue;
-                    }
-                }
-
-                return $index + 1;
-            } else {
-                return ($index + 1) * -1;
-            }
-
-            $index++;
-        }
-
-        return 0;
     }
 
     public function isPrimitive(): bool
@@ -124,7 +90,7 @@ class Type
 
     public function isGeneric(): bool
     {
-        if ($this->isClass() && $this->genericArgs) {
+        if ($this->isClass() && $this->arguments) {
             return true;
         }
         return false;
@@ -135,9 +101,14 @@ class Type
         return is_subclass_of($this->name, $class->Name);
     }
 
+    public function isEquivalentTo(Type $type): bool
+    {
+        return $this == $type;
+    }
+
     public function getGenericArguments(): array
     {
-        return $this->genericArgs;
+        return $this->arguments;
     }
 
     public function __toString(): string
@@ -145,17 +116,13 @@ class Type
         return $this->name;
     }
 
-    public static function typeOf($value): string
+    public static function getType($value): Type
     {
-        if (is_object($value)) {
-            return get_class($value);
-        } else {
-            return gettype($value);
+        $typeName = getType($value);
+        if ($typeName == 'object') {
+            $typeName = get_class($value);
         }
-    }
 
-    public static function getType(string $type)
-    {
-        return new Type($type);
+        return new Type($typeName);
     }
 }
