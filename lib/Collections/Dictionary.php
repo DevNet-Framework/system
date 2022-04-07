@@ -24,7 +24,7 @@ class Dictionary implements ArrayAccess, IDictionary
             throw ArrayException::keyConstraint();
         }
 
-        $this->genericType = new Type(self::class, $keyType, $valueType);
+        $this->genericType = new Type(self::class, [$keyType, $valueType]);
     }
 
     public function add($key, $value): void
