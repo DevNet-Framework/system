@@ -8,6 +8,17 @@
  */
 
 use DevNet\System\Diagnostics\Debug;
+use DevNet\System\Type;
+
+/**
+ * add typeOf helper.
+ */
+if (!function_exists("typeOf")) {
+    function typeOf(string $type, array $arguments = []): Type
+    {
+        return new Type($type, $arguments);
+    }
+}
 
 /**
  * add debug helper.
