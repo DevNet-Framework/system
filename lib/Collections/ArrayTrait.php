@@ -10,7 +10,6 @@
 namespace DevNet\System\Collections;
 
 use DevNet\System\Type;
-use DevNet\System\Text\StringBuilder;
 use DevNet\System\Exceptions\TypeException;
 
 trait ArrayTrait
@@ -24,18 +23,19 @@ trait ArrayTrait
      */
     public function offsetSet($key, $value): void
     {
-        $genericType = $this->getType();
-        $result = $genericType->validateArguments($key ?? 0, $value);
-
-        switch ($result) {
-            case 1:
-                $message = new StringBuilder();
-                $message->invalidKeyType(get_class($this), Type::Integer);
-                throw new TypeException($message->__toString());
-                break;
+        $genericArgs = $this->getType()->getGenericArguments();
+        $valueType = Type::getType($value);
+        if (!$genericArgs[1]->isEquivalentTo($valueType)) {
+            $className = get_class($this);
+            throw new TypeException("The value passed to {$className} must be of the type {$genericArgs[1]}");
         }
 
         if ($key != null) {
+            $keyType = Type::getType($key);
+            if (!$genericArgs[0]->isEquivalentTo($keyType)) {
+                $className = get_class($this);
+                throw new TypeException("The key passed to {$className} must be of the type {$genericArgs[0]}");
+            }
             $this->Array[$key] = $value;
         } else {
             $this->Array[] = $value;
