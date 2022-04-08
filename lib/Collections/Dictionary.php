@@ -11,20 +11,15 @@ namespace DevNet\System\Collections;
 
 use ArrayAccess;
 use DevNet\System\Type;
-use DevNet\System\Exceptions\ArrayException;
 
 class Dictionary implements ArrayAccess, IDictionary
 {
     use \DevNet\System\Collections\ArrayTrait;
     use \DevNet\System\Extension\ExtenderTrait;
 
-    public function __construct(string $keyType, string $valueType)
+    public function __construct(string $valueType)
     {
-        if ($keyType != Type::Integer && $keyType != Type::String) {
-            throw ArrayException::keyConstraint();
-        }
-
-        $this->genericType = new Type(self::class, [$keyType, $valueType]);
+        $this->genericType = new Type(self::class, ['string', $valueType]);
     }
 
     public function add($key, $value): void
