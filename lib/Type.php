@@ -57,7 +57,7 @@ class Type
                 $this->name = $name;
                 break;
         }
-        
+
         foreach ($arguments as $argument) {
             if (!is_string($argument)) {
                 $type = gettype($argument);
@@ -66,6 +66,11 @@ class Type
 
             $this->arguments[] = new Type($argument);
         }
+    }
+
+    public function getGenericArguments(): array
+    {
+        return $this->arguments;
     }
 
     public function isPrimitive(): bool
@@ -106,21 +111,43 @@ class Type
         return $this == $type;
     }
 
-    public function getGenericArguments(): array
+    public function isOfType($element): bool
     {
-        return $this->arguments;
+        $type = self::getType($element);
+
+        if ($this->isEquivalentTo($type)) {
+            return true;
+        }
+
+        if ($type->isSubclassOf($this)) {
+            return true;
+        }
+
+        if ($this->name == 'object' && $type->isClass()) {
+            return true;
+        }
+
+        return false;
     }
 
     public function __toString(): string
     {
-        return $this->name;
+        $typeName = $this->name;
+        if ($this->isGeneric()) {
+            $typeName .= '<' . implode(', ', $this->arguments) . '>';
+        }
+
+        return $typeName;
     }
 
-    public static function getType($value): Type
+    public static function getType($element): Type
     {
-        $typeName = getType($value);
+        $typeName = getType($element);
         if ($typeName == 'object') {
-            $typeName = get_class($value);
+            $typeName = get_class($element);
+            if (method_exists($element, 'getType')) {
+                return $element->getType();
+            }
         }
 
         return new Type($typeName);
