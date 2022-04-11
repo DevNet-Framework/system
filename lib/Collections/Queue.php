@@ -14,8 +14,9 @@ use DevNet\System\Text\StringBuilder;
 use DevNet\System\Exceptions\TypeException;
 use DevNet\System\Exceptions\ErrorMessageExtension;
 
-class Stack implements IEnumerable
+class Queue implements IEnumerable
 {
+    use \DevNet\System\Collections\GenericTrait;
     use \DevNet\System\Extension\ExtenderTrait;
 
     private array $array = [];
@@ -23,16 +24,15 @@ class Stack implements IEnumerable
 
     public function __construct(string $valueType)
     {
-        $this->genericType = new Type(self::class, [$valueType]);
+        $this->setTypeParameters([$valueType]);
     }
 
     public function enqueue($value): void
     {
-        $index = $this->genericType->validateArguments($value);
-        if ($index > 0) {
-            $message = new StringBuilder();
-            $message->invalidArgumentType(get_class($this), 'push', $index, $this->genericType->GenericTypeArgs[$index - 1]->Name);
-            throw new TypeException($message->__toString());
+        $genericArgs = $this->getType()->getGenericArguments();
+        if (!$genericArgs[0]->isOfType($value)) {
+            $className = get_class($this);
+            throw new TypeException("The value passed to {$className} must be of the type {$genericArgs[1]}");
         }
 
         $this->array[$value];
@@ -73,10 +73,5 @@ class Stack implements IEnumerable
     public function toArray(): array
     {
         return $this->array;
-    }
-
-    public function getType(): Type
-    {
-        return $this->genericType;
     }
 }
