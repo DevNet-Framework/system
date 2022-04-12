@@ -24,20 +24,21 @@ trait ArrayTrait
     public function offsetSet($key, $value): void
     {
         $genericArgs = $this->getType()->getGenericArguments();
-        $valueType = Type::getType($value);
-        if (!$genericArgs[1]->isEquivalentTo($valueType)) {
+        if (!$genericArgs[1]->isOfType($value)) {
             $className = get_class($this);
             throw new TypeException("The value passed to {$className} must be of the type {$genericArgs[1]}");
         }
 
         if ($key != null) {
-            $keyType = Type::getType($key);
-            if (!$genericArgs[0]->isEquivalentTo($keyType)) {
+            if (!$genericArgs[0]->isOfType($key)) {
                 $className = get_class($this);
                 throw new TypeException("The key passed to {$className} must be of the type {$genericArgs[0]}");
             }
             $this->Array[$key] = $value;
         } else {
+            if ($genericArgs[0]->Name != 'integer') {
+                throw new TypeException("Couldn't auto increment a Key of type {$genericArgs[0]}");
+            }
             $this->Array[] = $value;
         }
     }
