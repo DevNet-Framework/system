@@ -15,11 +15,12 @@ use DevNet\System\Type;
 class Dictionary implements ArrayAccess, IDictionary
 {
     use \DevNet\System\Collections\ArrayTrait;
+    use \DevNet\System\Collections\GenericTrait;
     use \DevNet\System\Extension\ExtenderTrait;
 
     public function __construct(string $valueType)
     {
-        $this->genericType = new Type(self::class, ['string', $valueType]);
+        $this->setTypeParameters(['string', $valueType]);
     }
 
     public function add($key, $value): void
@@ -47,11 +48,6 @@ class Dictionary implements ArrayAccess, IDictionary
     public function clear(): void
     {
         $this->Array = [];
-    }
-
-    public function getType(): Type
-    {
-        return $this->genericType;
     }
 
     public function toArray(): array
