@@ -9,20 +9,18 @@
 
 namespace DevNet\System\Collections;
 
-use ArrayAccess;
-use DevNet\System\Type;
 use DevNet\System\Exceptions\ArrayException;
+use ArrayAccess;
 
 class ArrayList implements ArrayAccess, IList
 {
     use \DevNet\System\Collections\ArrayTrait;
+    use \DevNet\System\Collections\GenericTrait;
     use \DevNet\System\Extension\ExtenderTrait;
-
-    private Type $genericType;
 
     public function __construct(string $valueType)
     {
-        $this->genericType = new Type(self::class, ['int', $valueType]);
+        $this->setTypeParameters(['int', $valueType]);
     }
 
     public function add($value): void
@@ -56,11 +54,6 @@ class ArrayList implements ArrayAccess, IList
     public function clear(): void
     {
         $this->Array = [];
-    }
-
-    public function getType(): Type
-    {
-        return $this->genericType;
     }
 
     public function toArray(): array
