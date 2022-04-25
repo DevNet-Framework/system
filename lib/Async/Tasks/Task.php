@@ -50,6 +50,7 @@ class Task implements IAwaitable
             case 'IsCompleted':
                 if (!$this->isCompleted && $this->status == Task::Running) {
                     $this->isCompleted = $this->awaiter->IsCompleted();
+                    $this->wait();
                 }
                 return $this->isCompleted;
                 break;
