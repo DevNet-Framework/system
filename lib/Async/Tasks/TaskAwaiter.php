@@ -68,8 +68,11 @@ class TaskAwaiter implements IAwaiter
             return $this->result;
         }
 
-        while (!$this->isCompleted()) {
-            // waiting for process to be completed.
+        // waiting for process to be completed.
+        while (true) {
+            if ($this->isCompleted()) {
+                break;
+            }
         }
 
         $output = $this->process->read();
