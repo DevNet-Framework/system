@@ -165,6 +165,19 @@ abstract class Stream
         return $result;
     }
 
+    public function truncate(int $size): bool
+    {
+        if (!$this->Resource) {
+            throw new \Exception('Missing resource');
+        }
+
+        if (!$this->isWritable()) {
+            throw new \Exception('not writible');
+        }
+
+        return ftruncate($this->Resource, $size);
+    }
+
     public function flush(): bool
     {
         if (!$this->Resource) {
