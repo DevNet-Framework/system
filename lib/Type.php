@@ -67,6 +67,11 @@ class Type
             $this->arguments[] = new Type($argument);
         }
     }
+    
+    public function makeGenericType(array $typeArguments): Type
+    {
+        return new Type($this->name, $typeArguments);
+    }
 
     public function getGenericArguments(): array
     {
