@@ -15,7 +15,7 @@ trait GenericTrait
 {
     private ?Type $type = null;
 
-    protected function setTypeParameters(array $typeParameters): void
+    protected function setGenericParameters(array $typeParameters): void
     {
         $this->type = new Type(get_class($this), $typeParameters);
     }
