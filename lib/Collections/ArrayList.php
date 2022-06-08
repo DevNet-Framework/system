@@ -20,7 +20,7 @@ class ArrayList implements ArrayAccess, IList
 
     public function __construct(string $valueType)
     {
-        $this->setTypeParameters(['int', $valueType]);
+        $this->Type = $this->getType()->makeGenericType(['int', $valueType]);
     }
 
     public function add($value): void
