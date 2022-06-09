@@ -20,7 +20,7 @@ class Dictionary implements ArrayAccess, IDictionary
 
     public function __construct(string $valueType)
     {
-        $this->setTypeParameters(['string', $valueType]);
+        $this->Type = $this->getType()->makeGenericType(['string', $valueType]);
     }
 
     public function add($key, $value): void
