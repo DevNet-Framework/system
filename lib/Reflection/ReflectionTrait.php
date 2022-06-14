@@ -9,8 +9,6 @@
 
 namespace DevNet\System\Reflection;
 
-use DevNet\System\Type;
-
 trait ReflectionTrait
 {
     protected ?Type $Type = null;
