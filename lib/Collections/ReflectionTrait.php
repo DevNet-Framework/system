@@ -11,7 +11,7 @@ namespace DevNet\System\Collections;
 
 use DevNet\System\Type;
 
-trait GenericTrait
+trait ReflectionTrait
 {
     private ?Type $type = null;
 
