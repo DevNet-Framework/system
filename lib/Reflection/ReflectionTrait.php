@@ -7,7 +7,7 @@
  * @link        https://github.com/DevNet-Framework
  */
 
-namespace DevNet\System\Collections;
+namespace DevNet\System\Reflection;
 
 use DevNet\System\Type;
 
