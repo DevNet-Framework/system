@@ -13,14 +13,14 @@ use DevNet\System\Type;
 
 trait ReflectionTrait
 {
-    private ?Type $type = null;
+    protected ?Type $Type = null;
 
     public function getType(): Type
     {
-        if (!$this->type) {
-            $this->type = new Type(get_class($this));
+        if (!$this->Type) {
+            $this->Type = new Type(get_class($this));
         }
 
-        return $this->type;
+        return $this->Type;
     }
 }
