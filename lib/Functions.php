@@ -8,7 +8,7 @@
  */
 
 use DevNet\System\Diagnostics\Debug;
-use DevNet\System\Type;
+use DevNet\System\Reflection\Type;
 
 /**
  * add typeOf helper.
