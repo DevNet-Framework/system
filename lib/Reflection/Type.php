@@ -7,7 +7,7 @@
  * @link        https://github.com/DevNet-Framework
  */
 
-namespace DevNet\System;
+namespace DevNet\System\Reflection;
 
 use DevNet\System\Exceptions\PropertyException;
 
