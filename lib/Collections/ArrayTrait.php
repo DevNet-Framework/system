@@ -9,7 +9,7 @@
 
 namespace DevNet\System\Collections;
 
-use DevNet\System\Type;
+use DevNet\System\Reflection\Type;
 use DevNet\System\Exceptions\TypeException;
 
 trait ArrayTrait
