@@ -10,13 +10,12 @@
 namespace DevNet\System\Collections;
 
 use ArrayAccess;
-use DevNet\System\Type;
 
 class Dictionary implements ArrayAccess, IDictionary
 {
     use \DevNet\System\Collections\ArrayTrait;
-    use \DevNet\System\Collections\GenericTrait;
     use \DevNet\System\Extension\ExtenderTrait;
+    use \DevNet\System\Reflection\ReflectionTrait;
 
     public function __construct(string $valueType)
     {
