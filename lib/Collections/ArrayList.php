@@ -15,8 +15,8 @@ use ArrayAccess;
 class ArrayList implements ArrayAccess, IList
 {
     use \DevNet\System\Collections\ArrayTrait;
-    use \DevNet\System\Collections\GenericTrait;
     use \DevNet\System\Extension\ExtenderTrait;
+    use \DevNet\System\Reflection\ReflectionTrait;
 
     public function __construct(string $valueType)
     {
