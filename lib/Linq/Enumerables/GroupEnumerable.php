@@ -22,6 +22,19 @@ class GroupEnumerable implements IEnumerable
     private array $array = [];
     private ?string $key;
 
+    public function __get(string $name)
+    {
+        if ($name == 'Key') {
+            return $this->key;
+        }
+        
+        if (property_exists($this, $name)) {
+            throw new PropertyException("access to private property " . get_class($this) . "::" . $name);
+        }
+
+        throw new PropertyException("access to undefined property " . get_class($this) . "::" . $name);
+    }
+
     public function __construct(IEnumerable $enumerable, string $key = null)
     {
         $this->enumerable = $enumerable;
