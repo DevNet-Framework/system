@@ -9,22 +9,18 @@
 
 namespace DevNet\System\Collections;
 
-use DevNet\System\Type;
-use DevNet\System\Text\StringBuilder;
 use DevNet\System\Exceptions\TypeException;
-use DevNet\System\Exceptions\ErrorMessageExtension;
 
 class Stack implements IEnumerable
 {
-    use \DevNet\System\Collections\GenericTrait;
     use \DevNet\System\Extension\ExtenderTrait;
+    use \DevNet\System\Reflection\ReflectionTrait;
 
     private array $array = [];
-    private Type $genericType;
 
     public function __construct(string $valueType)
     {
-        $this->setTypeParameters([$valueType]);
+        $this->Type = $this->getType()->makeGenericType([$valueType]);
     }
 
     public function push($value): void
@@ -32,10 +28,10 @@ class Stack implements IEnumerable
         $genericArgs = $this->getType()->getGenericArguments();
         if (!$genericArgs[0]->isOfType($value)) {
             $className = get_class($this);
-            throw new TypeException("The value passed to {$className} must be of the type {$genericArgs[1]}");
+            throw new TypeException("The value passed to {$className} must be of the type {$genericArgs[0]}");
         }
 
-        $this->array[$value];
+        $this->array[] = $value;
     }
 
     public function pop()
