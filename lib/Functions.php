@@ -7,16 +7,17 @@
  * @link        https://github.com/DevNet-Framework
  */
 
+use DevNet\System\Async\AsyncFunction;
 use DevNet\System\Diagnostics\Debug;
 use DevNet\System\Reflection\Type;
 
 /**
- * add typeOf helper.
+ * add async helper.
  */
-if (!function_exists("typeOf")) {
-    function typeOf(string $type, array $arguments = []): Type
+if (!function_exists("async")) {
+    function async(callable $action): AsyncFunction
     {
-        return new Type($type, $arguments);
+        return new AsyncFunction($action);
     }
 }
 
@@ -37,6 +38,16 @@ if (!function_exists("debug")) {
             $debug->unindent();
         }
         return $debug;
+    }
+}
+
+/**
+ * add typeOf helper.
+ */
+if (!function_exists("typeOf")) {
+    function typeOf(string $type, array $arguments = []): Type
+    {
+        return new Type($type, $arguments);
     }
 }
 
