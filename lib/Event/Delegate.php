@@ -59,15 +59,16 @@ abstract class Delegate implements IEnumerable
             return false;
         }
 
-        $parameterIndex = 0;
-        $actionParameters = $action->MethodInfo->getParameters();
-
-        foreach ($this->Parameters as $parameter) {
-            if ($parameter->getType() != $actionParameters[$parameterIndex]->getType()) {
-                return false;
+        $parameters = $action->MethodInfo->getParameters();
+        foreach ($parameters as $index => $parameter) {
+            if ($parameter->hasType()) {
+                $typeName = $parameter->getType()->getName();
+                $typeSignature = $this->Parameters[$index]->getType()->getName();
+                
+                if ($typeName != $typeSignature && !is_subclass_of($typeName, $typeSignature)) {
+                    return false;
+                }
             }
-
-            $parameterIndex++;
         }
 
         return true;
