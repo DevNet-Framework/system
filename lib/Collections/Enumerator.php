@@ -40,11 +40,13 @@ class Enumerator implements Iterator, Countable
         return isset($this->array[$this->key]);
     }
 
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->array[$this->key] ?? null;
     }
 
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->key ?? null;
