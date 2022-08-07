@@ -114,4 +114,9 @@ class Console
     {
         self::write("\e[0m");
     }
+
+    public static function clear(): void
+    {
+        self::write("\e[H\e[J");
+    }
 }
