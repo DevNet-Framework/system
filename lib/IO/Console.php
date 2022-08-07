@@ -9,9 +9,6 @@
 
 namespace DevNet\System\IO;
 
-if (!defined('STDIN'))  define('STDIN',  fopen('php://stdin',  'r'));
-if (!defined('STDOUT')) define('STDOUT', fopen('php://stdout', 'w'));
-
 class Console
 {
     private const FGCOLORS = [
@@ -44,65 +41,77 @@ class Console
         15 => '47'
     ];
 
-    public static function readLine(string $string = null)
+    private static FileStream $In;
+    private static FileStream $Out;
+
+    public static function write(string $value, ...$args): void
     {
-        if ($string != null) {
-            fwrite(STDOUT, $string);
+        if (!isset(self::$Out)) {
+            self::$Out = new FileStream('php://stdout', 'w');
         }
 
-        return str_replace(PHP_EOL, '', fgets(STDIN));
-    }
-
-    public static function write(string $format, ...$args)
-    {
         // overide the arguments if the fist argument is an array
         if (isset($args[0]) && is_array($args[0])) {
             $args = $args[0];
         }
-        
+
         $replace = [];
-        foreach ($args as $key => $value) {
+        foreach ($args as $key => $arg) {
             // map the arguments if the value can be casted to string
-            if (!is_array($value) && (!is_object($value) || method_exists($value, '__toString'))) {
-                $replace['{' . $key . '}'] = $value;
+            if (!is_array($arg) && (!is_object($arg) || method_exists($arg, '__toString'))) {
+                $replace['{' . $key . '}'] = $arg;
             }
         }
 
         // interpolate replacement values into the string format
-        $string = strtr($format, $replace);
-        fwrite(STDOUT, $string);
+        if ($replace) {
+            $value = strtr($value, $replace);
+        }
+
+        self::$Out->write($value);
     }
 
-    public static function writeline(string $format = "", ...$args)
+    public static function writeline(string $value = "", ...$args): void
     {
         // overide the arguments if the fist argument is an array
         if (isset($args[0]) && is_array($args[0])) {
             $args = $args[0];
         }
 
-        self::write($format . PHP_EOL, $args);
+        self::write($value . PHP_EOL, $args);
     }
 
-    public static function foregroundColor(int $fgColor)
+    public static function readLine(string $value = null): string
     {
-        $color = self::FGCOLORS[$fgColor] ?? null;
+        if (!isset(self::$In)) {
+            self::$In = new FileStream('php://stdin', 'r');
+        }
 
-        if ($color != null) {
-            fwrite(STDOUT, "\e[${color}m");
+        if ($value) {
+            self::write($value);
+        }
+
+        return str_replace(PHP_EOL, '', self::$In->readLine());
+    }
+
+    public static function foregroundColor(int $color): void
+    {
+        $color = self::FGCOLORS[$color] ?? null;
+        if ($color !== null) {
+            self::write("\e[${color}m");
         }
     }
 
-    public static function backgroundColor(int $bgColor)
+    public static function backgroundColor(int $color): void
     {
-        $color = self::BGCOLORS[$bgColor] ?? null;
-
-        if ($color != null) {
-            fwrite(STDOUT, "\e[${color}m");
+        $color = self::BGCOLORS[$color] ?? null;
+        if ($color !== null) {
+            self::write("\e[${color}m");
         }
     }
 
-    public static function resetColor()
+    public static function resetColor(): void
     {
-        fwrite(STDOUT, "\e[0m");
+        self::write("\e[0m");
     }
 }
