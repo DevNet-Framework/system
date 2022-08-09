@@ -13,10 +13,10 @@ use DevNet\System\IO\Stream;
 
 class Socket extends Stream
 {
-    public function __construct(string $host, int $port, float $timeout = 0, bool $blocking = true)
+    public function __construct(string $host, int $port, bool $blocking = true, float $timeout = 0)
     {
-        $this->Timeout  = $timeout;
         $this->Blocking = $blocking;
+        $this->Timeout  = $timeout;
 
         if ($this->Timeout) {
             $this->Resource = fsockopen($host, $port, $errorCode, $errorMessage, $this->Timeout);
