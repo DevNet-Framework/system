@@ -10,7 +10,6 @@
 namespace DevNet\System\Async\Tasks;
 
 use DevNet\System\Action;
-use DevNet\System\Async\AsyncAwaiter;
 use DevNet\System\Async\CancelationException;
 use DevNet\System\Async\CancelationToken;
 use DevNet\System\Async\IAwaitable;
@@ -18,6 +17,7 @@ use DevNet\System\Async\IAwaiter;
 use DevNet\System\Exceptions\ArrayException;
 use DevNet\System\Exceptions\PropertyException;
 use Closure;
+use DevNet\System\Async\AsyncAwaiter;
 
 class Task implements IAwaitable
 {
@@ -32,7 +32,6 @@ class Task implements IAwaitable
     private int $status = 0;
     private TaskScheduler $scheduler;
     private ?Task $continuationTask = null;
-    private ?Action $action = null;
     private ?IAwaiter $awaiter = null;
     private ?CancelationToken $token = null;
     private bool $isCompleted = false;
@@ -79,14 +78,15 @@ class Task implements IAwaitable
         $this->token     = $token;
 
         if ($action) {
-            $this->action = new Action($action);
             $this->status = Self::Created;
-            if ($this->action->MethodInfo->isGenerator()) {
-                $this->awaiter = new AsyncAwaiter($action(), $this->token);
+            $action = new Action($action);
+            if ($action->MethodInfo->isGenerator()) {
+                $this->awaiter = new AsyncAwaiter($action(), $token);
             } else {
-                $this->awaiter = new AsyncAwaiter(function () use ($action) {
+                $function = function () use ($action) {
                     return yield $action();
-                }, $this->token);
+                };
+                $this->awaiter = new AsyncAwaiter($function(), $token);
             }
         }
     }
@@ -110,9 +110,6 @@ class Task implements IAwaitable
         $continuationAction = $this->awaiter->OnCompleted;
 
         if ($this->scheduler->MaxConcurrency == 0 || $this->scheduler->MaxConcurrency - count($this->scheduler->getScheduledTasks()) > 0) {
-            if (!$this->action->MethodInfo->isGenerator()) {
-                $this->awaiter = new TaskAwaiter($this->action, $this->token);
-            }
             $this->status = Task::Running;
         }
 
