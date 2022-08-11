@@ -10,21 +10,20 @@
 namespace DevNet\System;
 
 use DevNet\System\Exceptions\PropertyException;
-use Opis\Closure\SerializableClosure;
 use ReflectionFunction;
+use ReflectionMethod;
 use Closure;
 
 class Action
 {
     protected ReflectionFunction $MethodInfo;
-    private string $syntax = '';
 
     public function __get(string $name)
     {
         if ($name == 'MethodInfo') {
             return $this->MethodInfo;
         }
-        
+
         if (property_exists($this, $name)) {
             throw new PropertyException("access to private property " . get_class($this) . "::" . $name);
         }
@@ -34,7 +33,14 @@ class Action
 
     public function __construct(callable $action)
     {
-        $action = Closure::fromCallable($action);
+        if (is_array($action)) {
+            $reflection = new ReflectionMethod($action[0], $action[1]);
+            $action = $reflection->getClosure($action[0]);
+        } else if (is_object($action) && !$action instanceof Closure) {
+            $reflection = new ReflectionMethod($action, '__invoke');
+            $action = $reflection->getClosure($action);
+        }
+
         $this->MethodInfo = new ReflectionFunction($action);
     }
 
@@ -46,20 +52,5 @@ class Action
     public function __invoke(...$args)
     {
         return $this->invokeArgs($args);
-    }
-
-    public function  __serialize(): array
-    {
-        $wrapper = new SerializableClosure($this->MethodInfo->getClosure());
-        $serialized = serialize($wrapper);
-        return ['syntax' => $serialized];
-    }
-
-    public function __unserialize(array $data): void
-    {
-        $syntax  = $data['syntax'];
-        $wrapper = unserialize($syntax);
-        $closure = $wrapper->getClosure();
-        $this->MethodInfo = new ReflectionFunction($closure);
     }
 }
