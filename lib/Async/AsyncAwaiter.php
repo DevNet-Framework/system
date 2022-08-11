@@ -60,8 +60,6 @@ class AsyncAwaiter implements IAwaiter
 
         if ($this->token && $this->token->IsCancellationRequested) {
             $this->isCompleted = true;
-            $this->process->kill();
-            $this->process->close();
             throw new CancelationException('A task was canceled');
         }
 
