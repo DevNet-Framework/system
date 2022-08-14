@@ -15,7 +15,7 @@ use DevNet\System\Logging\File\FileLoggerProvider;
 
 class LoggerOptions
 {
-    use \DevNet\System\Extension\ExtenderTrait;
+    use \DevNet\System\Extension\ExtensionTrait;
 
     private array $filters = [];
     private array $providers = [];

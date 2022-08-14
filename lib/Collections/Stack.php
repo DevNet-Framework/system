@@ -13,7 +13,7 @@ use DevNet\System\Exceptions\TypeException;
 
 class Stack implements IEnumerable
 {
-    use \DevNet\System\Extension\ExtenderTrait;
+    use \DevNet\System\Extension\ExtensionTrait;
     use \DevNet\System\Reflection\ReflectionTrait;
 
     private array $array = [];

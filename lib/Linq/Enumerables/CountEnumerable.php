@@ -15,7 +15,7 @@ use Closure;
 
 class CountEnumerable implements IEnumerable
 {
-    use \DevNet\System\Extension\ExtenderTrait;
+    use \DevNet\System\Extension\ExtensionTrait;
 
     private IEnumerable $enumerable;
 

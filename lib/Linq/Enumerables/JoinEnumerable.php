@@ -15,7 +15,7 @@ use Closure;
 
 class JoinEnumerable implements IEnumerable
 {
-    use \DevNet\System\Extension\ExtenderTrait;
+    use \DevNet\System\Extension\ExtensionTrait;
 
     private IEnumerable $enumerable;
     private array $array = [];

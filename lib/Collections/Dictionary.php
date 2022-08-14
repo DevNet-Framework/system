@@ -14,7 +14,7 @@ use ArrayAccess;
 class Dictionary implements ArrayAccess, IDictionary
 {
     use \DevNet\System\Collections\ArrayTrait;
-    use \DevNet\System\Extension\ExtenderTrait;
+    use \DevNet\System\Extension\ExtensionTrait;
     use \DevNet\System\Reflection\ReflectionTrait;
 
     public function __construct(string $valueType)
