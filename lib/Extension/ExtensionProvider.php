@@ -13,12 +13,20 @@ class ExtensionProvider
 {
     private static array $extensionMap = [];
 
-    static function getClassNames(): array
+    static function getImportedClasses(string $target): array
     {
+        $file = '';
         $trace = debug_backtrace();
-        $runtimeFile = $trace[2]["file"];
-        $contents = file_get_contents($runtimeFile);
+        foreach ($trace as $info) {
+            $class = $info['class'] ?? null;
+            $function = $info['function'] ?? null;
+            if ($class == $target && $function == '__call') {
+                $file = $info['file'] ?? null;
+                break;
+            }
+        }
 
+        $contents = file_get_contents($file);
         preg_match_all("%(?i)use\s+([A-Za-z_\\\]+);%", $contents, $matches);
 
         return $matches[1];
@@ -44,7 +52,7 @@ class ExtensionProvider
             return $extensionMethod;
         }
 
-        return self::matchExtension($target, $methodName, self::getClassNames());
+        return self::matchExtension($target, $methodName, self::getImportedClasses($targetClass));
     }
 
     public static function matchExtension(object $target, string $methodName, array $classnames): ?object
