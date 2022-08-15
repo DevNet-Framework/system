@@ -13,22 +13,19 @@ use DevNet\System\Exceptions\MethodException;
 
 trait AsyncTrait
 {
-    public function __call(string $name, array $args)
+    public function __call(string $method, array $args)
     {
-        $class = get_class($this);
-        $asyncMethod = 'async_' . $name;
+        $asyncMethod = 'async_' . $method;
         if (method_exists($this, $asyncMethod)) {
             $action = new AsyncFunction([$this, $asyncMethod]);
-            if (!$action->MethodInfo->isGenerator()) {
-                throw new MethodException("The method {$class}::{$asyncMethod}() must use 'yield' keyword");
-            }
             return $action->invokeArgs($args);
         }
 
-        if (!method_exists($this, $name)) {
-            throw new MethodException("Call to undefined method {$class}::{$name}()");
+        $class = get_class($this);
+        if (!method_exists($this, $method)) {
+            throw new MethodException("Call to undefined method {$class}::{$method}()");
         }
 
-        throw new MethodException("Call to non-public method {$class}::{$name}()");
+        throw new MethodException("Call to non-public method {$class}::{$method}()");
     }
 }
