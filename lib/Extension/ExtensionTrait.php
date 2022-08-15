@@ -28,9 +28,4 @@ trait ExtensionTrait
 
         throw new MethodException("Call to non-public method {$class}::{$method}()");
     }
-
-    public function extend(string $extenssion)
-    {
-        ExtensionProvider::addExtension($this, $extenssion);
-    }
 }
