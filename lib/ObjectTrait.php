@@ -44,6 +44,10 @@ trait ObjectTrait
             }
         }
 
+        if (method_exists($this, $name)) {
+            return [$this, $name];
+        }
+
         $class = get_class($this);
         if (!property_exists($this, $name)) {
             throw new PropertyException("Access to undefined property {$class}::{$name}");
