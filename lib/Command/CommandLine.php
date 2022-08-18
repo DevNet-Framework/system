@@ -17,8 +17,8 @@ class CommandLine implements ICommand
     protected ?string $Name;
     protected ?string $Description;
     protected array $Arguments = [];
-    protected array $Options = [];
-    protected array $Commands = [];
+    protected array $Options   = [];
+    protected array $Commands  = [];
     protected EventHandler $Handler;
 
     public function __get(string $name)
@@ -69,11 +69,11 @@ class CommandLine implements ICommand
     public function addHandler(ICommandHandler $handler): void
     {
         if (isset($this->Handler)) {
-            $this->Handler->add($handler, 'execute');
+            $this->Handler->add([$handler, 'execute']);
             return;
         }
 
-        $this->Handler = new EventHandler($handler, 'execute');
+        $this->Handler = new EventHandler([$handler, 'execute']);
     }
 
     public function invoke(array $args): void
