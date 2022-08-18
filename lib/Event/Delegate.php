@@ -17,34 +17,30 @@ use ReflectionMethod;
 
 abstract class Delegate implements IEnumerable
 {
-    protected ReflectionMethod $MethodInfo;
+    protected ReflectionMethod $Method;
     protected array $Parameters = [];
     protected array $Actions    = [];
 
-    public function __construct(object $target = null, ?string $actionName = null)
+    public function __construct(?callable $action = null)
     {
         if (!method_exists($this, 'delegate')) {
             throw new MethodException("Undefined signature, Delegate method not found");
         }
 
-        $this->MethodInfo = new ReflectionMethod($this, 'delegate');
+        $this->Method = new ReflectionMethod($this, 'delegate');
 
-        foreach ($this->MethodInfo->getParameters() as $parameter) {
+        foreach ($this->Method->getParameters() as $parameter) {
             $this->Parameters[] = $parameter;
         }
 
-        if ($target) {
-            $this->add($target, $actionName);
+        if ($action) {
+            $this->add($action);
         }
     }
 
-    public function add(object $target, ?string $actionName = null)
+    public function add(callable $action)
     {
-        if (!$actionName) {
-            $actionName = '__invoke';
-        }
-
-        $action = new Action([$target, $actionName]);
+        $action = new Action($action);
 
         if (!$this->matchSignature($action)) {
             throw new \Exception("incompatible signature, function must be compatible with : {$this->getSignature()}");
@@ -55,7 +51,7 @@ abstract class Delegate implements IEnumerable
 
     public function matchSignature(Action $action): bool
     {
-        if ($this->MethodInfo->getReturnType() && $this->MethodInfo->getReturnType() != $action->MethodInfo->getReturnType()) {
+        if ($this->Method->getReturnType() && $this->Method->getReturnType() != $action->MethodInfo->getReturnType()) {
             return false;
         }
 
@@ -89,8 +85,8 @@ abstract class Delegate implements IEnumerable
         $parameters = implode(', ', $parameters);
 
         $returnTypeName = 'mixed';
-        if ($this->MethodInfo->getReturnType()) {
-            $returnTypeName = $this->MethodInfo->getReturnType()->getName();
+        if ($this->Method->getReturnType()) {
+            $returnTypeName = $this->Method->getReturnType()->getName();
         }
 
         $delegateName = get_class($this);
