@@ -10,26 +10,20 @@
 namespace DevNet\System\Exceptions;
 
 use Exception;
+use Throwable;
 
 class MethodException extends Exception
 {
-    public static function undefinedMethod(string $className, string $methodName): self
+    public function __construct(string $message = "", int $code = 0, ?Throwable $previous = null, int $scope = 0)
     {
-        return new self("Call to undefined method {$className}::{$methodName}()");
-    }
+        parent::__construct($message, $code, $previous);
 
-    public static function privateMethod(string $className, string $methodName): self
-    {
-        return new self("Call to private method {$className}::{$methodName}()");
-    }
-
-    public static function protectedMethod(string $className, string $methodName): self
-    {
-        return new self("Call to protected method {$className}::{$methodName}()");
-    }
-
-    public static function invalidReturnType(string $className, string $methodName, string $requiredType): self
-    {
-        return new self("Return value of {$className}::{$methodName}()} must be of the type {$requiredType}");
+        if ($scope > 0) {
+            $trace = $this->getTrace();
+            if (isset($trace[$scope - 1])) {
+                $this->file = $trace[$scope - 1]['file'];
+                $this->line = $trace[$scope - 1]['line'];
+            }
+        }
     }
 }
