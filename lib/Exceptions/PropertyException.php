@@ -10,26 +10,20 @@
 namespace DevNet\System\Exceptions;
 
 use Exception;
+use Throwable;
 
 class PropertyException extends Exception
 {
-    public static function undefinedPropery(string $ClassName, string $propertyName): self
+    public function __construct(string $message = "", int $code = 0, ?Throwable $previous = null, int $scope = 0)
     {
-        return new self("access to undefined property {$ClassName}::{$propertyName}");
-    }
-
-    public static function privateProperty(string $ClassName, string $propertyName): self
-    {
-        return new self("access to private property {$ClassName}::{$propertyName}");
-    }
-
-    public static function protectedProperty(string $ClassName, string $propertyName): self
-    {
-        return new self("access to protected property {$ClassName}::{$propertyName}");
-    }
-
-    public static function invalidValueType(string $className, string $methodName, string $requiredType): self
-    {
-        return new self("Value passed to {$className}::{$methodName} must be of the type {$requiredType}");
+        parent::__construct($message, $code, $previous);
+        
+        if ($scope > 0) {
+            $trace = $this->getTrace();
+            if (isset($trace[$scope - 1])) {
+                $this->file = $trace[$scope - 1]['file'];
+                $this->line = $trace[$scope - 1]['line'];
+            }
+        }
     }
 }
