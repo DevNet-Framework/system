@@ -10,21 +10,20 @@
 namespace DevNet\System\Exceptions;
 
 use Exception;
+use Throwable;
 
 class ArrayException extends Exception
 {
-    public static function keyConstraint(): self
+    public function __construct(string $message = "", int $code = 0, ?Throwable $previous = null, int $scope = 0)
     {
-        return new self("Key must be of the type Integert or String");
-    }
+        parent::__construct($message, $code, $previous);
 
-    public static function invalidKeyType(string $requiredType): self
-    {
-        return new self("Key must be of the type {$requiredType}");
-    }
-
-    public static function invalidValueType(string $requiredType): self
-    {
-        return new self("Value must be of the type {$requiredType}");
+        if ($scope > 0) {
+            $trace = $this->getTrace();
+            if (isset($trace[$scope - 1])) {
+                $this->file = $trace[$scope - 1]['file'];
+                $this->line = $trace[$scope - 1]['line'];
+            }
+        }
     }
 }
