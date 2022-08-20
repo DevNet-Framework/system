@@ -9,28 +9,21 @@
 
 namespace DevNet\System\Exceptions;
 
-use DevNet\System\Type;
 use Exception;
+use Throwable;
 
 class TypeException extends Exception
 {
-    public static function invalidPropertType(string $className, string $propertyName, Type $requiredType): self
+    public function __construct(string $message = "", int $code = 0, ?Throwable $previous = null, int $scope = 0)
     {
-        return new self("Property {$className}::{$propertyName} must be of the type {$requiredType->Name}");
-    }
+        parent::__construct($message, $code, $previous);
 
-    public static function invalidArgumentType(string $className, string $methodName, int $argumentPosition, Type $requiredType): self
-    {
-        return new self("Argument {$argumentPosition} passed to {$className}::{$methodName}() must be of the type {$requiredType->Name}");
-    }
-
-    public static function invalidReturnType(string $className, string $methodName, Type $requiredType): self
-    {
-        return new self("Return Type of {$className}::{$methodName}() must be of the type {$requiredType->Name}");
-    }
-
-    public static function invalidKeyType(string $targetName, Type $requiredType): self
-    {
-        return new self("Key passed to {$targetName} must be of the type {$requiredType->Name}");
+        if ($scope > 0) {
+            $trace = $this->getTrace();
+            if (isset($trace[$scope - 1])) {
+                $this->file = $trace[$scope - 1]['file'];
+                $this->line = $trace[$scope - 1]['line'];
+            }
+        }
     }
 }
