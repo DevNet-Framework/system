@@ -14,10 +14,10 @@ use Throwable;
 
 class PropertyException extends Exception
 {
-    public function __construct(string $message = "", int $code = 0, ?Throwable $previous = null, int $scope = 0)
+    public function __construct(string $message = "", int $code = 0, int $scope = 0, ?Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
-        
+
         if ($scope > 0) {
             $trace = $this->getTrace();
             if (isset($trace[$scope - 1])) {
