@@ -9,7 +9,7 @@
 
 use DevNet\System\Async\AsyncFunction;
 use DevNet\System\Diagnostics\Debug;
-use DevNet\System\Reflection\Type;
+use DevNet\System\Type;
 
 /**
  * add async helper.
@@ -18,6 +18,16 @@ if (!function_exists("async")) {
     function async(callable $action): AsyncFunction
     {
         return new AsyncFunction($action);
+    }
+}
+
+/**
+ * add typeOf helper.
+ */
+if (!function_exists("typeOf")) {
+    function typeOf($element, array $arguments = []): Type
+    {
+        return Type::getType($element, $arguments);
     }
 }
 
@@ -38,16 +48,6 @@ if (!function_exists("debug")) {
             $debug->unindent();
         }
         return $debug;
-    }
-}
-
-/**
- * add typeOf helper.
- */
-if (!function_exists("typeOf")) {
-    function typeOf(string $type, array $arguments = []): Type
-    {
-        return new Type($type, $arguments);
     }
 }
 
