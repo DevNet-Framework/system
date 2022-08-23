@@ -24,7 +24,7 @@ class Type
     public function __get(string $property)
     {
         if ($property == 'Name') {
-            return $this->property;
+            return $this->name;
         }
 
         $class = get_class($this);
@@ -148,18 +148,9 @@ class Type
 
     public function isEquivalentTo(Type $type): bool
     {
-        return $this == $type;
-    }
-
-    public function isOfType($element): bool
-    {
-        $type = self::getType($element);
-
-        if ($this->isEquivalentTo($type)) return true;
-
-        if ($type->isSubclassOf($this)) return true;
-
+        if ($this == $type) return true;
         if ($this->name == 'object' && $type->isClass()) return true;
+        if ($type->name == 'object' && $this->isClass()) return true;
 
         return false;
     }
