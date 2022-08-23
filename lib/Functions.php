@@ -25,9 +25,9 @@ if (!function_exists("async")) {
  * add typeOf helper.
  */
 if (!function_exists("typeOf")) {
-    function typeOf($element, array $arguments = []): Type
+    function typeOf($element): Type
     {
-        return Type::getType($element, $arguments);
+        return Type::getType($element);
     }
 }
 

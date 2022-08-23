@@ -29,10 +29,10 @@ class Type
 
         $class = get_class($this);
         if (!property_exists($this, $property)) {
-            throw new PropertyException("Access to undefined property {$class}::{$property}", 0, null, 1);
+            throw new PropertyException("Access to undefined property {$class}::{$property}", 0, 1);
         }
 
-        throw new PropertyException("Access to non-public property {$class}::{$property}", 0, null, 1);
+        throw new PropertyException("Access to non-public property {$class}::{$property}", 0, 1);
     }
 
     public function __construct(string $name, array $arguments = [])
@@ -69,7 +69,7 @@ class Type
         foreach ($arguments as $argument) {
             if (!is_string($argument)) {
                 $type = gettype($argument);
-                throw new ArrayException("Generic type arguments must be defind by an array of string values, {$type} was given", 0, null, 1);
+                throw new ArrayException("Generic type arguments must be defind by an array of string values, {$type} was given", 0, 1);
             }
 
             $this->arguments[] = new Type($argument);
@@ -172,9 +172,9 @@ class Type
         return $name;
     }
 
-    public static function getType($element, array $arguments = []): Type
+    public static function getType($element): Type
     {
-        if (is_string($element) && class_exists($element)) return new Type($element, $arguments);
+        if (is_string($element) && class_exists($element)) return new Type($element);
 
         $type = gettype($element);
         if ($type == 'object') {
