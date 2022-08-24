@@ -10,25 +10,25 @@
 namespace DevNet\System\Collections;
 
 use DevNet\System\Exceptions\TypeException;
+use DevNet\System\ObjectTrait;
 
 class Queue implements IEnumerable
 {
-    use \DevNet\System\Extension\ExtensionTrait;
-    use \DevNet\System\Reflection\ReflectionTrait;
+    use ObjectTrait;
 
     private array $array = [];
 
     public function __construct(string $valueType)
     {
-        $this->Type = $this->getType()->makeGenericType([$valueType]);
+        $this->setGenericType([$valueType]);
     }
 
     public function enqueue($value): void
     {
         $genericArgs = $this->getType()->getGenericArguments();
-        if (!$genericArgs[0]->isOfType($value)) {
+        if (!$genericArgs[0]->isTypeOf($value)) {
             $className = get_class($this);
-            throw new TypeException("The value passed to {$className} must be of the type {$genericArgs[0]}");
+            throw new TypeException("The value passed to {$className} must be of the type {$genericArgs[0]}", 0, 1);
         }
 
         $this->array[] = $value;
