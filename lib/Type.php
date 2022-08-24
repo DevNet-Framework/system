@@ -17,9 +17,9 @@ use ReflectionProperty;
 class Type
 {
     private string $name;
-    private array $arguments  = [];
-    private array $properties = [];
-    private array $methods    = [];
+    private array $arguments = [];
+    private static array $properties = [];
+    private static array $methods = [];
 
     public function __get(string $property)
     {
@@ -37,7 +37,11 @@ class Type
 
     public function __construct(string $name, array $arguments = [])
     {
+        // normalizing the built-in type names
         switch (strtolower($name)) {
+            case 'null':
+                $name = 'null';
+                break;
             case 'boolean':
             case 'bool':
                 $name = 'boolean';
@@ -53,17 +57,15 @@ class Type
             case 'string':
                 $name = 'string';
                 break;
-            case 'array':
-                $name = 'array';
-                break;
             case 'object':
                 $name = 'object';
                 break;
-            default:
-                $name = $name;
+            case 'callable':
+                $name = 'callable';
                 break;
         }
 
+        // the remaining case is considered a class and must be in PascalCase
         $this->name = $name;
 
         foreach ($arguments as $argument) {
@@ -88,12 +90,12 @@ class Type
 
     public function getProperty(string $property): ?ReflectionProperty
     {
-        if (isset($this->properties[$property])) return $this->properties[$property];
+        if (isset($this->properties[$this->name][$property])) return $this->properties[$this->name][$property];
 
         if ($this->isClass()) {
             if (property_exists($this->name, $property)) {
                 $propertyInfo = new ReflectionProperty($this->name, $property);
-                $this->properties[$property] = $propertyInfo;
+                $this->properties[$this->name][$property] = $propertyInfo;
                 return $propertyInfo;
             }
         }
@@ -103,12 +105,14 @@ class Type
 
     public function getMethod(string $method): ?ReflectionMethod
     {
-        if (isset($this->methods[$method])) return $this->methods[$method];
+        // use method name in lower case as array key to avoid duplication
+        $method = strtolower($method);
+        if (isset(self::$methods[$this->name][$method])) return self::$methods[$this->name][$method];
 
         if ($this->isClass()) {
             if (method_exists($this->name, $method)) {
                 $methodInfo = new ReflectionMethod($this->name, $method);
-                $this->methods[$method] = $methodInfo;
+                self::$methods[$this->name][$method] = $methodInfo;
                 return $methodInfo;
             }
         }
@@ -116,7 +120,7 @@ class Type
         return null;
     }
 
-    public function isPrimitive(): bool
+    public function isScalar(): bool
     {
         $types = ['boolean', 'integer', 'float', 'string'];
         if (in_array($this->name, $types)) return true;
@@ -134,16 +138,16 @@ class Type
         return class_exists($this->name);
     }
 
+    public function isSubclassOf(Type $class): bool
+    {
+        return is_subclass_of($this->name, $class->Name);
+    }
+
     public function isGeneric(): bool
     {
         if ($this->isClass() && $this->arguments) return true;
 
         return false;
-    }
-
-    public function isSubclassOf(Type $class): bool
-    {
-        return is_subclass_of($this->name, $class->Name);
     }
 
     public function isEquivalentTo(Type $type): bool
@@ -153,6 +157,12 @@ class Type
         if ($type->name == 'object' && $this->isClass()) return true;
 
         return false;
+    }
+
+    public function isTypeOf($element): bool
+    {
+        $type = self::getType($element);
+        return $this->isEquivalentTo($type);
     }
 
     public function __toString(): string
@@ -165,20 +175,24 @@ class Type
 
     public static function getType($element): Type
     {
-        if (is_string($element) && class_exists($element)) return new Type($element);
-
-        $type = gettype($element);
-        if ($type == 'object') {
-            if (method_exists($element, 'getType')) {
-                $method = new \ReflectionMethod($element, 'getType');
-                if ($method->hasReturnType() && $method->getReturnType()->getName() == Type::class) {
+        $typeName = gettype($element);
+        if ($typeName == 'object') {
+            $className = get_class($element);
+            if (method_exists($className, 'gettype')) {
+                // use method name in lower case as array key to avoid duplication
+                $methodInfo = self::$methods[$className]['gettype'] ?? null;
+                if (!$methodInfo) {
+                    $methodInfo = new \ReflectionMethod($className, 'gettype');
+                    self::$methods[$className]['gettype'] = $methodInfo;
+                }
+                if ($methodInfo->hasReturnType() && $methodInfo->getReturnType()->getName() == Type::class) {
                     return $element->getType();
                 }
             }
 
-            return new Type(get_class($element));
+            return new Type($className);
         }
 
-        return new Type($type);
+        return new Type($typeName);
     }
 }
