@@ -9,48 +9,70 @@
 
 namespace DevNet\System\Collections;
 
+use DevNet\System\ArrayTrait;
+use DevNet\System\Exceptions\ArgumentException;
+use DevNet\System\Type;
 use ArrayAccess;
 
 class Dictionary implements ArrayAccess, IDictionary
 {
-    use \DevNet\System\Collections\ArrayTrait;
-    use \DevNet\System\Extension\ExtensionTrait;
-    use \DevNet\System\Reflection\ReflectionTrait;
+    use ArrayTrait;
 
-    public function __construct(string $valueType)
+    public function __construct(string $keyType, string $valueType)
     {
-        $this->Type = $this->getType()->makeGenericType(['string', $valueType]);
+        $keyType = strtolower($keyType);
+        if ($keyType != 'int' && $keyType != 'integer' &&  $keyType != 'string') {
+            throw new ArgumentException(self::class."::__construct(): Key type must be defined as integer or string", 0, 1);
+        }
+
+        $this->setGenericType([$keyType, $valueType]);
     }
 
     public function add($key, $value): void
     {
-        $this->offsetSet($key, $value);
+        $genericArgs = $this->getType()->getGenericArguments();
+
+        if (!Type::getType($key)->isEquivalentTo($genericArgs[0])) {
+            throw new ArgumentException(self::class . "::add(): The argument #1, must be of type {$genericArgs[0]}", 0, 1);
+        }
+
+        if (!Type::getType($value)->isEquivalentTo($genericArgs[1])) {
+            throw new ArgumentException(self::class . "::add(): The argument #2, must be of type {$genericArgs[1]}", 0, 1);
+        }
+
+        $this->array[$key] = $value;
     }
 
     public function contains($key): bool
     {
-        return isset($this->Array[$key]) ? true : false;
+        $genericArgs = $this->getType()->getGenericArguments();
+
+        if (!Type::getType($key)->isEquivalentTo($genericArgs[0])) {
+            throw new ArgumentException(self::class . "::contains(): The argument #1, must be of type {$genericArgs[0]}", 0, 1);
+        }
+
+        return isset($this->array[$key]) ? true : false;
     }
 
     public function remove($key): void
     {
-        if (isset($this->Array[$key])) {
-            unset($this->Array[$key]);
+        $genericArgs = $this->getType()->getGenericArguments();
+
+        if (!Type::getType($key)->isEquivalentTo($genericArgs[0])) {
+            throw new ArgumentException(self::class . "::remove(): The argument #1, must be of type {$genericArgs[0]}", 0, 1);
         }
+
+        if (isset($this->array[$key])) unset($this->array[$key]);
     }
 
     public function getValue($key)
     {
-        return $this->Array[$key] ?? null;
-    }
+        $genericArgs = $this->getType()->getGenericArguments();
 
-    public function clear(): void
-    {
-        $this->Array = [];
-    }
+        if (!Type::getType($key)->isEquivalentTo($genericArgs[0])) {
+            throw new ArgumentException(self::class . "::getValue(): The argument #1, must be of type {$genericArgs[0]}", 0, 1);
+        }
 
-    public function toArray(): array
-    {
-        return $this->Array;
+        return $this->array[$key] ?? null;
     }
 }
