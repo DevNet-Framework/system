@@ -13,12 +13,12 @@ use ReflectionMethod;
 
 class Extender
 {
-    private string $target;
+    private object $target;
     private static array $classes;
 
     public function __construct(object $target)
     {
-        $this->target = get_class($target);
+        $this->target = $target;
     }
 
     public function getMethod(string $method): ?ReflectionMethod
@@ -33,7 +33,7 @@ class Extender
                             $fistParameterType = $reflectionParams[0]->getType()->getName();
                         }
 
-                        if ($this->target == $fistParameterType) {
+                        if ($this->target instanceof $fistParameterType) {
                             return $reflectionMethod;
                         }
                     }
@@ -51,7 +51,7 @@ class Extender
         foreach ($trace as $info) {
             $class = $info['class'] ?? null;
             $function = $info['function'] ?? null;
-            if ($class == $this->target && $function == '__call') {
+            if ($class == get_class($this->target) && $function == '__call') {
                 $file = $info['file'] ?? null;
                 break;
             }
