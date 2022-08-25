@@ -47,6 +47,7 @@ class Extender
     function getUsedClasses(): array
     {
         $file = '';
+        $count = 0;
         $trace = debug_backtrace();
         foreach ($trace as $info) {
             $class = $info['class'] ?? null;
@@ -55,22 +56,26 @@ class Extender
                 $file = $info['file'] ?? null;
                 break;
             }
+            $count++;
         }
 
         $classes = self::$classes[$file] ?? [];
+        if ($classes) return $classes;
 
-        if ($classes) {
-            return $classes;
+        $callerClass = $trace[$count + 1]['class'] ?? null;
+        if ($callerClass) {
+            $classes[] = $callerClass;
+            self::$classes[$file] = $classes;
         }
 
         $contents = file_get_contents($file);
         preg_match_all("%(?i)use\s+([A-Za-z_\\\]+);%", $contents, $matches);
 
-        if ($matches) {
-            $classes = $matches[1] ?? [];
+        if (isset($matches[1])) {
+            $classes = array_merge($classes, $matches[1]);
             self::$classes[$file] = $classes;
         }
-        
+
         return $classes;
     }
 }
