@@ -9,12 +9,13 @@
 
 namespace DevNet\System\Dependency;
 
+use DevNet\System\ObjectTrait;
 use ArrayIterator;
 use Traversable;
 
 class ServiceCollection implements IServiceCollection
 {
-    use \DevNet\System\Extension\ExtensionTrait;
+    use ObjectTrait;
 
     private array $services = [];
 

@@ -12,10 +12,11 @@ namespace DevNet\System\Logging;
 use DevNet\System\Exceptions\PropertyException;
 use DevNet\System\Logging\Console\ConsoleLoggerProvider;
 use DevNet\System\Logging\File\FileLoggerProvider;
+use DevNet\System\ObjectTrait;
 
 class LoggerOptions
 {
-    use \DevNet\System\Extension\ExtensionTrait;
+    use ObjectTrait;
 
     private array $filters = [];
     private array $providers = [];
