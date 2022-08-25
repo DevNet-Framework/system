@@ -57,6 +57,7 @@ trait ArrayTrait
     /**
      * Gets the element associated with the specified key.
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($key)
     {
         $genericArgs = $this->getType()->getGenericArguments();
