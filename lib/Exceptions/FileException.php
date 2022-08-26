@@ -10,11 +10,20 @@
 namespace DevNet\System\Exceptions;
 
 use Exception;
+use Throwable;
 
 class FileException extends Exception
 {
-    public static function fileNotFound(): self
+    public function __construct(string $message = "", int $code = 0, int $scope = 0, ?Throwable $previous = null)
     {
-        return new self('No resource available; cannot tell position');
+        parent::__construct($message, $code, $previous);
+
+        if ($scope > 0) {
+            $trace = $this->getTrace();
+            if (isset($trace[$scope - 1])) {
+                $this->file = $trace[$scope - 1]['file'];
+                $this->line = $trace[$scope - 1]['line'];
+            }
+        }
     }
 }
