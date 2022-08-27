@@ -120,7 +120,7 @@ class Type
         return null;
     }
 
-    public function isScalar(): bool
+    public function isPrimitive(): bool
     {
         $types = ['boolean', 'integer', 'float', 'string'];
         if (in_array($this->name, $types)) return true;
