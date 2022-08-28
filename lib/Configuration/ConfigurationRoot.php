@@ -9,28 +9,22 @@
 
 namespace DevNet\System\Configuration;
 
-use DevNet\System\Exceptions\PropertyException;
+use DevNet\System\ObjectTrait;
 
 class ConfigurationRoot implements IConfiguration
 {
+    use ObjectTrait;
+
     private array $settings = [];
-
-    public function __get(string $name)
-    {
-        if ($name == 'Settings') {
-            return $this->settings;
-        }
-
-        if (property_exists($this, $name)) {
-            throw new PropertyException("access to private property " . get_class($this) . "::" . $name);
-        }
-
-        throw new PropertyException("access to undefined property " . get_class($this) . "::" . $name);
-    }
 
     public function __construct(array $settings = [])
     {
         $this->settings = $settings;
+    }
+
+    public function get_Settings(): array
+    {
+        return $this->settings;
     }
 
     public function getValue(string $key)

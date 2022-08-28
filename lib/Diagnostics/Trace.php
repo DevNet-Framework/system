@@ -9,76 +9,62 @@
 
 namespace DevNet\System\Diagnostics;
 
-use DevNet\System\Exceptions\PropertyException;
+use DevNet\System\ObjectTrait;
 
 class Trace
 {
-    protected TraceListenerCollection $Listeners;
-    protected int $IndentSize = 4;
+    use ObjectTrait;
 
-    public function __get(string $name)
-    {
-        if ($name == 'Listeners') {
-            return $this->Listeners;
-        }
-
-        if ($name == 'IndentSize') {
-            return $this->IndentSize;
-        }
-        
-        if (property_exists($this, $name)) {
-            throw new PropertyException("access to private property " . get_class($this) . "::" . $name);
-        }
-
-        throw new PropertyException("access to undefined property " . get_class($this) . "::" . $name);
-    }
-
-    public function __set(string $name, $value)
-    {
-        if ($name == 'IndentSize') {
-            $this->IndentSize = $value;
-            foreach ($this->Listeners as $listener) {
-                $listener->IndentSize = $value;
-            }
-            return;
-        }
-
-        if (property_exists($this, $name)) {
-            throw new PropertyException("access to private property " . get_class($this) . "::" . $name);
-        }
-
-        throw new PropertyException("access to undefined property " . get_class($this) . "::" . $name);
-    }
+    protected TraceListenerCollection $listeners;
+    protected int $indentSize = 4;
 
     public function __construct()
     {
-        $this->Listeners = new TraceListenerCollection();
+        $this->listeners = new TraceListenerCollection();
+    }
+
+    public function get_Listeners(): TraceListenerCollection
+    {
+        return $this->listeners;
+    }
+
+    public function get_IndentSize(): int
+    {
+        return $this->indentSize;
+    }
+
+    public function set_IndentSize(int $value): void
+    {
+        $this->indentSize = $value;
+        foreach ($this->listeners as $listener) {
+            $listener->IndentSize = $value;
+        }
     }
 
     public function indent(): void
     {
-        foreach ($this->Listeners as $listener) {
+        foreach ($this->listeners as $listener) {
             $listener->indent();
         }
     }
 
     public function unindent(): void
     {
-        foreach ($this->Listeners as $listener) {
+        foreach ($this->listeners as $listener) {
             $listener->unindent();
         }
     }
 
     public function write($value, ?string $category = null): void
     {
-        foreach ($this->Listeners as $listener) {
+        foreach ($this->listeners as $listener) {
             $listener->write($value, $category);
         }
     }
 
     public function writeLine($value, ?string $category = null): void
     {
-        foreach ($this->Listeners as $listener) {
+        foreach ($this->listeners as $listener) {
             $listener->writeLine($value, $category);
         }
     }
@@ -101,14 +87,14 @@ class Trace
     {
         // adapt the frame level to the outer scope by one step.
         $skipFrames++;
-        foreach ($this->Listeners as $listener) {
+        foreach ($this->listeners as $listener) {
             $listener->caller($skipFrames);
         }
     }
 
     public function flush()
     {
-        foreach ($this->Listeners as $listener) {
+        foreach ($this->listeners as $listener) {
             $listener->flush();
         }
     }

@@ -10,31 +10,34 @@
 namespace DevNet\System\Async;
 
 use Closure;
-use DevNet\System\Exceptions\PropertyException;
+use DevNet\System\ObjectTrait;
 
 class CancelationToken
 {
+    use ObjectTrait;
+
     private CancelationSource $source;
     private Closure $action;
     private bool $isCancellationRequested = false;
 
-    public function __get(string $name)
-    {
-        if (in_array($name, ['Source', 'Action', 'IsCancellationRequested'])) {
-            $property = lcfirst($name);
-            return $this->$property;
-        }
-        
-        if (property_exists($this, $name)) {
-            throw new PropertyException("access to private property " . get_class($this) . "::" . $name);
-        }
-
-        throw new PropertyException("access to undefined property " . get_class($this) . "::" . $name);
-    }
-
     public function __construct($source)
     {
         $this->Source = $source;
+    }
+
+    public function get_Source(): CancelationSource
+    {
+        return $this->source;
+    }
+
+    public function get_Action(): Closure
+    {
+        return $this->action;
+    }
+
+    public function get_IsCancellationRequested(): bool
+    {
+        return $this->ssCancellationRequested;
     }
 
     public function register(Closure $action)

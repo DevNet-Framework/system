@@ -9,12 +9,14 @@
 
 namespace DevNet\System\Dependency;
 
-use Closure;
 use DevNet\System\Exceptions\ClassException;
-use DevNet\System\Exceptions\PropertyException;
+use DevNet\System\ObjectTrait;
+use Closure;
 
 class ServiceDescriptor
 {
+    use ObjectTrait;
+
     public const Singleton = 1;
     public const Transient = 2;
 
@@ -23,20 +25,6 @@ class ServiceDescriptor
     private ?string $implimentationType = null;
     private ?object $implementationInstance = null;
     private ?Closure $implimentationFactory = null;
-
-    public function __get(string $name)
-    {
-        if (in_array($name, ['Lifetime', 'ServiceType', 'ImplimentationType', 'ImplementationInstance', 'ImplimentationFactory'])) {
-            $property = lcfirst($name);
-            return $this->$property;
-        }
-
-        if (property_exists($this, $name)) {
-            throw new PropertyException("access to private property " . get_class($this) . "::" . $name);
-        }
-
-        throw new PropertyException("access to undefined property " . get_class($this) . "::" . $name);
-    }
 
     public function __construct(int $lifetime, string $serviceType, $service)
     {
@@ -54,6 +42,31 @@ class ServiceDescriptor
                 throw new \Exception("incomplatible type, it must be of type object, or string of class type, or a callable factory");
                 break;
         }
+    }
+
+    public function get_Lifetime(): int
+    {
+        return $this->lifetime;
+    }
+
+    public function get_ServiceType(): string
+    {
+        return $this->serviceType;
+    }
+
+    public function get_ImplimentationType(): ?string
+    {
+        return $this->implimentationType;
+    }
+
+    public function get_ImplementationInstance(): ?object
+    {
+        return $this->implementationInstance;
+    }
+
+    public function get_ImplimentationFactory(): ?Closure
+    {
+        return $this->implimentationFactory;
     }
 
     public function describeInstance(int $lifetime, string $serviceType, object $implementationInstance): void

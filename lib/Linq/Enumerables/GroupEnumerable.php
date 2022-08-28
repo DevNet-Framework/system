@@ -11,34 +11,26 @@ namespace DevNet\System\Linq\Enumerables;
 
 use DevNet\System\Collections\Enumerator;
 use DevNet\System\Collections\IEnumerable;
-use DevNet\System\Exceptions\PropertyException;
+use DevNet\System\ObjectTrait;
 use Closure;
 
 class GroupEnumerable implements IEnumerable
 {
-    use \DevNet\System\Extension\ExtensionTrait;
+    use ObjectTrait;
 
     private IEnumerable $enumerable;
     private array $array = [];
     private ?string $key;
 
-    public function __get(string $name)
-    {
-        if ($name == 'Key') {
-            return $this->key;
-        }
-        
-        if (property_exists($this, $name)) {
-            throw new PropertyException("access to private property " . get_class($this) . "::" . $name);
-        }
-
-        throw new PropertyException("access to undefined property " . get_class($this) . "::" . $name);
-    }
-
     public function __construct(IEnumerable $enumerable, string $key = null)
     {
         $this->enumerable = $enumerable;
         $this->key = $key;
+    }
+
+    public function get_Key(): ?string
+    {
+        return $this->key;
     }
 
     public function groupBy(Closure $function)

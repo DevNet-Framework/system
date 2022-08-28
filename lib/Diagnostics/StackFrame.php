@@ -9,29 +9,17 @@
 
 namespace DevNet\System\Diagnostics;
 
-use DevNet\System\Exceptions\PropertyException;
+use DevNet\System\ObjectTrait;
 
 class StackFrame
 {
+    use ObjectTrait;
+
     private ?string $fileName;
     private ?int $lineNumber;
     private ?string $className;
     private ?string $functionName;
     private array $arguments;
-
-    public function __get(string $name)
-    {
-        if (in_array($name, ['FileName', 'LineNumber', 'ClassName', 'FunctionName', 'Arguments'])) {
-            $property = lcfirst($name);
-            return $this->$property;
-        }
-
-        if (property_exists($this, $name)) {
-            throw new PropertyException("access to private property " . get_class($this) . "::" . $name);
-        }
-
-        throw new PropertyException("access to undefined property " . get_class($this) . "::" . $name);
-    }
 
     public function __construct(array $frame)
     {
@@ -40,5 +28,30 @@ class StackFrame
         $this->className    = $frame['class'] ?? null;
         $this->functionName = $frame['function'] ?? null;
         $this->arguments    = $frame['args'] ?? [];
+    }
+
+    public function get_FileName(): ?string
+    {
+        return $this->fileName;
+    }
+
+    public function get_LineNumber(): ?int
+    {
+        return $this->lineNumber;
+    }
+
+    public function get_ClassName(): ?string
+    {
+        return $this->className;
+    }
+
+    public function get_FunctionName(): ?string
+    {
+        return $this->functionName;
+    }
+
+    public function get_Arguments(): array
+    {
+        return $this->arguments;
     }
 }

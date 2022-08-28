@@ -9,12 +9,14 @@
 
 namespace DevNet\System\Async;
 
-use DevNet\System\Exceptions\PropertyException;
+use DevNet\System\ObjectTrait;
 use Generator;
 use Closure;
 
 class AsyncAwaiter implements IAwaiter
 {
+    use ObjectTrait;
+
     private ?Generator $generator = null;
     private ?AsyncResult $asyncResult = null;
     private ?CancelationToken $token = null;
@@ -22,19 +24,6 @@ class AsyncAwaiter implements IAwaiter
     private bool $isCompleted = false;
     private bool $isRunning = false;
     private $result = null;
-
-    public function __get(string $name)
-    {
-        if ($name == 'OnCompleted') {
-            return $this->onCompleted;
-        }
-        
-        if (property_exists($this, $name)) {
-            throw new PropertyException("access to private property " . get_class($this) . "::" . $name);
-        }
-
-        throw new PropertyException("access to undefined property " . get_class($this) . "::" . $name);
-    }
 
     public function __construct($result = null, ?CancelationToken $token = null)
     {
@@ -45,6 +34,11 @@ class AsyncAwaiter implements IAwaiter
             $this->result = $result;
             $this->isCompleted = true;
         }
+    }
+
+    public function get_OnCompleted(): ?Closure
+    {
+        return $this->onCompleted;
     }
 
     public function onCompleted(Closure $continuation): void

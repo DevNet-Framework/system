@@ -9,10 +9,12 @@
 
 namespace DevNet\System\Database;
 
-use DevNet\System\Exceptions\PropertyException;
+use DevNet\System\ObjectTrait;
 
 class DbConnectionStringBuilder
 {
+    use ObjectTrait;
+
     private string $connectionString = "";
     public ?string $Driver           = null;
     public ?string $Datasource       = null;
@@ -21,24 +23,16 @@ class DbConnectionStringBuilder
     public ?string $Username         = null;
     public ?string $Password         = null;
 
-    public function __get(string $name)
-    {
-        if ($name == 'ConnectionString') {
-            return $this->connectionString;
-        }
-
-        if (property_exists($this, $name)) {
-            throw new PropertyException("access to private property " . get_class($this) . "::" . $name);
-        }
-
-        throw new PropertyException("access to undefined property " . get_class($this) . "::" . $name);
-    }
-
     public function __construct(string $connection = null)
     {
         if ($connection) {
             $this->parseUri($connection);
         }
+    }
+
+    public function get_ConnectionString(): string
+    {
+        return $this->connectionString;
     }
 
     public function parseUri(string $uri)
@@ -74,48 +68,48 @@ class DbConnectionStringBuilder
 
     public function build(): string
     {
-        $this->ConnectionString = "";
-        $this->ConnectionString .= $this->Driver . ":";
+        $this->connectionString = "";
+        $this->connectionString .= $this->Driver . ":";
 
         switch ($this->Driver) {
             case 'sqlite':
-                $this->ConnectionString .= $this->Datasource;
+                $this->connectionString .= $this->Datasource;
                 break;
             case 'mysql':
-                $this->ConnectionString .= "host=" . $this->Datasource . ";";
-                $this->ConnectionString .= "dbname=" . $this->Database . ";";
-                $this->ConnectionString .= $this->Charset ? "charset=" . $this->Charset . ";" : null;
-                $this->ConnectionString .= "user=" . $this->Username . ";";
-                $this->ConnectionString .= "password=" . $this->Password . ";";
+                $this->connectionString .= "host=" . $this->Datasource . ";";
+                $this->connectionString .= "dbname=" . $this->Database . ";";
+                $this->connectionString .= $this->Charset ? "charset=" . $this->Charset . ";" : null;
+                $this->connectionString .= "user=" . $this->Username . ";";
+                $this->connectionString .= "password=" . $this->Password . ";";
                 break;
             case 'pgsql':
                 $this->Datasource = str_replace(":", ",", $this->Datasource);
-                $this->ConnectionString .= "host=" . $this->Datasource . ";";
-                $this->ConnectionString .= "dbname=" . $this->Database . ";";
-                $this->ConnectionString .= $this->Charset ? "charset=" . $this->Charset . ";" : null;
-                $this->ConnectionString .= "user=" . $this->Username . ";";
-                $this->ConnectionString .= "password=" . $this->Password . ";";
+                $this->connectionString .= "host=" . $this->Datasource . ";";
+                $this->connectionString .= "dbname=" . $this->Database . ";";
+                $this->connectionString .= $this->Charset ? "charset=" . $this->Charset . ";" : null;
+                $this->connectionString .= "user=" . $this->Username . ";";
+                $this->connectionString .= "password=" . $this->Password . ";";
                 break;
             case 'sqlsrv':
                 $this->Datasource = str_replace(":", ",", $this->Datasource);
-                $this->ConnectionString .= "server=" . $this->Datasource . ";";
-                $this->ConnectionString .= "database=" . $this->Database . ";";
-                $this->ConnectionString .= $this->Charset ? "charset=" . $this->Charset . ";" : null;
-                $this->ConnectionString .= "user=" . $this->Username . ";";
-                $this->ConnectionString .= "password=" . $this->Password . ";";
+                $this->connectionString .= "server=" . $this->Datasource . ";";
+                $this->connectionString .= "database=" . $this->Database . ";";
+                $this->connectionString .= $this->Charset ? "charset=" . $this->Charset . ";" : null;
+                $this->connectionString .= "user=" . $this->Username . ";";
+                $this->connectionString .= "password=" . $this->Password . ";";
                 break;
             case 'oci':
-                $this->ConnectionString .= "dbname=//" . $this->Datasource;
-                $this->ConnectionString .= "/" . $this->Database . ";";
-                $this->ConnectionString .= $this->Charset ? "charset=" . $this->Charset . ";" : null;
-                $this->ConnectionString .= "user=" . $this->Username . ";";
-                $this->ConnectionString .= "password=" . $this->Password . ";";
+                $this->connectionString .= "dbname=//" . $this->Datasource;
+                $this->connectionString .= "/" . $this->Database . ";";
+                $this->connectionString .= $this->Charset ? "charset=" . $this->Charset . ";" : null;
+                $this->connectionString .= "user=" . $this->Username . ";";
+                $this->connectionString .= "password=" . $this->Password . ";";
                 break;
             default:
-                $this->ConnectionString .= "uri:file://" . $this->Datasource;
+                $this->connectionString .= "uri:file://" . $this->Datasource;
                 break;
         }
 
-        return $this->ConnectionString;
+        return $this->connectionString;
     }
 }

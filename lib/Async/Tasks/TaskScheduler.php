@@ -9,54 +9,49 @@
 
 namespace DevNet\System\Async\Tasks;
 
-use DevNet\System\Exceptions\PropertyException;
+use DevNet\System\ObjectTrait;
 
 class TaskScheduler
 {
+    use ObjectTrait;
+
     private static TaskScheduler $scheduler;
 
-    protected int $MaxConcurrency = 0;
-    protected array $Tasks = [];
-
-    public function __get(string $name)
-    {
-        if ($name == 'MaxConcurrency') {
-            return $this->MaxConcurrency;
-        }
-
-        if ($name == 'Tasks') {
-            return $this->Tasks;
-        }
-        
-        if (property_exists($this, $name)) {
-            throw new PropertyException("access to private property " . get_class($this) . "::" . $name);
-        }
-
-        throw new PropertyException("access to undefined property " . get_class($this) . "::" . $name);
-    }
+    protected int $maxConcurrency = 0;
+    protected array $tasks = [];
 
     public function __construct(int $maxConcurrency = 0)
     {
-        $this->MaxConcurrency = $maxConcurrency;
+        $this->maxConcurrency = $maxConcurrency;
+    }
+
+    public function get_MaxConcurrency(): int
+    {
+        return $this->maxConcurrency;
+    }
+
+    public function get_Tasks(): array
+    {
+        return $this->tasks;
     }
 
     public function enqueue(Task $task): void
     {
-        if (isset($this->Tasks[$task->Id])) {
+        if (isset($this->tasks[$task->Id])) {
             return;
         }
-        $this->Tasks[$task->Id] = $task;
+        $this->tasks[$task->Id] = $task;
     }
 
     public function dequeue(Task $task): void
     {
-        if (isset($this->Tasks[$task->Id])) {
-            unset($this->Tasks[$task->Id]);
+        if (isset($this->tasks[$task->Id])) {
+            unset($this->tasks[$task->Id]);
         }
 
         $count = 0;
-        $vacancy = $this->MaxConcurrency - count($this->getScheduledTasks());
-        foreach ($this->Tasks as $task) {
+        $vacancy = $this->maxConcurrency - count($this->getScheduledTasks());
+        foreach ($this->tasks as $task) {
             if ($count > $vacancy) {
                 break;
             }
@@ -70,7 +65,7 @@ class TaskScheduler
     public function getScheduledTasks(): array
     {
         $tasks = [];
-        foreach ($this->Tasks as $task) {
+        foreach ($this->tasks as $task) {
             if ($task->Status == Task::Running) {
                 $tasks[] = $task;
             }

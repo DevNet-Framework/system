@@ -10,17 +10,19 @@
 namespace DevNet\System\Async\Tasks;
 
 use DevNet\System\Action;
+use DevNet\System\Async\AsyncAwaiter;
 use DevNet\System\Async\CancelationException;
 use DevNet\System\Async\CancelationToken;
 use DevNet\System\Async\IAwaitable;
 use DevNet\System\Async\IAwaiter;
 use DevNet\System\Exceptions\ArrayException;
-use DevNet\System\Exceptions\PropertyException;
+use DevNet\System\ObjectTrait;
 use Closure;
-use DevNet\System\Async\AsyncAwaiter;
 
 class Task implements IAwaitable
 {
+    use ObjectTrait;
+
     public const Created   = 0;
     public const Pending   = 1;
     public const Running   = 2;
@@ -36,38 +38,6 @@ class Task implements IAwaitable
     private ?CancelationToken $token = null;
     private bool $isCompleted = false;
     private $result = null;
-
-    public function __get(string $name)
-    {
-        switch ($name) {
-            case 'Id':
-                return $this->id;
-                break;
-            case 'Status':
-                return $this->status;
-                break;
-            case 'IsCompleted':
-                if (!$this->isCompleted && $this->status == Task::Running) {
-                    if ($this->awaiter->IsCompleted()) {
-                        $this->wait();
-                    }
-                }
-                return $this->isCompleted;
-                break;
-            case 'Result':
-                if (!$this->isCompleted) {
-                    $this->wait();
-                }
-                return $this->result;
-                break;
-        }
-        
-        if (property_exists($this, $name)) {
-            throw new PropertyException("access to private property " . get_class($this) . "::" . $name);
-        }
-
-        throw new PropertyException("access to undefined property " . get_class($this) . "::" . $name);
-    }
 
     public function __construct(Closure $action = null, ?CancelationToken $token = null)
     {
@@ -89,6 +59,36 @@ class Task implements IAwaitable
                 $this->awaiter = new AsyncAwaiter($function(), $token);
             }
         }
+    }
+
+    public function get_Id(): int
+    {
+        return $this->id;
+    }
+
+    public function get_Status(): int
+    {
+        return $this->status;
+    }
+
+    public function get_IsCompleted(): bool
+    {
+        if (!$this->isCompleted && $this->status == Task::Running) {
+            if ($this->awaiter->IsCompleted()) {
+                $this->wait();
+            }
+        }
+
+        return $this->isCompleted;
+    }
+
+    public function get_Result()
+    {
+        if (!$this->isCompleted) {
+            $this->wait();
+        }
+
+        return $this->result;
     }
 
     public function getAwaiter(): IAwaiter

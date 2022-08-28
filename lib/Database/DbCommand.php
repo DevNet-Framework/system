@@ -9,29 +9,17 @@
 
 namespace DevNet\System\Database;
 
-use DevNet\System\Exceptions\PropertyException;
+use DevNet\System\ObjectTrait;
 use PDOStatement;
 
 class DbCommand
 {
+    use ObjectTrait;
+
     private ?DbConnection $connection = null;
     private ?PDOStatement $statement = null;
     private string $sql;
     private array $parameters = [];
-
-    public function __get(string $name)
-    {
-        if (in_array($name, ['Connection', 'Statement', 'Sql', 'Parameters'])) {
-            $property = lcfirst($name);
-            return $this->$property;
-        }
-        
-        if (property_exists($this, $name)) {
-            throw new PropertyException("access to private property " . get_class($this) . "::" . $name);
-        }
-
-        throw new PropertyException("access to undefined property " . get_class($this) . "::" . $name);
-    }
 
     public function __construct(DbConnection $connection, string $sql = null)
     {
@@ -39,20 +27,38 @@ class DbCommand
         $this->sql = $sql;
     }
 
+    public function get_Connection(): ?DbConnection
+    {
+        return $this->connection;
+    }
+
+    public function get_Statement(): ?PDOStatement
+    {
+        return $this->statement;
+    }
+
+    public function get_Sql(): string
+    {
+        return $this->sql;
+    }
+
+    public function get_Parameters(): array
+    {
+        return $this->parameters;
+    }
+
     public function addParameters(array $parameters)
     {
         $this->parameters = $parameters;
     }
 
-    public function execute() : int
+    public function execute(): int
     {
-        if ($this->connection->getState() === 0)
-        {
+        if ($this->connection->getState() === 0) {
             throw new \PDOException('Database connection is closed');
         }
 
-        if ($this->parameters)
-        {
+        if ($this->parameters) {
             $statement = $this->connection->getConnector()->prepare($this->sql);
             $result = $statement->execute($this->parameters);
 
@@ -62,9 +68,7 @@ class DbCommand
             }
 
             $result = $statement->rowCount();
-        }
-        else
-        {
+        } else {
             $result = $this->connection->getConnector()->exec($this->sql);
             if ($result === false) {
                 $errorInfo = $this->connection->getConnector()->errorInfo();

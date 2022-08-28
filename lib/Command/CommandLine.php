@@ -10,95 +10,109 @@
 namespace DevNet\System\Command;
 
 use DevNet\System\Event\EventHandler;
-use DevNet\System\Exceptions\PropertyException;
+use DevNet\System\ObjectTrait;
 
 class CommandLine implements ICommand
 {
-    protected ?string $Name;
-    protected ?string $Description;
-    protected array $Arguments = [];
-    protected array $Options   = [];
-    protected array $Commands  = [];
-    protected EventHandler $Handler;
+    use ObjectTrait;
 
-    public function __get(string $name)
-    {
-        if (in_array($name, ['Name', 'Description', 'Options', 'Commands', 'Handler'])) {
-            return $this->$name;
-        }
-        
-        if (property_exists($this, $name)) {
-            throw new PropertyException("access to private property " . get_class($this) . "::" . $name);
-        }
-
-        throw new PropertyException("access to undefined property " . get_class($this) . "::" . $name);
-    }
+    protected ?string $name;
+    protected ?string $description;
+    protected array $arguments = [];
+    protected array $options   = [];
+    protected array $commands  = [];
+    protected EventHandler $handler;
 
     public function __construct(?string $name = null, ?string $description = null)
     {
-        $this->Name        = $name;
-        $this->Description = $description;
-        $this->Handler     = new EventHandler();
+        $this->name        = $name;
+        $this->description = $description;
+        $this->handler     = new EventHandler();
+    }
+
+    public function get_Name(): ?string
+    {
+        return $this->name;
+    }
+
+    public function get_Description(): ?string
+    {
+        return $this->description;
+    }
+
+    public function get_Options(): array
+    {
+        return $this->options;
+    }
+
+    public function get_Commands(): array
+    {
+        return $this->commands;
+    }
+
+    public function get_Handler(): EventHandler
+    {
+        return $this->handler;
     }
 
     public function setName(string $name): void
     {
-        $this->Name = $name;
+        $this->name = $name;
     }
 
     public function setDescription(string $description): void
     {
-        $this->Description = $description;
+        $this->description = $description;
     }
 
     public function addArgument(CommandArgument $argument): void
     {
-        $this->Arguments[$argument->Name] = $argument;
+        $this->arguments[$argument->Name] = $argument;
     }
 
     public function addOption(CommandOption $option): void
     {
-        $this->Options[$option->Name] = $option;
+        $this->options[$option->Name] = $option;
     }
 
     public function addCommand(ICommand $command): void
     {
-        $this->Commands[$command->Name] = $command;
+        $this->commands[$command->Name] = $command;
     }
 
     public function addHandler(ICommandHandler $handler): void
     {
-        if (isset($this->Handler)) {
-            $this->Handler->add([$handler, 'execute']);
+        if (isset($this->handler)) {
+            $this->handler->add([$handler, 'execute']);
             return;
         }
 
-        $this->Handler = new EventHandler([$handler, 'execute']);
+        $this->handler = new EventHandler([$handler, 'execute']);
     }
 
     public function invoke(array $args): void
     {
         $inputs = $args;
         $commandName = (string) array_shift($args);
-        if (isset($this->Commands[$commandName])) {
-            $command = $this->Commands[$commandName];
+        if (isset($this->commands[$commandName])) {
+            $command = $this->commands[$commandName];
             $command->invoke($args);
             return;
         }
 
         $parser = new CommandParser();
 
-        foreach ($this->Arguments as $argument) {
+        foreach ($this->arguments as $argument) {
             $parser->addArgument($argument);
         }
 
-        foreach ($this->Options as $option) {
+        foreach ($this->options as $option) {
             $parser->addOption($option);
         }
 
         $eventArgs = $parser->parse($inputs);
 
         $eventArgs->Inputs = $inputs;
-        $this->Handler->invoke($this, $eventArgs);
+        $this->handler->invoke($this, $eventArgs);
     }
 }

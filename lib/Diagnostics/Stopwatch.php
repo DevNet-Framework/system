@@ -9,29 +9,24 @@
 
 namespace DevNet\System\Diagnostics;
 
-use DevNet\System\Exceptions\PropertyException;
+use DevNet\System\ObjectTrait;
 
 class Stopwatch
 {
+    use ObjectTrait;
+
     private float $elapsed = 0;
     private float $startTimeStamp = 0;
     private bool $isRunning = false;
 
-    public function __get(string $name)
+    public function get_Elapsed(): float
     {
-        if ($name == 'Elapsed') {
-            return $this->elapsed;
-        }
+        return $this->elapsed;
+    }
 
-        if ($name == 'IsRunning') {
-            return $this->isRunning;
-        }
-        
-        if (property_exists($this, $name)) {
-            throw new PropertyException("access to private property " . get_class($this) . "::" . $name);
-        }
-
-        throw new PropertyException("access to undefined property " . get_class($this) . "::" . $name);
+    public function get_IsRunning(): bool
+    {
+        return $this->isRunning;
     }
 
     public function start()

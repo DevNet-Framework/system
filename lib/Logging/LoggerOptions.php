@@ -9,7 +9,6 @@
 
 namespace DevNet\System\Logging;
 
-use DevNet\System\Exceptions\PropertyException;
 use DevNet\System\Logging\Console\ConsoleLoggerProvider;
 use DevNet\System\Logging\File\FileLoggerProvider;
 use DevNet\System\ObjectTrait;
@@ -21,28 +20,21 @@ class LoggerOptions
     private array $filters = [];
     private array $providers = [];
 
-    public function __get(string $name)
+    public function get_Filters(): array
     {
-        if ($name == 'Filters') {
-            return $this->filters;
-        }
+        return $this->filters;
+    }
 
-        if ($name == 'Providers') {
-            return $this->filters;
-        }
-        
-        if (property_exists($this, $name)) {
-            throw new PropertyException("access to private property " . get_class($this) . "::" . $name);
-        }
-
-        throw new PropertyException("access to undefined property " . get_class($this) . "::" . $name);
+    public function get_Providers(): array
+    {
+        return $this->providers;
     }
 
     public function setMinimumLevel(int $level)
     {
         $this->addFilter('', $level);
     }
-    
+
     public function addFilter(string $category, int $level)
     {
         $this->filters[$category] = $level;
