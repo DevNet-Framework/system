@@ -90,12 +90,13 @@ class Type
 
     public function getProperty(string $property): ?ReflectionProperty
     {
-        if (isset($this->properties[$this->name][$property])) return $this->properties[$this->name][$property];
+        if (isset(self::$properties[$this->name][$property])) 
+        return self::$properties[$this->name][$property];
 
         if ($this->isClass()) {
             if (property_exists($this->name, $property)) {
                 $propertyInfo = new ReflectionProperty($this->name, $property);
-                $this->properties[$this->name][$property] = $propertyInfo;
+                self::$properties[$this->name][$property] = $propertyInfo;
                 return $propertyInfo;
             }
         }
