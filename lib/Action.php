@@ -9,27 +9,15 @@
 
 namespace DevNet\System;
 
-use DevNet\System\Exceptions\PropertyException;
 use ReflectionFunction;
 use ReflectionMethod;
 use Closure;
 
 class Action
 {
-    protected ReflectionFunction $MethodInfo;
+    use ObjectTrait;
 
-    public function __get(string $name)
-    {
-        if ($name == 'MethodInfo') {
-            return $this->MethodInfo;
-        }
-
-        if (property_exists($this, $name)) {
-            throw new PropertyException("access to private property " . get_class($this) . "::" . $name);
-        }
-
-        throw new PropertyException("access to undefined property " . get_class($this) . "::" . $name);
-    }
+    protected ReflectionFunction $function;
 
     public function __construct(callable $action)
     {
@@ -41,12 +29,22 @@ class Action
             $action = $reflection->getClosure($action);
         }
 
-        $this->MethodInfo = new ReflectionFunction($action);
+        $this->function = new ReflectionFunction($action);
+    }
+
+    public function get_Function(): ReflectionFunction
+    {
+        return $this->function;
     }
 
     public function invokeArgs(array $args = [])
     {
-        return $this->MethodInfo->invokeArgs($args);
+        return $this->function->invokeArgs($args);
+    }
+
+    public function invoke(...$args)
+    {
+        return $this->invokeArgs($args);
     }
 
     public function __invoke(...$args)
