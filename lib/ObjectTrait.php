@@ -12,10 +12,11 @@ namespace DevNet\System;
 use DevNet\System\Async\AsyncFunction;
 use DevNet\System\Exceptions\MethodException;
 use DevNet\System\Exceptions\PropertyException;
+use DevNet\System\Exceptions\TypeException;
 
 trait ObjectTrait
 {
-    private ?Type $_type = null;
+    private static ?Type $__type = null;
 
     public function __get(string $property)
     {
@@ -32,12 +33,16 @@ trait ObjectTrait
             return [$this, $property];
         }
 
-        $class = get_class($this);
-        if (!property_exists($this, $property)) {
-            throw new PropertyException("Access to undefined property {$class}::{$property}", 0, 1);
+        if (property_exists($this, $property)) {
+            $modifier = 'private';
+            if ($this->getType()->getProperty($property)->isProtected()) {
+                $modifier = 'protected';
+            }
+
+            throw new PropertyException("Cannot access {$modifier} property " . static::class . "::{$property}", 0, 1);
         }
 
-        throw new PropertyException("Access to non-public property {$class}::{$property}", 0, 1);
+        throw new PropertyException("Cannot access undefined property " . static::class . "::{$property}", 0, 1);
     }
 
     public function __set(string $property, $value): void
@@ -47,17 +52,30 @@ trait ObjectTrait
             $accessor = $this->getType()->getMethod($accessor)->getName();
             $name = substr(strrchr($accessor, '_'), 1);
             if ($name == $property) {
-                $this->$accessor($value);
-                return;
+                try {
+                    $this->$accessor($value);
+                    return;
+                } catch (\TypeError $error) {
+                    $type = Type::getType($value);
+                    throw new TypeException("Cannot assign a value of type '{$type}' to property " . static::class . "::{$property}", 0, 1);
+                }
             }
         }
 
-        $class = get_class($this);
-        if (!property_exists($this, $property)) {
-            throw new PropertyException("Access to undefined property {$class}::{$property}", 0, 1);
+        if (method_exists($this, 'get_' . $property)) {
+            throw new PropertyException("Cannot assign a value to read only property " . static::class . "::{$property}", 0, 1);
         }
 
-        throw new PropertyException("Access to non-public property {$class}::{$property}", 0, 1);
+        if (property_exists($this, $property)) {
+            $modifier = 'private';
+            if ($this->getType()->getProperty($property)->isProtected()) {
+                $modifier = 'protected';
+            }
+
+            throw new PropertyException("Cannot access {$modifier} property " . static::class . "::{$property}", 0, 1);
+        }
+
+        throw new PropertyException("Cannot access undefined property " . static::class . "::{$property}", 0, 1);
     }
 
     public function __call(string $method, array $args)
@@ -75,18 +93,22 @@ trait ObjectTrait
             return $extensionMethod->invokeArgs(null, $args);
         }
 
-        $class = get_class($this);
-        if (!method_exists($this, $method)) {
-            throw new MethodException("Call to undefined method {$class}::{$method}()", 0, 1);
+        if (method_exists($this, $method)) {
+            $modifier = 'private';
+            if ($this->getType()->getMethod($method)->isProtected()) {
+                $modifier = 'protected';
+            }
+
+            throw new MethodException("Call to {$modifier} method " . static::class . "::{$method}()", 0, 1);
         }
 
-        throw new MethodException("Call to non-public method {$class}::{$method}()", 0, 1);
+        throw new MethodException("Call to undefined method "  . static::class . "::{$method}()", 0, 1);
     }
 
     protected function setGenericType(array $typeArguments): void
     {
-        if (!$this->_type) {
-            $this->_type = new Type(self::class, $typeArguments);
+        if (!static::$__type) {
+            static::$__type = new Type(static::class, $typeArguments);
         }
     }
 
@@ -95,11 +117,11 @@ trait ObjectTrait
      */
     public function getType(): Type
     {
-        if (!$this->_type) {
-            $this->_type = new Type(self::class);
+        if (!static::$__type) {
+            static::$__type = new Type(static::class);
         }
 
-        return $this->_type;
+        return static::$__type;
     }
 
     /**
