@@ -50,7 +50,7 @@ class Task implements IAwaitable
         if ($action) {
             $this->status = Self::Created;
             $action = new Action($action);
-            if ($action->MethodInfo->isGenerator()) {
+            if ($action->Function->isGenerator()) {
                 $this->awaiter = new AsyncAwaiter($action(), $token);
             } else {
                 $function = function () use ($action) {
