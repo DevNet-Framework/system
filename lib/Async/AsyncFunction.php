@@ -17,9 +17,9 @@ class AsyncFunction extends Action
 {
     public function invokeArgs(array $args = []): Task
     {
-        $action = $this->MethodInfo;
-        $task = new Task(function () use ($action, $args) {
-            $result = yield $action->invokeArgs($args);
+        $function = $this->function;
+        $task = new Task(function () use ($function, $args) {
+            $result = yield $function->invokeArgs($args);
             return $result;
         });
 
