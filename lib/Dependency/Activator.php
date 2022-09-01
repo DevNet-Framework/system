@@ -17,7 +17,7 @@ class Activator
     public static function CreateInstance(string $type, IServiceProvider $provider = null)
     {
         if (!class_exists($type)) {
-            throw ClassException::classNotFound($type);
+            throw new ClassException("Cound not find class {$type}", 0, 1);
         }
 
         $classInfo  = new ReflectionClass($type);
