@@ -9,8 +9,11 @@
 
 namespace DevNet\System\Dependency;
 
+use DevNet\System\Exceptions\ArgumentException;
 use DevNet\System\Exceptions\ClassException;
+use DevNet\System\Exceptions\TypeException;
 use DevNet\System\ObjectTrait;
+use ReflectionFunction;
 use Closure;
 
 class ServiceDescriptor
@@ -26,20 +29,33 @@ class ServiceDescriptor
     private ?object $implementationInstance = null;
     private ?Closure $implimentationFactory = null;
 
-    public function __construct(int $lifetime, string $serviceType, $service)
+    public function __construct(int $lifetime, $service)
     {
+        $this->lifetime = $lifetime;
+
         switch ($service) {
-            case is_callable($service):
-                $this->describeFactory($lifetime, $serviceType, $service);
-                break;
             case is_object($service):
-                $this->describeInstance($lifetime, $serviceType, $service);
+                if ($service instanceof Closure) {
+                    $reflector = new ReflectionFunction($service);
+                    if (!$reflector->hasReturnType()) {
+                        throw new TypeException("The service factory must have a return type", 0, 1);
+                    }
+                    $this->serviceType = $reflector->getReturnType()->getName();
+                    $this->implimentationFactory = $service;
+                } else {
+                    $this->serviceType = get_class($service);
+                    $this->implementationInstance = $service;
+                }
                 break;
             case is_string($service):
-                $this->describeType($lifetime, $serviceType, $service);
+                if (!class_exists($service)) {
+                    throw new ClassException("Could not find service class: {$service}", 0, 1);
+                }
+                $this->serviceType = $service;
+                $this->implimentationType = $service;
                 break;
             default:
-                throw new \Exception("incomplatible type, it must be of type object, or string of class type, or a callable factory");
+                throw new ArgumentException(static::class . "::__construct() The argument #3 must be of type string, object or closure", 0, 1);
                 break;
         }
     }
@@ -67,47 +83,5 @@ class ServiceDescriptor
     public function get_ImplimentationFactory(): ?Closure
     {
         return $this->implimentationFactory;
-    }
-
-    public function describeInstance(int $lifetime, string $serviceType, object $implementationInstance): void
-    {
-        if (!$implementationInstance instanceof $serviceType) {
-            throw new ClassException("The given service: " . get_class($implementationInstance) . " is not compatible with the declared type: {$serviceType}");
-        }
-
-        $this->lifetime               = $lifetime;
-        $this->serviceType            = $serviceType;
-        $this->implementationInstance = $implementationInstance;
-    }
-
-    public function describeType(int $lifetime, string $serviceType, string $implimentationType): void
-    {
-        if (!class_exists($serviceType) && !interface_exists($serviceType)) {
-            throw new ClassException("Can not find declared service type: {$serviceType}");
-        }
-
-        if (!class_exists($implimentationType)) {
-            throw new ClassException("Can not find declared service type: {$implimentationType}");
-        }
-
-        $interfaces = class_implements($implimentationType);
-        if (!in_array($serviceType, $interfaces) && $serviceType != $implimentationType) {
-            throw new ClassException("The given service: {$implimentationType} is not compatible with the declared type: {$serviceType}");
-        }
-
-        $this->lifetime           = $lifetime;
-        $this->serviceType        = $serviceType;
-        $this->implimentationType = $implimentationType;
-    }
-
-    public function describeFactory(int $lifetime, string $serviceType, Closure $implimentationFactory): void
-    {
-        if (!class_exists($serviceType) && !interface_exists($serviceType)) {
-            throw new ClassException("Can not find declared service type: {$serviceType}");
-        }
-
-        $this->lifetime              = $lifetime;
-        $this->serviceType           = $serviceType;
-        $this->implimentationFactory = $implimentationFactory;
     }
 }
