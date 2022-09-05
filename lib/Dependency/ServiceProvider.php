@@ -9,8 +9,6 @@
 
 namespace DevNet\System\Dependency;
 
-use DevNet\System\Exceptions\TypeException;
-
 class ServiceProvider implements IServiceProvider
 {
     private array $instanceServices = [];
@@ -70,10 +68,6 @@ class ServiceProvider implements IServiceProvider
                     }
                     $factory = $serviceDescriptor->ImplimentationFactory;
                     $instance = $factory($this);
-
-                    if (!$instance instanceof $serviceType) {
-                        throw new TypeException("Return value of factory function must be of the type '$serviceType'", 0, 1);
-                    }
 
                     $this->instanceServices[$serviceType] = $instance;
                     return $instance;
