@@ -12,9 +12,9 @@ namespace DevNet\System\Command;
 interface ICommandHandler
 {
     /**
-     * Execute and handle arguments.
+     * handle the command.
      * @param object $sender, the command that raised the event.
-     * @param EventArgs $args, a collection of parsed arguments <IcommandArgument|ICommandOption>.
+     * @param CommandEventArgs $args, a collection of parsed arguments and options.
      */
-    public function execute(object $sender, CommandEventArgs $args): void;
+    public function __invoke(object $sender, CommandEventArgs $args): void;
 }
