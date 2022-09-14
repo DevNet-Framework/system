@@ -15,13 +15,12 @@ class StringBuilder
 {
     use ObjectTrait;
 
-    private int $capacity;
-    private string $text;
+    private int $capacity = 0;
+    private string $text  = '';
 
     public function __construct(int $capacity = 0)
     {
         $this->capacity = $capacity;
-        $this->text = '';
     }
 
     public function append(string $value): StringBuilder
