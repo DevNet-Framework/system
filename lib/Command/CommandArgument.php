@@ -11,12 +11,34 @@ namespace DevNet\System\Command;
 
 class CommandArgument
 {
-    public ?string $Name;
-    public $Value = null;
+    protected string $name;
+    protected string $description;
+    protected $value;
 
-    public function __construct(?string $name = null, ?string $value = null)
+    public function __construct(string $name, ?string $description = null, $value = null)
     {
-        $this->Name  = $name;
-        $this->Value = $value;
+        $this->name = strtolower($name);
+        $this->description = (string) $description;
+        $this->value = $value;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    public function setValue($value)
+    {
+        $this->value = $value;
     }
 }
