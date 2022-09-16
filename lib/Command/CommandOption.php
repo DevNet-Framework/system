@@ -11,12 +11,17 @@ namespace DevNet\System\Command;
 
 class CommandOption extends CommandArgument
 {
-    public ?string $Alias;
+    protected string $alias;
 
-    public function __construct(?string $name = null, ?string $alias = null, ?string $value = null)
+    public function __construct(string $name, ?string $description = null, ?string $alias = null, $value = null)
     {
-        $this->Name  = $name;
-        $this->Alias = $alias;
-        $this->Value = $value;
+        parent::__construct($name, $description, $value);
+
+        $this->alias = strtolower((string) $alias);
+    }
+
+    public function getAlias(): string
+    {
+        return $this->alias;
     }
 }
