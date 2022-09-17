@@ -19,11 +19,6 @@ class CommandParser
         $this->arguments[] = $argument;
     }
 
-    public function addOption(CommandOption $option): void
-    {
-        $this->options[] = $option;
-    }
-
     public function getArgument(string $name): ?CommandArgument
     {
         if (!$name) {
@@ -32,12 +27,17 @@ class CommandParser
 
         $name = strtolower($name);
         foreach ($this->arguments as $argument) {
-            if (strtolower($argument->Name) == $name) {
+            if (strtolower($argument->getName()) == $name) {
                 return $argument;
             }
         }
 
         return null;
+    }
+
+    public function addOption(CommandOption $option): void
+    {
+        $this->options[] = $option;
     }
 
     public function getOption(string $name): ?CommandOption
@@ -48,7 +48,7 @@ class CommandParser
 
         $name = strtolower($name);
         foreach ($this->options as $option) {
-            if (strtolower((string)$option->Name) == $name || strtolower((string)$option->Alias) == $name) {
+            if (strtolower((string)$option->getName()) == $name || strtolower((string)$option->getAlias()) == $name) {
                 return $option;
             }
         }
@@ -56,7 +56,7 @@ class CommandParser
         return null;
     }
 
-    public function parse(array $args): CommandEventArgs
+    public function parse(array $args): ?CommandEventArgs
     {
         $inputs     = $args;
         $arguments  = $this->arguments;
@@ -71,17 +71,17 @@ class CommandParser
                 $nextToken  = $inputs[0] ?? '';
                 $nextOption = $this->getOption($nextToken);
                 if ($nextOption) {
-                    $parameters[$option->Name] = $option;
+                    $parameters[$option->getName()] = $option;
                 } else {
-                    $option->Value = $nextToken;
-                    $parameters[$option->Name] = $option;
+                    $option->setValue($nextToken);
+                    $parameters[$option->getName()] = $option;
                     array_shift($inputs);
                 }
             } else {
                 $argument = $arguments[0] ?? null;
                 if ($argument) {
-                    $argument->Value = $token;
-                    $parameters[$argument->Name] = $argument;
+                    $argument->setValue($token);
+                    $parameters[$argument->getName()] = $argument;
                     array_shift($arguments);
                     array_shift($inputs);
                 } else {
@@ -90,10 +90,11 @@ class CommandParser
             }
         }
 
-        $eventArgs = new CommandEventArgs($parameters);
         if ($inputs) {
-            $eventArgs->Residual = $inputs;
+            return null;
         }
+
+        $eventArgs = new CommandEventArgs($parameters, $args);
 
         return $eventArgs;
     }
