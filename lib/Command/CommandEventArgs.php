@@ -13,22 +13,27 @@ use DevNet\System\Event\EventArgs;
 
 class CommandEventArgs extends EventArgs
 {
-    public array $Inputs = [];
-    public array $Residual = [];
-    private array $parameters;
+    protected array $parameters = [];
+    protected array $values = [];
 
-    public function __construct(array $parameters = [])
+    public function __construct(array $parameters = [], array $values = [])
     {
         $this->parameters = $parameters;
+        $this->values = $values;
     }
 
-    public function set(string $name, CommandArgument $parameter): void
-    {
-        $this->parameters[$name] = $parameter;
-    }
-
-    public function get(string $name): ?CommandArgument
+    public function getParameter(string $name)
     {
         return $this->parameters[$name] ?? null;
+    }
+
+    public function getParameters(): array
+    {
+        return $this->parameters;
+    }
+
+    public function getValues(): array
+    {
+        return $this->values;
     }
 }
