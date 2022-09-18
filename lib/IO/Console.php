@@ -41,14 +41,14 @@ class Console
         self::$Out->write($value);
     }
 
-    public static function writeline(string $value = "", ...$args): void
+    public static function writeLine(?string $value = null, ...$args): void
     {
         // overide the arguments if the fist argument is an array
         if (isset($args[0]) && is_array($args[0])) {
             $args = $args[0];
         }
 
-        self::write($value . PHP_EOL, $args);
+        self::write((string) $value . PHP_EOL, $args);
     }
 
     public static function readLine(string $value = null): string
