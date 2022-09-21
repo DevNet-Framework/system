@@ -9,58 +9,42 @@
 
 namespace DevNet\System\Command;
 
-use DevNet\System\Event\EventHandler;
-use DevNet\System\Exceptions\PropertyException;
-
 interface ICommand
 {
     /**
-     * This method must retun the following properties.
-     * @return string $Name
-     * @return string $Description
-     * @return array <CommandArgument> $Arguments
-     * @return array <CommandOption> $Options array
-     * @return array <ICommand> $Commands array
-     * @return EventHandler $Handler
-     * and must throw an exception if the property doesn't exist
-     * @throws PropertyException
+     * Get the command's name;
      */
-    public function __get(string $name);
+    public function getName(): string;
 
     /**
-     * set the command's property Name;
+     * Get the command's description;
      */
-    public function setName(string $name): void;
+    public function getDescription(): string;
 
     /**
-     * set the command's property Description;
+     * Get the command's arguments.
+     * @return array<CommandArgument>
      */
-    public function setDescription(string $description): void;
+    public function getArguments(): array;
 
     /**
-     * add CommandArgument to to the property Arguments array<CommandArgument>;
+     * Get the command's options
+     * @return array<CommandOption>
      */
-    public function addArgument(CommandArgument $argument): void;
+    public function getOptions(): array;
 
     /**
-     * add CommandOption to to the property Options array<CommandOption>;
+     * Get the parent command
      */
-    public function addOption(CommandOption $option): void;
+    public function getParent(): ?ICommand;
 
     /**
-     * add ICommand to the property Commands array<ICommand>;
+     * Set the parent command
      */
-    public function addCommand(ICommand $command): void;
+    public function setParent(ICommand $command): void;
 
     /**
-     * add ICommandHandler to command's property EventHandler;
-     */
-    public function addHandler(ICommandHandler $handler): void;
-
-    /**
-     * Parse the input arguments to ICommand, CommandArgument and CommandOption,
-     * Invoke the matched command else invoke the current command by invoking the EventHandler.
-     * Return false if didn't match any criteria.
+     * Parse the input arguments and invoke the command
      */
     public function invoke(array $args): void;
 }
