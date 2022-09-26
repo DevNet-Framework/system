@@ -15,10 +15,10 @@ class CommandArgument
     protected string $description;
     protected $value;
 
-    public function __construct(string $name, ?string $description = null, $value = null)
+    public function __construct(string $name, string $description = '', $value = '')
     {
         $this->name = strtolower($name);
-        $this->description = (string) $description;
+        $this->description = $description;
         $this->value = $value;
     }
 
