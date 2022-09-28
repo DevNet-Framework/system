@@ -9,98 +9,95 @@
 
 namespace DevNet\System\Command;
 
+use DevNet\System\Command\Help\HelpBuilder;
 use DevNet\System\Event\EventHandler;
-use DevNet\System\ObjectTrait;
+use DevNet\System\IO\Console;
+use DevNet\System\IO\ConsoleColor;
+use DevNet\System\Command\Parsing\Parser;
+use Closure;
 
 class CommandLine implements ICommand
 {
-    use ObjectTrait;
+    private string $name;
+    private string $description;
+    private array $arguments = [];
+    private array $options = [];
+    private array $commands = [];
+    private ?ICommand $parent = null;
+    private ?EventHandler $handler = null;
+    private ?Closure $customize = null;
 
-    protected ?string $name;
-    protected ?string $description;
-    protected array $arguments = [];
-    protected array $options   = [];
-    protected array $commands  = [];
-    protected EventHandler $handler;
-
-    public function __construct(?string $name = null, ?string $description = null)
+    public function __construct(string $name, string $description = '')
     {
-        $this->name        = $name;
+        $this->name = strtolower($name);
         $this->description = $description;
-        $this->handler     = new EventHandler();
+        $this->addOption('--help', 'Show help for the given command-line', '-h', null);
     }
 
-    public function get_Name(): ?string
+    public function getName(): string
     {
-        return $this->name;
+        return (string) $this->name;
     }
 
-    public function get_Description(): ?string
+    public function getDescription(): string
     {
-        return $this->description;
+        return (string) $this->description;
     }
 
-    public function get_Options(): array
+    public function addArgument(string $name, string $description = '', $value = ''): void
+    {
+        $this->arguments[strtolower($name)] = new CommandArgument($name, $description, $value);
+    }
+
+    public function getArguments(): array
+    {
+        return $this->arguments;
+    }
+
+    public function addOption(string $name, string $description = '', string $alias = '', $value = ''): void
+    {
+        $this->options[strtolower($name)] = new CommandOption($name, $description, $alias, $value);
+    }
+
+    public function getOptions(): array
     {
         return $this->options;
     }
 
-    public function get_Commands(): array
+    public function addCommand(ICommand $command): void
+    {
+        $command->setParent($this);
+        $this->commands[$command->getName()] = $command;
+    }
+
+    public function getCommands(): array
     {
         return $this->commands;
     }
 
-    public function get_Handler(): EventHandler
+    public function setParent(ICommand $command): void
     {
-        return $this->handler;
+        $this->parent = $command;
     }
 
-    public function setName(string $name): void
+    public function getParent(): ?ICommand
     {
-        $this->name = $name;
+        return $this->parent;
     }
 
-    public function setDescription(string $description): void
+    public function setHandler(callable $handler): void
     {
-        $this->description = $description;
+        $this->handler = new EventHandler($handler);
     }
 
-    public function addArgument(CommandArgument $argument): void
+    public function setHelp(Closure $customize): void
     {
-        $this->arguments[$argument->Name] = $argument;
-    }
-
-    public function addOption(CommandOption $option): void
-    {
-        $this->options[$option->Name] = $option;
-    }
-
-    public function addCommand(ICommand $command): void
-    {
-        $this->commands[$command->Name] = $command;
-    }
-
-    public function addHandler(ICommandHandler $handler): void
-    {
-        if (isset($this->handler)) {
-            $this->handler->add([$handler, 'execute']);
-            return;
-        }
-
-        $this->handler = new EventHandler([$handler, 'execute']);
+        $this->customize = $customize;
     }
 
     public function invoke(array $args): void
     {
-        $inputs = $args;
-        $commandName = (string) array_shift($args);
-        if (isset($this->commands[$commandName])) {
-            $command = $this->commands[$commandName];
-            $command->invoke($args);
-            return;
-        }
-
-        $parser = new CommandParser();
+        $parser = new Parser();
 
         foreach ($this->arguments as $argument) {
             $parser->addArgument($argument);
@@ -110,9 +107,41 @@ class CommandLine implements ICommand
             $parser->addOption($option);
         }
 
-        $eventArgs = $parser->parse($inputs);
+        $result = $parser->parse($args);
+        $unparsedTokens = $result->getUnparsedTokens();
+        $input = (string) array_shift($unparsedTokens);
 
-        $eventArgs->Inputs = $inputs;
+        foreach ($this->commands as $command) {
+            if ($command->getName() == $input) {
+                $command->invoke($unparsedTokens);
+                return;
+            }
+        }
+
+        if ($input) {
+            Console::foregroundColor(ConsoleColor::Red);
+            Console::writeline("Unrecognized command or argument '{$input}', try '--help' option for usage information.");
+            Console::resetColor();
+            return;
+        }
+
+        $parameters = array_merge($result->getArguments(), $result->getOptions());
+        $eventArgs = new CommandEventArgs($parameters, $args);
+
+        $help = $eventArgs->getParameter('--help');
+        if ($help) {
+            $help = new HelpBuilder($this);
+            if ($this->customize) {
+                $customize = $this->customize;
+                $customize($help);
+            } else {
+                $help->useDefaults();
+            }
+
+            $help->build()->write();
+            return;
+        }
+
         $this->handler->invoke($this, $eventArgs);
     }
 }
