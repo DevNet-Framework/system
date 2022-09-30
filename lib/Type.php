@@ -155,15 +155,27 @@ class Type
     {
         if ($this == $type) return true;
         if ($this->name == 'object' && $type->isClass()) return true;
-        if ($type->name == 'object' && $this->isClass()) return true;
+        if ($type->Name == 'object' && $this->isClass()) return true;
 
         return false;
     }
 
     public function isTypeOf($element): bool
     {
-        $type = self::getType($element);
-        return $this->isEquivalentTo($type);
+        $type = static::getType($element);
+
+        if ($this->isEquivalentTo($type)) return true;
+
+        if ($type->isSubclassOf($this)) {
+            if ($this->isGeneric() && $this->arguments != $type->getGenericArguments()) return false;
+            return true;
+        }
+
+        if ($this->isInterface()) {
+            if (class_implements($element, $this->name)) return true;
+        }
+
+        return false;
     }
 
     public function __toString(): string
