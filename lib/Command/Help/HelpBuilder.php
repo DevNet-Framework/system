@@ -142,7 +142,7 @@ class HelpBuilder
                 if ($option->getAlias()) {
                     $name .= ', ' . $option->getAlias();
                 }
-                $rows[$option->getName()] = $option->getDescription();
+                $rows[$name] = $option->getDescription();
             }
             $this->writeRows($rows);
             $this->writeline();
