@@ -35,9 +35,10 @@ class Parser
         $options = $this->options;
 
         while ($args != []) {
-            $arg = $args[0] ?? null;
+            $match = false;
+            $token  = $args[0] ?? '';
             foreach ($options as $index => $option) {
-                if ($arg == $option->getName() || $arg == $option->getAlias()) {
+                if ($token == $option->getName() || $token == $option->getAlias()) {
                     if ($option->getValue() !== null) {
                         $option->setValue($args[1] ?? '');
                         array_shift($args);
@@ -45,17 +46,20 @@ class Parser
                     $parsedOptions[$option->getName()] = $option;
                     unset($options[$index]);
                     array_shift($args);
+                    $match = true;
                     break;
                 }
             }
 
-            if ($arg) {
-                $argument = $arguments[0] ?? null;
-                if ($argument) {
-                    $argument->setValue($arg);
-                    $parsedArguments[$argument->getName()] = $argument;
-                    array_shift($arguments);
-                    array_shift($args);
+            if (!$match) {
+                if ($arguments) {
+                    foreach ($arguments as $index => $argument) {
+                        $argument->setValue($token);
+                        $parsedArguments[$argument->getName()] = $argument;
+                        unset($arguments[$index]);
+                        array_shift($args);
+                        break;
+                    }
                 } else {
                     break;
                 }
