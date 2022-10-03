@@ -16,10 +16,12 @@ class HelpResult
     private array $layouts = [];
     private int $primaryColor = 0;
     private int $secondaryColor = 0;
+    private int $maxWidth = 0;
 
-    public function __construct(array $layouts, int $primaryColor = 0, int $secondaryColor = 0)
+    public function __construct(array $layouts, int $maxWidth, int $primaryColor = 0, int $secondaryColor = 0)
     {
         $this->layouts = $layouts;
+        $this->maxWidth = $maxWidth;
         $this->primaryColor = $primaryColor;
         $this->secondaryColor = $secondaryColor;
     }
@@ -40,7 +42,9 @@ class HelpResult
                         if ($this->secondaryColor) {
                             Console::foregroundColor($this->secondaryColor);
                         }
-                        Console::write($name);
+                        $lenth = strlen($name);
+                        $space = str_repeat(" ", $this->maxWidth - $lenth + 4);
+                        Console::write($name . $space);
                         Console::resetColor();
                         Console::writeLine($description);
                     }

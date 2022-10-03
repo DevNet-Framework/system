@@ -17,7 +17,8 @@ class HelpBuilder
     private int $primaryColor = 7;
     private int $secondaryColor = 6;
     private array $layouts = [];
-
+    private int $maxWidth = 0;
+    private string $indent = '  ';
 
     public function __construct(CommandLine $command)
     {
@@ -51,20 +52,14 @@ class HelpBuilder
 
     public function writeRows(array $rows): void
     {
-        ksort($rows);
-        $max = 0;
         $lines = [];
-        foreach ($rows as $name => $description) {
-            $lenth = strlen($name);
-            if ($lenth > $max) {
-                $max = $lenth;
+        ksort($rows);
+        foreach ($rows as $label => $description) {
+            $lines[$this->indent . $label] = $description;
+            $lenth = strlen($label);
+            if ($lenth > $this->maxWidth) {
+                $this->maxWidth = $lenth;
             }
-        }
-
-        foreach ($rows as $name => $description) {
-            $lenth = strlen($name);
-            $space = str_repeat(" ", $max - $lenth + 3);
-            $lines["  {$name}{$space}"] = $description;
         }
 
         $this->layouts[] = ['type' => 'rows', 'content' => $lines];
@@ -73,14 +68,14 @@ class HelpBuilder
     public function writeDescription(): void
     {
         $this->writeHeading('Description:');
-        $this->writeLine("  {$this->command->getDescription()}");
+        $this->writeLine($this->indent . "{$this->command->getDescription()}");
         $this->writeLine();
     }
 
     public function writeUsage(): void
     {
         $this->writeHeading("Usage:");
-        $usage = '';
+        $usage = $this->indent;
 
         $parents = [];
         $command = $this->command;
@@ -93,11 +88,10 @@ class HelpBuilder
         $parents = array_reverse($parents);
 
         foreach ($parents as $parent) {
-            $usage .= ' ';
             $usage .= $parent->getName();
+            $usage .= ' ';
         }
 
-        $usage .= ' ';
         $usage .= $this->command->getName();
 
         if ($this->command->getArguments()) {
@@ -164,6 +158,6 @@ class HelpBuilder
 
     public function build(): HelpResult
     {
-        return new HelpResult($this->layouts, $this->primaryColor, $this->secondaryColor);
+        return new HelpResult($this->layouts, $this->maxWidth, $this->primaryColor, $this->secondaryColor);
     }
 }
