@@ -30,20 +30,20 @@ class ClassLoader
         $this->map[$root] = $prefix;
     }
 
-    public function load(string $type): void
+    public function load(string $class): void
     {
-        $segmets    = explode("\\", $type);
-        $name       = array_pop($segmets);
-        $namespace  = implode("\\", $segmets);
+        $segmets   = explode("\\", $class);
+        $name      = array_pop($segmets);
+        $namespace = implode("\\", $segmets);
 
         foreach ($this->map as $root => $prefix) {
             $position = strpos($namespace, $prefix);
 
             if ($position !== false) {
-                $directory  = substr_replace($namespace, "", $position, strlen($prefix));
-                $directory  = str_replace("\\", "/", $directory);
-                $directory  = trim($directory, "/");
-                $path       = $this->workspace . $root . "/" . $directory . "/" . $name . ".php";
+                $directory = substr_replace($namespace, "", $position, strlen($prefix));
+                $directory = str_replace("\\", "/", $directory);
+                $directory = trim($directory, "/");
+                $path      = $this->workspace . $root . "/" . $directory . "/" . $name . ".php";
 
                 if (file_exists($path)) {
                     require_once $path;
@@ -53,9 +53,11 @@ class ClassLoader
             }
         }
 
-        $directory  = str_replace("\\", "/", $namespace);
-        $directory  = trim($directory, "/");
-        $path       = $this->workspace . "/" . $directory . "/" . $name . ".php";
+        array_shift($segmets);
+        $directory = implode("\\", $segmets);
+        $directory = str_replace("\\", "/", $directory);
+        $directory = trim($directory, "/");
+        $path      = $this->workspace . "/" . $directory . "/" . $name . ".php";
 
         if (file_exists($path)) {
             require_once $path;
