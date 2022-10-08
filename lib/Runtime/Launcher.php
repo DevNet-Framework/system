@@ -11,58 +11,24 @@ namespace DevNet\System\Runtime;
 
 class Launcher extends LauncherProperties
 {
-    private static ?Launcher $instance = null;
-
-    public static function getLauncher(): Launcher
+    public function __construct(string $rootDirectory, array $autoloadMap = [])
     {
-        if (!self::$instance) {
-            self::$instance = new self;
+        static::$classLoader = new ClassLoader($rootDirectory, $autoloadMap);
+        static::$rootDirectory = $rootDirectory;
+    }
+
+    public function launch(string $mainClass, array $args = []): void
+    {
+        static::$classLoader->register();
+        static::$entryPoint = $mainClass;
+
+        if (!$args) {
+            $args = $GLOBALS['argv'] ?? [];
+            array_shift($args);
         }
 
-        return self::$instance;
-    }
-
-    public function workspace(string $workspace): void
-    {
-        self::$Workspace = $workspace;
-    }
-
-    public function namespace(string $namespace): void
-    {
-        self::$Namespace = $namespace;
-    }
-
-    public function entryPoint(string $entryPoint): void
-    {
-        self::$EntryPoint = $entryPoint;
-    }
-
-    public function Arguments(array $args): void
-    {
-        self::$Arguments = $args;
-    }
-
-    public function environmoment(string $env): void
-    {
-        self::$Envirement = $env;
-    }
-
-    public function provider(object $provider): void
-    {
-        self::$Provider = $provider;
-    }
-
-    public function Launch(): void
-    {
-        self::$Loader = new ClassLoader(self::$Workspace, ["/" => self::$Namespace]);
-        self::$Loader->register();
-
-        $inputArgs = $GLOBALS['argv'] ?? [];
-        array_shift($inputArgs);
-
-        $inputArgs = $inputArgs + self::$Arguments;
-        $mainClass = self::$Namespace . '\\' . self::$EntryPoint;
-        $runner    = new MainMethodRunner($mainClass, $inputArgs);
+        self::$arguments = $args;
+        $runner = new MainMethodRunner($mainClass, $args);
 
         $runner->run();
     }
