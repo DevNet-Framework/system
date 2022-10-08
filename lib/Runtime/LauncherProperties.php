@@ -11,46 +11,28 @@ namespace DevNet\System\Runtime;
 
 class LauncherProperties
 {
-    protected static ClassLoader $Loader;
-    protected static string $Workspace = __DIR__;
-    protected static ?string $Namespace = 'Application';
-    protected static string $EntryPoint = 'Program';
-    protected static array $Arguments = [];
-    protected static string $Envirement;
-    protected static ?object $Provider = null;
+    protected static ?ClassLoader $classLoader = null;
+    protected static string $rootDirectory = __DIR__;
+    protected static string $entryPoint = 'Application\Program';
+    protected static array $arguments = [];
 
     public static function getLoader(): ?ClassLoader
     {
-        return self::$Loader ?? null;
+        return static::$classLoader ?? null;
     }
 
-    public static function getWorkspace(): string
+    public static function getRootDirectory(): string
     {
-        return self::$Workspace;
-    }
-
-    public static function getNamespace(): string
-    {
-        return self::$Namespace;
+        return static::$rootDirectory;
     }
 
     public static function getEntryPoint(): string
     {
-        return self::$EntryPoint;
+        return static::$entryPoint;
     }
 
     public static function getArguments(): array
     {
-        return self::$Arguments;
-    }
-
-    public static function getEnvironmoment(): string
-    {
-        return self::$Envirement;
-    }
-
-    public static function getProvider(): ?object
-    {
-        return self::$Provider;
+        return static::$arguments;
     }
 }
