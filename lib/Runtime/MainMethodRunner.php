@@ -23,18 +23,19 @@ class MainMethodRunner
         $this->args = $args;
     }
 
-    public function run(): void
+    public function run(): int
     {
         if (!class_exists($this->mainClass)) {
-            throw new \Exception("Main class does not exist or not configured yet");
+            return 1;
         }
 
         if (!method_exists($this->mainClass, 'main')) {
-            throw new \Exception("Main Method does not exist or entry point not configured yet");
+            return 2;
         }
 
         $this->mainClass::main($this->args);
 
         Task::waitAll(TaskScheduler::getDefaultScheduler()->Tasks);
+        return 0;
     }
 }
