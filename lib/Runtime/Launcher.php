@@ -17,7 +17,7 @@ class Launcher extends LauncherProperties
         static::$rootDirectory = $rootDirectory;
     }
 
-    public function launch(string $mainClass, array $args = []): void
+    public function launch(string $mainClass, array $args = []): int
     {
         static::$classLoader->register();
         static::$entryPoint = $mainClass;
@@ -30,6 +30,6 @@ class Launcher extends LauncherProperties
         self::$arguments = $args;
         $runner = new MainMethodRunner($mainClass, $args);
 
-        $runner->run();
+        return $runner->run();
     }
 }
