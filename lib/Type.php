@@ -10,30 +10,15 @@
 namespace DevNet\System;
 
 use DevNet\System\Exceptions\ArrayException;
-use DevNet\System\Exceptions\PropertyException;
 use ReflectionMethod;
 use ReflectionProperty;
 
 class Type
 {
-    private string $name;
+    public readonly string $Name;
     private array $arguments = [];
     private static array $properties = [];
     private static array $methods = [];
-
-    public function __get(string $property)
-    {
-        if ($property == 'Name') {
-            return $this->name;
-        }
-
-        $class = get_class($this);
-        if (!property_exists($this, $property)) {
-            throw new PropertyException("Access to undefined property {$class}::{$property}", 0, 1);
-        }
-
-        throw new PropertyException("Access to non-public property {$class}::{$property}", 0, 1);
-    }
 
     public function __construct(string $name, array $arguments = [])
     {
@@ -66,7 +51,7 @@ class Type
         }
 
         // the remaining case is considered a class and must be in PascalCase
-        $this->name = $name;
+        $this->Name = $name;
 
         foreach ($arguments as $argument) {
             if (!is_string($argument)) {
@@ -80,7 +65,7 @@ class Type
 
     public function makeGenericType(array $typeArguments): Type
     {
-        return new Type($this->name, $typeArguments);
+        return new Type($this->Name, $typeArguments);
     }
 
     public function getGenericArguments(): array
@@ -88,15 +73,24 @@ class Type
         return $this->arguments;
     }
 
+    public function getInterfaces(): array
+    {
+        $interfaces = class_implements($this->Name);
+        if (!$interfaces) {
+            $interfaces = [];
+        }
+        return $interfaces;
+    }
+
     public function getProperty(string $property): ?ReflectionProperty
     {
-        if (isset(self::$properties[$this->name][$property])) 
-        return self::$properties[$this->name][$property];
+        if (isset(self::$properties[$this->Name][$property])) 
+        return self::$properties[$this->Name][$property];
 
         if ($this->isClass()) {
-            if (property_exists($this->name, $property)) {
-                $propertyInfo = new ReflectionProperty($this->name, $property);
-                self::$properties[$this->name][$property] = $propertyInfo;
+            if (property_exists($this->Name, $property)) {
+                $propertyInfo = new ReflectionProperty($this->Name, $property);
+                self::$properties[$this->Name][$property] = $propertyInfo;
                 return $propertyInfo;
             }
         }
@@ -108,12 +102,12 @@ class Type
     {
         // use method name in lower case as array key to avoid duplication
         $method = strtolower($method);
-        if (isset(self::$methods[$this->name][$method])) return self::$methods[$this->name][$method];
+        if (isset(self::$methods[$this->Name][$method])) return self::$methods[$this->Name][$method];
 
         if ($this->isClass()) {
-            if (method_exists($this->name, $method)) {
-                $methodInfo = new ReflectionMethod($this->name, $method);
-                self::$methods[$this->name][$method] = $methodInfo;
+            if (method_exists($this->Name, $method)) {
+                $methodInfo = new ReflectionMethod($this->Name, $method);
+                self::$methods[$this->Name][$method] = $methodInfo;
                 return $methodInfo;
             }
         }
@@ -124,24 +118,24 @@ class Type
     public function isPrimitive(): bool
     {
         $types = ['boolean', 'integer', 'float', 'string'];
-        if (in_array($this->name, $types)) return true;
+        if (in_array($this->Name, $types)) return true;
 
         return false;
     }
 
     public function isInterface(): bool
     {
-        return interface_exists($this->name);
+        return interface_exists($this->Name);
     }
 
     public function isClass(): bool
     {
-        return class_exists($this->name);
+        return class_exists($this->Name);
     }
 
     public function isSubclassOf(Type $class): bool
     {
-        return is_subclass_of($this->name, $class->Name);
+        return is_subclass_of($this->Name, $class->Name);
     }
 
     public function isGeneric(): bool
@@ -154,8 +148,40 @@ class Type
     public function isEquivalentTo(Type $type): bool
     {
         if ($this == $type) return true;
-        if ($this->name == 'object' && $type->isClass()) return true;
+        if ($this->Name == 'object' && $type->isClass()) return true;
         if ($type->Name == 'object' && $this->isClass()) return true;
+
+        return false;
+    }
+
+    public function isAssignableFrom(Type $type)
+    {
+        if ($type->isEquivalentTo($this)) return true;
+
+        if ($type->isSubclassOf($this)) {
+            if ($this->arguments != $type->getGenericArguments()) return false;
+            return true;
+        }
+
+        if ($this->isInterface()) {
+            return in_array($this->Name, $type->getInterfaces());
+        }
+
+        return false;
+    }
+
+    public function isAssignableTo(Type $type)
+    {
+        if ($this->isEquivalentTo($type)) return true;
+
+        if ($this->isSubclassOf($type)) {
+            if ($this->arguments != $type->getGenericArguments()) return false;
+            return true;
+        }
+
+        if ($type->isInterface()) {
+            return in_array($type->Name, $this->getInterfaces());
+        }
 
         return false;
     }
@@ -163,24 +189,12 @@ class Type
     public function isTypeOf($element): bool
     {
         $type = static::getType($element);
-
-        if ($this->isEquivalentTo($type)) return true;
-
-        if ($type->isSubclassOf($this)) {
-            if ($this->isGeneric() && $this->arguments != $type->getGenericArguments()) return false;
-            return true;
-        }
-
-        if ($this->isInterface()) {
-            if (class_implements($element, $this->name)) return true;
-        }
-
-        return false;
+        return $this->isAssignableFrom($type);
     }
 
     public function __toString(): string
     {
-        $name = $this->name;
+        $name = $this->Name;
         if ($this->isGeneric()) $name .= '<' . implode(',', $this->arguments) . '>';
 
         return $name;
