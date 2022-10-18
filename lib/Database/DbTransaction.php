@@ -24,23 +24,28 @@ class DbTransaction
         $this->connection = $connection;
     }
 
-    public function commit()
+    public function commit(): void
     {
         $connector = $this->connection->getConnector();
         if (!$connector) {
             throw new \Exception("DB connection is closed");
         }
 
-        $connector->commit();
+        if ($connector->inTransaction()) {
+            $connector->commit();
+        }
+
     }
 
-    public function rollBack()
+    public function rollBack(): void
     {
         $connector = $this->connection->getConnector();
         if (!$connector) {
             throw new \Exception("DB connection is closed");
         }
 
-        $connector->rollBack();
+        if ($connector->inTransaction()) {
+            $connector->rollBack();
+        }
     }
 }
