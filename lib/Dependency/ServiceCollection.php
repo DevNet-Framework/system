@@ -28,10 +28,10 @@ class ServiceCollection implements IServiceCollection
         $this->services[$serviceDescriptor->ServiceType] = $serviceDescriptor;
     }
 
-    public function addSingleton($service)
+    public function addSingleton(string $serviceType, $service = null)
     {
         try {
-            $this->add(new ServiceDescriptor(1, $service));
+            $this->add(new ServiceDescriptor(1, $serviceType, $service));
         } catch (SystemException $exception) {
             if ($exception instanceof ClassException) {
                 throw new ClassException($exception->getMessage(), 0, 1);
@@ -45,10 +45,10 @@ class ServiceCollection implements IServiceCollection
         }
     }
 
-    public function addTransient(string $service)
+    public function addTransient(string $serviceType, $service = null)
     {
         try {
-            $this->add(new ServiceDescriptor(2, $service));
+            $this->add(new ServiceDescriptor(2, $serviceType, $service));
         } catch (SystemException $exception) {
             if ($exception instanceof ClassException) {
                 throw new ClassException($exception->getMessage(), 0, 1);
