@@ -21,12 +21,6 @@ class Launcher extends LauncherProperties
     {
         static::$classLoader->register();
         static::$entryPoint = $mainClass;
-
-        if (!$args) {
-            $args = $GLOBALS['argv'] ?? [];
-            array_shift($args);
-        }
-
         self::$arguments = $args;
         $runner = new MainMethodRunner($mainClass, $args);
 
