@@ -11,18 +11,18 @@ namespace DevNet\System\Runtime;
 
 class ClassLoader
 {
-    private string $workspace;
+    private string $root;
     private array $map;
 
-    public function __construct(string $workspace = null, array $map = [])
+    public function __construct(string $root, array $map = [])
     {
-        $this->workspace = $workspace;
+        $this->root = $root;
         $this->map = $map;
     }
 
-    public function setWorkspace(string $workspace): void
+    public function getRoot(): string
     {
-        $this->workspace = $workspace;
+        return $this->root;
     }
 
     public function map(string $prefix, string $root): void
@@ -43,7 +43,7 @@ class ClassLoader
                 $directory = substr_replace($namespace, "", $position, strlen($prefix));
                 $directory = str_replace("\\", "/", $directory);
                 $directory = trim($directory, "/");
-                $path      = $this->workspace . $root . "/" . $directory . "/" . $name . ".php";
+                $path      = $this->root . $root . "/" . $directory . "/" . $name . ".php";
 
                 if (file_exists($path)) {
                     require_once $path;
@@ -57,7 +57,7 @@ class ClassLoader
         $directory = implode("\\", $segmets);
         $directory = str_replace("\\", "/", $directory);
         $directory = trim($directory, "/");
-        $path      = $this->workspace . "/" . $directory . "/" . $name . ".php";
+        $path      = $this->root . "/" . $directory . "/" . $name . ".php";
 
         if (file_exists($path)) {
             require_once $path;
