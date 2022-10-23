@@ -15,15 +15,13 @@ use DevNet\System\Async\Tasks\TaskScheduler;
 class MainMethodRunner
 {
     private string $mainClass;
-    private array $args;
 
-    public function __construct($mainClass, $args)
+    public function __construct(string $mainClass)
     {
         $this->mainClass = $mainClass;
-        $this->args = $args;
     }
 
-    public function run(): int
+    public function run(array $args = []): int
     {
         if (!class_exists($this->mainClass)) {
             return 1;
@@ -33,7 +31,7 @@ class MainMethodRunner
             return 2;
         }
 
-        $this->mainClass::main($this->args);
+        $this->mainClass::main($args);
 
         Task::waitAll(TaskScheduler::getDefaultScheduler()->Tasks);
         return 0;
