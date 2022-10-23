@@ -11,19 +11,47 @@ namespace DevNet\System\Runtime;
 
 class Launcher extends LauncherProperties
 {
-    public function __construct(string $rootDirectory, array $autoloadMap = [])
+    public function __construct(ClassLoader $loader)
     {
-        static::$classLoader = new ClassLoader($rootDirectory, $autoloadMap);
-        static::$rootDirectory = $rootDirectory;
+        static::$classLoader = $loader;
+        static::$rootDirectory = $loader->getRoot();
     }
 
-    public function launch(string $mainClass, array $args = []): int
+    public function launch(array $args = [], ?string $mainClass = null): int
     {
         static::$classLoader->register();
-        static::$entryPoint = $mainClass;
         self::$arguments = $args;
-        $runner = new MainMethodRunner($mainClass, $args);
+        if ($mainClass) {
+            static::$entryPoint = $mainClass;
+        }
+        $runner = new MainMethodRunner(static::$entryPoint);
+        return $runner->run($args);
+    }
 
-        return $runner->run();
+    public static function initialize(string $projectPath): ?static
+    {
+        if (!file_exists($projectPath)) {
+            return null;
+        }
+        
+        $projectFile = simplexml_load_file($projectPath);
+        if (!$projectFile) {
+            return null;
+        }
+
+        $root = dirname($projectPath);
+
+        static::$entryPoint = $projectFile->Properties->EntryPoint ?? 'Application\\Program';
+        $packages = $projectFile->Dependencies->Package ?? [];
+        
+        // load local packages including composer
+        foreach ($packages as $package) {
+            $include = (string)$package->attributes()->include;
+            if (file_exists($root. '/' . $include)) {
+                require $root . '/' . $include;
+            }
+        }
+
+        return new static(new ClassLoader($root));
     }
 }
