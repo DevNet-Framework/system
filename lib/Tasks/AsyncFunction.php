@@ -7,11 +7,9 @@
  * @link        https://github.com/DevNet-Framework
  */
 
-namespace DevNet\System\Async;
+namespace DevNet\System\Tasks;
 
 use DevNet\System\Action;
-use DevNet\System\Async\Tasks\Task;
-use DevNet\System\Async\Tasks\TaskScheduler;
 
 class AsyncFunction extends Action
 {

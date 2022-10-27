@@ -7,7 +7,7 @@
  * @link        https://github.com/DevNet-Framework
  */
 
-namespace DevNet\System\Async;
+namespace DevNet\System\Tasks;
 
 use DevNet\System\Exceptions\MethodException;
 

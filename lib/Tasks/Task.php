@@ -7,14 +7,9 @@
  * @link        https://github.com/DevNet-Framework
  */
 
-namespace DevNet\System\Async\Tasks;
+namespace DevNet\System\Tasks;
 
 use DevNet\System\Action;
-use DevNet\System\Async\AsyncAwaiter;
-use DevNet\System\Async\CancelationException;
-use DevNet\System\Async\CancelationToken;
-use DevNet\System\Async\IAwaitable;
-use DevNet\System\Async\IAwaiter;
 use DevNet\System\Exceptions\ArrayException;
 use DevNet\System\ObjectTrait;
 use Closure;

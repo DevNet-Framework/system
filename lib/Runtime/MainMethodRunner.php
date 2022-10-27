@@ -9,8 +9,8 @@
 
 namespace DevNet\System\Runtime;
 
-use DevNet\System\Async\Tasks\Task;
-use DevNet\System\Async\Tasks\TaskScheduler;
+use DevNet\System\Tasks\Task;
+use DevNet\System\Tasks\TaskScheduler;
 
 class MainMethodRunner
 {

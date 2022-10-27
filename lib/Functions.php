@@ -7,7 +7,7 @@
  * @link        https://github.com/DevNet-Framework
  */
 
-use DevNet\System\Async\AsyncFunction;
+use DevNet\System\Tasks\AsyncFunction;
 use DevNet\System\Diagnostics\Debug;
 use DevNet\System\Type;
 
