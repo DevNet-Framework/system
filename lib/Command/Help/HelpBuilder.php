@@ -14,8 +14,8 @@ use DevNet\System\Command\CommandLine;
 class HelpBuilder
 {
     private CommandLine $command;
-    private int $primaryColor = 7;
-    private int $secondaryColor = 6;
+    private int $primaryColor = 0;
+    private int $secondaryColor = 0;
     private array $layouts = [];
     private int $maxWidth = 0;
     private string $indent = '  ';
