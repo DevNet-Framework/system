@@ -18,8 +18,8 @@ class Debug extends Trace
 
     public function __construct()
     {
-        $this->Listeners = new TraceListenerCollection();
-        $this->Listeners->add(new DefaultTraceListener());
+        $this->listeners = new TraceListenerCollection();
+        $this->listeners->add(new DefaultTraceListener());
     }
 
     public function assert(bool $condition, string $message): void
