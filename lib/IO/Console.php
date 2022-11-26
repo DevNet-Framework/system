@@ -61,7 +61,7 @@ class Console
             self::write($value);
         }
 
-        return trim(self::$In->readLine());
+        return trim((string)self::$In->readLine());
     }
 
     public static function foregroundColor(int $color): void
