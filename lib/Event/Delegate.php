@@ -38,7 +38,7 @@ abstract class Delegate implements IEnumerable
         }
     }
 
-    public function add(callable $action)
+    public function add(callable $action): void
     {
         $action = new Action($action);
 

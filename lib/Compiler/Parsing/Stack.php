@@ -18,7 +18,7 @@ class Stack
         $this->stack[] = $item;
     }
 
-    public function addRange(array $items)
+    public function addRange(array $items): void
     {
         $this->stack = array_merge($this->stack, $items);
     }
@@ -33,12 +33,12 @@ class Stack
         return array_pop($this->stack);
     }
 
-    public function count()
+    public function count(): int
     {
         return count($this->stack);
     }
 
-    public function clear()
+    public function clear(): void
     {
         $this->stack = [];
     }

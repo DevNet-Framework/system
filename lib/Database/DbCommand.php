@@ -47,7 +47,7 @@ class DbCommand
         return $this->parameters;
     }
 
-    public function addParameters(array $parameters)
+    public function addParameters(array $parameters): void
     {
         $this->parameters = $parameters;
     }

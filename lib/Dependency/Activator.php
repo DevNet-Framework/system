@@ -14,7 +14,7 @@ use ReflectionClass;
 
 class Activator
 {
-    public static function CreateInstance(string $type, IServiceProvider $provider = null)
+    public static function CreateInstance(string $type, IServiceProvider $provider = null): object
     {
         if (!class_exists($type)) {
             throw new ClassException("Cound not find class {$type}", 0, 1);

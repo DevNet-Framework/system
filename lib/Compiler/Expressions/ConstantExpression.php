@@ -20,7 +20,7 @@ class ConstantExpression extends Expression
         $this->Type = $type;
     }
 
-    public function accept(ExpressionVisitor $visitor)
+    public function accept(ExpressionVisitor $visitor): void
     {
         $visitor->visitConstant($this);
     }

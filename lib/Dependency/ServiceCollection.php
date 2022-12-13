@@ -28,7 +28,7 @@ class ServiceCollection implements IServiceCollection
         $this->services[$serviceDescriptor->ServiceType] = $serviceDescriptor;
     }
 
-    public function addSingleton(string $serviceType, $service = null)
+    public function addSingleton(string $serviceType, $service = null): void
     {
         try {
             $this->add(new ServiceDescriptor(1, $serviceType, $service));
@@ -45,7 +45,7 @@ class ServiceCollection implements IServiceCollection
         }
     }
 
-    public function addTransient(string $serviceType, $service = null)
+    public function addTransient(string $serviceType, $service = null): void
     {
         try {
             $this->add(new ServiceDescriptor(2, $serviceType, $service));
@@ -67,7 +67,7 @@ class ServiceCollection implements IServiceCollection
         return new ArrayIterator($this->services);
     }
 
-    public function clear()
+    public function clear(): void
     {
         $this->services = [];
     }

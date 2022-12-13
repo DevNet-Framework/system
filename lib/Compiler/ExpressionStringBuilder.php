@@ -25,7 +25,7 @@ class ExpressionStringBuilder extends ExpressionVisitor
         return $visitor->__toString();
     }
 
-    public function visitLambda(Expression $expression)
+    public function visitLambda(Expression $expression): void
     {
         $parameters = [];
         foreach ($expression->Parameters as $parameter) {
@@ -39,10 +39,9 @@ class ExpressionStringBuilder extends ExpressionVisitor
         $parameters = implode(', ', $parameters);
         $this->Out .= "fn({$parameters}) => ";
         $this->visit($expression->Body);
-        return $expression;
     }
 
-    public function visitCall(Expression $expression)
+    public function visitCall(Expression $expression): void
     {
         $arguments = $expression->Arguments;
         $lastExpression = array_shift($arguments);
@@ -60,50 +59,44 @@ class ExpressionStringBuilder extends ExpressionVisitor
             $this->visit($argument);
         }
         $this->Out .= ")";
-        return $expression;
     }
 
-    public function visitArray(Expression $expression)
+    public function visitArray(Expression $expression): void
     {
         # code...
     }
 
-    public function visitGroup(Expression $expression)
+    public function visitGroup(Expression $expression): void
     {
         $this->Out .= "(";
         $this->visit($expression->Expression);
         $this->Out .= ")";
-        return $expression;
     }
 
-    public function visitBinary(Expression $expression)
+    public function visitBinary(Expression $expression): void
     {
         $this->visit($expression->Left);
         $this->Out .= ' ' . $expression->Name . ' ';
         $this->visit($expression->Right);
-        return $expression;
     }
 
-    public function visitProperty(Expression $expression)
+    public function visitProperty(Expression $expression): void
     {
         $this->visit($expression->Parameter);
         $this->Out .= '->' . $expression->Property;
-        return $expression;
     }
 
-    public function visitParameter(Expression $expression)
+    public function visitParameter(Expression $expression): void
     {
         $this->Out .= $expression->Name;
-        return $expression;
     }
 
-    public function visitConstant(Expression $expression)
+    public function visitConstant(Expression $expression): void
     {
         $this->Out .= $expression->Value;
-        return $expression;
     }
 
-    public function visitUnary(Expression $expression)
+    public function visitUnary(Expression $expression): void
     {
         if ($expression->operand instanceof ConstantExpression) {
             $operand = $expression->operand->Value;
@@ -111,10 +104,9 @@ class ExpressionStringBuilder extends ExpressionVisitor
             $operand = $expression->operand->Name;
         }
         $this->Out .= "{$expression->Name}{$operand}";
-        return $expression;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->Out;
     }

@@ -21,13 +21,13 @@ class Lexer implements ILexer
         $this->definitions = $definitions;
     }
 
-    public function scan(string $input)
+    public function scan(string $input): void
     {
         $this->input = $input;
         $this->token = null;
     }
 
-    public function advance()
+    public function advance(): void
     {
         foreach ($this->definitions as $definition) {
             if ($this->input == '') {
@@ -52,14 +52,14 @@ class Lexer implements ILexer
         return $this->token;
     }
 
-    public function reset()
+    public function reset(): void
     {
         $this->definition = [];
         $this->input = '';
         $this->token = null;
     }
 
-    public function getTokens()
+    public function getTokens(): array
     {
         $position = 0;
         $tokens = [];

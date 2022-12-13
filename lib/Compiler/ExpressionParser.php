@@ -30,7 +30,7 @@ class ExpressionParser
         $this->parser = $parser;
     }
 
-    public static function getInstance()
+    public static function getInstance(): static
     {
         if (self::$instance) {
             return self::$instance;
@@ -112,7 +112,7 @@ class ExpressionParser
         return self::$instance;
     }
 
-    public function parse(Closure $function)
+    public function parse(Closure $function): void
     {
         $this->position = 0;
         $this->startLine = 0;
@@ -277,7 +277,7 @@ class ExpressionParser
         return $expression;
     }
 
-    public function getParameters()
+    public function getParameters(): array
     {
         $parameters = [];
         foreach ($this->functionReflector->getParameters() as $paramReflector) {

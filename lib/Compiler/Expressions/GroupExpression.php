@@ -20,7 +20,7 @@ class GroupExpression extends Expression
         $this->Expression = $expression;
     }
 
-    public function accept(ExpressionVisitor $visitor)
+    public function accept(ExpressionVisitor $visitor): void
     {
         $visitor->visitGroup($this);
     }

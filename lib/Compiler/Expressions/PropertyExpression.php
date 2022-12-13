@@ -20,7 +20,7 @@ class PropertyExpression extends Expression
         $this->Property = $property;
     }
 
-    public function accept(ExpressionVisitor $visitor)
+    public function accept(ExpressionVisitor $visitor): void
     {
         $visitor->visitProperty($this);
     }

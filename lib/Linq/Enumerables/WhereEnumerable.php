@@ -26,7 +26,7 @@ class WhereEnumerable implements IEnumerable
         $this->enumerable = $enumerable;
     }
 
-    public function where(Closure $predecate)
+    public function where(Closure $predecate): static
     {
         $elements = [];
         foreach ($this->enumerable as $key => $element) {

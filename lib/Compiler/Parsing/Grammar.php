@@ -10,6 +10,7 @@
 namespace DevNet\System\Compiler\Parsing;
 
 use DevNet\System\Compiler\Lexing\ILexer;
+use DevNet\System\Compiler\Lexing\IToken;
 
 class Grammar
 {
@@ -27,14 +28,14 @@ class Grammar
         $this->rules = $rules;
     }
 
-    public function consume(string $input)
+    public function consume(string $input): void
     {
         $this->lexer->scan($input);
         $this->lexer->advance();
         $this->tokens = [$this->lexer->getToken()];
     }
 
-    public function match($state, int $position, string $itemName)
+    public function match($state, int $position, string $itemName): array
     {
         $this->position = $position--;
         $this->itemName = $itemName;
@@ -51,7 +52,7 @@ class Grammar
         return $this->filterRules($matchedRules, $position + 1, 0);
     }
 
-    public function lookAhead(string $item)
+    public function lookAhead(string $item): array
     {
         $nextRules = [];
         foreach ($this->rules as $rule) {
@@ -76,7 +77,7 @@ class Grammar
         return $this->filterRules($matchedRules, 2, 1);
     }
 
-    public function goTo(string $itemName)
+    public function goTo(string $itemName): array
     {
         $matchedRules = [];
         foreach ($this->rules as $rule) {
@@ -90,7 +91,7 @@ class Grammar
         return $this->filterRules($matchedRules, 1, 0);
     }
 
-    public function filterRules(array $state, int $position, $lookAhead)
+    public function filterRules(array $state, int $position, $lookAhead): array
     {
         switch (count($state)) {
             case 0:
@@ -142,7 +143,7 @@ class Grammar
         }
     }
 
-    public function derivation(array $rules)
+    public function derivation(array $rules): array
     {
         if ($rules) {
             $matchedRules = [];
@@ -159,7 +160,7 @@ class Grammar
         return $rules;
     }
 
-    public function canReduce($state, $position, $itemName, $stackState, $stackPointer)
+    public function canReduce($state, $position, $itemName, $stackState, $stackPointer): ?Rule
     {
         $rules = [];
         $token = $this->nextToken(0);
@@ -208,7 +209,7 @@ class Grammar
         }
     }
 
-    public function shift()
+    public function shift(): IToken
     {
         $token = array_shift($this->tokens);
         if ($token) {
@@ -220,7 +221,7 @@ class Grammar
         return $token;
     }
 
-    public function nextToken($level)
+    public function nextToken($level): IToken
     {
         if (isset($this->tokens[$level])) {
             return $this->tokens[$level];
@@ -232,7 +233,7 @@ class Grammar
         return $token;
     }
 
-    public function next()
+    public function next(): IToken
     {
         $token = reset($this->tokens);
         if ($token) {
@@ -245,7 +246,7 @@ class Grammar
         return $token;
     }
 
-    public function getRule($ruleIndex)
+    public function getRule($ruleIndex): ?Rule
     {
         if (isset($this->rules[$ruleIndex])) {
             return $this->rules[$ruleIndex];

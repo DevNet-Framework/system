@@ -32,13 +32,13 @@ class ExtensionProvider
         return $matches[1];
     }
 
-    static function addExtension(object $target, string $extenssionType)
+    static function addExtension(object $target, string $extenssionType): void
     {
         $targetType = get_class($target);
         self::$extensionMap[$targetType][] = $extenssionType;
     }
 
-    static function getExtensionMethod(object $target, string $methodName)
+    static function getExtensionMethod(object $target, string $methodName): ?object
     {
         $targetClass = get_class($target);
 

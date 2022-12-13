@@ -11,8 +11,9 @@ namespace DevNet\System\Compiler\Parsing;
 
 use DevNet\System\Compiler\IComponent;
 use IteratorAggregate;
+use Traversable;
 
-class Node implements IComponent
+class Node implements IComponent, IteratorAggregate
 {
     public string $Name;
     public array $Values = [];
@@ -23,7 +24,7 @@ class Node implements IComponent
         $this->Values = $values;
     }
 
-    public function add(Node $node)
+    public function add(Node $node): void
     {
         $this->Values[] = $node;
     }
@@ -50,7 +51,7 @@ class Node implements IComponent
         return get_class($this);;
     }
 
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         foreach ($this->Values as $value) {
             yield $value;

@@ -22,7 +22,7 @@ class Rule
         $this->Predecates = $predecates;
     }
 
-    public function getIndex()
+    public function getIndex(): int
     {
         return $this->Index;
     }

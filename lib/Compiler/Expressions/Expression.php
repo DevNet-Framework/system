@@ -20,42 +20,42 @@ abstract class Expression
         return ExpressionStringBuilder::expressionToString($this);
     }
 
-    public static function lambda($predicate, array $parameters = [], ?string $returnType = null)
+    public static function lambda($predicate, array $parameters = [], ?string $returnType = null): LambdaExpression
     {
         return new LambdaExpression($predicate, $parameters, $returnType);
     }
 
-    public static function call(?ParameterExpression $object, string $method, array $parameters = [])
+    public static function call(?ParameterExpression $object, string $method, array $parameters = []): CallExpression
     {
         return new CallExpression($object, $method, $parameters);
     }
 
-    public static function group(string $name, Expression $expression)
+    public static function group(string $name, Expression $expression): GroupExpression
     {
         return new GroupExpression($name, $expression);
     }
 
-    public static function parameter(string $name, ?string $type = null, $value = null)
+    public static function parameter(string $name, ?string $type = null, $value = null): ParameterExpression
     {
         return new ParameterExpression($name, $type, $value);
     }
 
-    public static function binary(string $name, Expression $left, Expression $right)
+    public static function binary(string $name, Expression $left, Expression $right): BinaryExpression
     {
         return new BinaryExpression($name, $left, $right);
     }
 
-    public static function property(ParameterExpression $parameter, string $property)
+    public static function property(ParameterExpression $parameter, string $property): PropertyExpression
     {
         return new PropertyExpression($parameter, $property);
     }
 
-    public static function constant($value, ?string $type = null)
+    public static function constant($value, ?string $type = null): ConstantExpression
     {
         return new ConstantExpression($value, $type);
     }
 
-    public static function unary(string $name, Expression $operand)
+    public static function unary(string $name, Expression $operand): UnaryExpression
     {
         return new UnaryExpression($name, $operand);
     }

@@ -33,7 +33,7 @@ class GroupEnumerable implements IEnumerable
         return $this->key;
     }
 
-    public function groupBy(Closure $function)
+    public function groupBy(Closure $function): static
     {
         $groups = [];
         foreach ($this->enumerable as $element) {

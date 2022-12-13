@@ -25,7 +25,7 @@ class JoinEnumerable implements IEnumerable
         $this->enumerable = $enumerable;
     }
 
-    public function join($innerCollection, Closure $outerSelector, Closure $innerSelector, Closure $resultSelector)
+    public function join($innerCollection, Closure $outerSelector, Closure $innerSelector, Closure $resultSelector): static
     {
         $innerJoin = [];
         $joinResult = [];

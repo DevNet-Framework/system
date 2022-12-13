@@ -27,7 +27,7 @@ class OrderEnumerable implements IEnumerable
         $this->enumerable = $enumerable;
     }
 
-    public function orderBy(Closure $predecate)
+    public function orderBy(Closure $predecate): static
     {
         $array       = $this->enumerable->getIterator()->toArray();
         $this->sort  = $this->sort($array, $predecate);
@@ -36,7 +36,7 @@ class OrderEnumerable implements IEnumerable
         return $this;
     }
 
-    public function orderByDescending(Closure $predecate)
+    public function orderByDescending(Closure $predecate): static
     {
         $array       = $this->enumerable->getIterator()->toArray();
         $this->sort  = $this->sort($array, $predecate, true);
@@ -45,7 +45,7 @@ class OrderEnumerable implements IEnumerable
         return $this;
     }
 
-    public function thenBy(Closure $predecate)
+    public function thenBy(Closure $predecate): static
     {
         $map         = $this->sort($this->sort, $predecate);
         $list        = $this->list($map);
@@ -53,7 +53,7 @@ class OrderEnumerable implements IEnumerable
         return $this;
     }
 
-    public function thenByDescending(Closure $predecate)
+    public function thenByDescending(Closure $predecate): static
     {
         $map         = $this->sort($this->sort, $predecate, true);
         $list        = $this->list($map);
@@ -61,7 +61,7 @@ class OrderEnumerable implements IEnumerable
         return $this;
     }
 
-    private function sort(array $array, Closure $predecate, $reverseOrder = false)
+    private function sort(array $array, Closure $predecate, $reverseOrder = false): array
     {
         $sort = [];
         $leaf = false;
@@ -93,7 +93,7 @@ class OrderEnumerable implements IEnumerable
         return $sort;
     }
 
-    private function list(array $array)
+    private function list(array $array): array
     {
         $list = [];
         foreach ($array as $element) {

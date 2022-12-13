@@ -29,7 +29,7 @@ class Process
         $this->env = $env;
     }
 
-    public function start(string ...$command)
+    public function start(string ...$command): void
     {
         $command = implode(' ', $command);
         $this->process = proc_open($command, $this->descriptors, $this->pipes, $this->cwd, $this->env);
@@ -92,7 +92,7 @@ class Process
         return $result;
     }
 
-    public function kill()
+    public function kill(): void
     {
         if ($this->isRunning()) {
             if (function_exists('proc_terminate')) {
@@ -106,7 +106,7 @@ class Process
         }
     }
 
-    public function close()
+    public function close(): void
     {
         if (is_resource($this->process)) {
             fclose($this->pipes[0]);

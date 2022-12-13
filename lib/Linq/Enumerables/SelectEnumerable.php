@@ -26,7 +26,7 @@ class SelectEnumerable implements IEnumerable
         $this->enumerable = $enumerable;
     }
 
-    public function select(Closure $predecate)
+    public function select(Closure $predecate): static
     {
         $elements = [];
         foreach ($this->enumerable as $element) {

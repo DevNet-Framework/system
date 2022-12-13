@@ -22,7 +22,7 @@ class ParameterExpression extends Expression
         $this->Value = $value;
     }
 
-    public function accept(ExpressionVisitor $visitor)
+    public function accept(ExpressionVisitor $visitor): void
     {
         $visitor->visitParameter($this);
     }

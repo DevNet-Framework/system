@@ -22,7 +22,7 @@ class BinaryExpression extends Expression
         $this->Right = $right;
     }
 
-    public function accept(ExpressionVisitor $visitor)
+    public function accept(ExpressionVisitor $visitor): void
     {
         $visitor->visitBinary($this);
     }

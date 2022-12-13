@@ -13,7 +13,7 @@ class LexerBuilder
 {
     private array $definitions;
 
-    public function define(string $name, string $pattern)
+    public function define(string $name, string $pattern): void
     {
         $this->definitions[] = new TokenDefenition($name, $pattern);
     }

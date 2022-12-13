@@ -34,7 +34,7 @@ class LambdaExpression extends Expression
         }
     }
 
-    public function accept(ExpressionVisitor $visitor)
+    public function accept(ExpressionVisitor $visitor): void
     {
         $visitor->visitLambda($this);
     }

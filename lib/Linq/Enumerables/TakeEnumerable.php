@@ -24,7 +24,7 @@ class TakeEnumerable implements IEnumerable
         $this->array = $enumerable->getIterator()->toArray();
     }
 
-    public function take(int $limit)
+    public function take(int $limit): static
     {
         $i = 1;
         $elements = [];
@@ -42,7 +42,7 @@ class TakeEnumerable implements IEnumerable
         return $this;
     }
 
-    public function skip(int $offset)
+    public function skip(int $offset): static
     {
         $i = 1;
         $elements = [];

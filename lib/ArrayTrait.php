@@ -82,7 +82,7 @@ trait ArrayTrait
     /** 
      * reverse the order of the array items.
      */
-    public function reverse(): self
+    public function reverse(): static
     {
         array_reverse($this->array);
         return $this;

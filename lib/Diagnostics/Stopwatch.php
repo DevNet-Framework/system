@@ -29,7 +29,7 @@ class Stopwatch
         return $this->isRunning;
     }
 
-    public function start()
+    public function start(): void
     {
         if (!$this->isRunning) {
             $this->startTimeStamp = microtime(true);
@@ -37,7 +37,7 @@ class Stopwatch
         }
     }
 
-    public function stop()
+    public function stop(): void
     {
         if ($this->isRunning) {
             $this->elapsed += microtime(true) - $this->startTimeStamp;
@@ -45,7 +45,7 @@ class Stopwatch
         }
     }
 
-    public function reset()
+    public function reset(): void
     {
         $this->stop();
         $this->elapsed = 0;

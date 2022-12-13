@@ -20,7 +20,7 @@ class UnaryExpression extends Expression
         $this->Operand = $operand;
     }
 
-    public function accept(ExpressionVisitor $visitor)
+    public function accept(ExpressionVisitor $visitor): void
     {
         $visitor->visitUnary($this);
     }

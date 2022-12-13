@@ -69,21 +69,21 @@ class Trace
         }
     }
 
-    public function writeIf(bool $condition, $value, ?string $category = null)
+    public function writeIf(bool $condition, $value, ?string $category = null): void
     {
         if ($condition) {
             $this->write($value, $category);
         }
     }
 
-    public function writeLineIf(bool $condition, $value, ?string $category = null)
+    public function writeLineIf(bool $condition, $value, ?string $category = null): void
     {
         if ($condition) {
             $this->writeLine($value, $category);
         }
     }
 
-    public function caller(int $skipFrames = 0)
+    public function caller(int $skipFrames = 0): void
     {
         // adapt the frame level to the outer scope by one step.
         $skipFrames++;
@@ -92,7 +92,7 @@ class Trace
         }
     }
 
-    public function flush()
+    public function flush(): void
     {
         foreach ($this->listeners as $listener) {
             $listener->flush();

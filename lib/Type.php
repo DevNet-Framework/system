@@ -154,7 +154,7 @@ class Type
         return false;
     }
 
-    public function isAssignableFrom(Type $type)
+    public function isAssignableFrom(Type $type): bool
     {
         if ($type->isEquivalentTo($this)) return true;
 
@@ -170,7 +170,7 @@ class Type
         return false;
     }
 
-    public function isAssignableTo(Type $type)
+    public function isAssignableTo(Type $type): bool
     {
         if ($this->isEquivalentTo($type)) return true;
 

@@ -51,13 +51,13 @@ class DbReader implements IteratorAggregate
         return $row[$ordinal] ?? null;
     }
 
-    public function reset()
+    public function reset(): void
     {
         $this->row = [];
         $this->command->Statement->closeCursor();
     }
 
-    public function close()
+    public function close(): void
     {
         $this->row = [];
         $this->command->Statement->closeCursor();

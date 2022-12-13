@@ -35,7 +35,7 @@ class DbConnectionStringBuilder
         return $this->connectionString;
     }
 
-    public function parseUri(string $uri)
+    public function parseUri(string $uri): void
     {
         $this->Driver       = parse_url($uri, PHP_URL_SCHEME);
         $this->Username     = parse_url($uri, PHP_URL_USER);

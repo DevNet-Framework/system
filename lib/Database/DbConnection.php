@@ -26,7 +26,7 @@ class DbConnection
         $this->password   = $password;
     }
 
-    public function open()
+    public function open(): void
     {
         if ($this->state == 0) {
             $this->connector = new PDO($this->datasource, $this->username, $this->password);
@@ -44,7 +44,7 @@ class DbConnection
         return $this->state;
     }
 
-    public function beginTransaction()
+    public function beginTransaction(): DbTransaction
     {
         return new DbTransaction($this);
     }
@@ -54,7 +54,7 @@ class DbConnection
         return new DbCommand($this, $sql);
     }
 
-    public function close()
+    public function close(): void
     {
         $this->connector = null;
         $this->state = 0;

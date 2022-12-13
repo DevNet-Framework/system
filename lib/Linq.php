@@ -17,12 +17,12 @@ use Closure;
 
 class Linq
 {
-    public static function select(IEnumerable $enumerable, Closure $predecate)
+    public static function select(IEnumerable $enumerable, Closure $predecate): IEnumerable
     {
         return Enumerable::select($enumerable, $predecate);
     }
 
-    public static function where(IEnumerable $enumerable, Closure $predecate)
+    public static function where(IEnumerable $enumerable, Closure $predecate): IEnumerable
     {
         $interfaces = class_implements($enumerable);
         if (in_array(IQueryable::class, $interfaces)) {
@@ -32,7 +32,7 @@ class Linq
         return Enumerable::where($enumerable, $predecate);
     }
 
-    public static function orderBy(IEnumerable $enumerable, Closure $predecate)
+    public static function orderBy(IEnumerable $enumerable, Closure $predecate): IEnumerable
     {
         $interfaces = class_implements($enumerable);
         if (in_array(IQueryable::class, $interfaces)) {
@@ -42,7 +42,7 @@ class Linq
         return Enumerable::orderBy($enumerable, $predecate);
     }
 
-    public static function orderByDescending(IEnumerable $enumerable, Closure $predecate)
+    public static function orderByDescending(IEnumerable $enumerable, Closure $predecate): IEnumerable
     {
         $interfaces = class_implements($enumerable);
         if (in_array(IQueryable::class, $interfaces)) {
@@ -52,7 +52,7 @@ class Linq
         return Enumerable::orderByDescending($enumerable, $predecate);
     }
 
-    public static function skip(IEnumerable $enumerable, int $offset)
+    public static function skip(IEnumerable $enumerable, int $offset): IEnumerable
     {
         $interfaces = class_implements($enumerable);
         if (in_array(IQueryable::class, $interfaces)) {
@@ -62,7 +62,7 @@ class Linq
         return Enumerable::skip($enumerable, $offset);
     }
 
-    public static function take(IEnumerable $enumerable, int $limit)
+    public static function take(IEnumerable $enumerable, int $limit): IEnumerable
     {
         $interfaces = class_implements($enumerable);
         if (in_array(IQueryable::class, $interfaces)) {
@@ -72,7 +72,7 @@ class Linq
         return Enumerable::take($enumerable, $limit);
     }
 
-    public static function groupBy(IEnumerable $enumerable, Closure $predecate)
+    public static function groupBy(IEnumerable $enumerable, Closure $predecate): IEnumerable
     {
         $interfaces = class_implements($enumerable);
         if (in_array(IQueryable::class, $interfaces)) {
@@ -82,7 +82,7 @@ class Linq
         return Enumerable::groupBy($enumerable, $predecate);
     }
 
-    public static function join(IEnumerable $enumerable, $innerCollection, Closure $outerSelector, Closure $innerSelector, Closure $resultSelector)
+    public static function join(IEnumerable $enumerable, $innerCollection, Closure $outerSelector, Closure $innerSelector, Closure $resultSelector): IEnumerable
     {
         $interfaces = class_implements($enumerable);
         if (in_array(IQueryable::class, $interfaces)) {

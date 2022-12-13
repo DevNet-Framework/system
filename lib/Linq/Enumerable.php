@@ -21,40 +21,52 @@ use Closure;
 
 abstract class Enumerable
 {
-    public static function select(IEnumerable $enumerable, Closure $predecate)
+    public static function select(IEnumerable $enumerable, Closure $predecate): SelectEnumerable
     {
         $selectEnumerable = new SelectEnumerable($enumerable);
         return $selectEnumerable->select($predecate);
     }
 
-    public static function where(IEnumerable $enumerable, Closure $predecate)
+    public static function where(IEnumerable $enumerable, Closure $predecate): WhereEnumerable
     {
         $whereEnumerable = new WhereEnumerable($enumerable);
         return $whereEnumerable->where($predecate);
     }
 
-    public static function orderBy(IEnumerable $enumerable, Closure $predecate)
+    public static function orderBy(IEnumerable $enumerable, Closure $predecate): OrderEnumerable
     {
         $orderEnumerable = new OrderEnumerable($enumerable);
         return $orderEnumerable->orderBy($predecate);
     }
 
-    public static function orderByDescending(IEnumerable $enumerable, Closure $predecate)
+    public static function orderByDescending(IEnumerable $enumerable, Closure $predecate): OrderEnumerable
     {
         $orderEnumerable = new OrderEnumerable($enumerable);
         return $orderEnumerable->orderByDescending($predecate);
     }
 
-    public static function groupBy(IEnumerable $enumerable, Closure $predecate)
+    public static function groupBy(IEnumerable $enumerable, Closure $predecate): GroupEnumerable
     {
         $group = new GroupEnumerable($enumerable);
         return $group->groupBy($predecate);
     }
 
-    public static function join(IEnumerable $enumerable, $innerCollection, Closure $outerSelector, Closure $innerSelector, Closure $resultSelector)
+    public static function join(IEnumerable $enumerable, $innerCollection, Closure $outerSelector, Closure $innerSelector, Closure $resultSelector): JoinEnumerable
     {
         $joined = new JoinEnumerable($enumerable);
         return $joined->join($innerCollection, $outerSelector, $innerSelector, $resultSelector);
+    }
+
+    public static function take(IEnumerable $enumerable, int $limit): TakeEnumerable
+    {
+        $take = new TakeEnumerable($enumerable);
+        return $take->take($limit);
+    }
+
+    public static function skip(IEnumerable $enumerable, int $offset): TakeEnumerable
+    {
+        $take = new TakeEnumerable($enumerable);
+        return $take->skip($offset);
     }
 
     public static function count(IEnumerable $enumerable, Closure $predecate = null): int
@@ -73,18 +85,6 @@ abstract class Enumerable
     {
         $count = new CountEnumerable($enumerable);
         return $count->min($predecate);
-    }
-
-    public static function take(IEnumerable $enumerable, int $limit)
-    {
-        $take = new TakeEnumerable($enumerable);
-        return $take->take($limit);
-    }
-
-    public static function skip(IEnumerable $enumerable, int $offset)
-    {
-        $take = new TakeEnumerable($enumerable);
-        return $take->skip($offset);
     }
 
     public static function first(IEnumerable $enumerable)

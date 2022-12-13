@@ -30,7 +30,7 @@ class Parser
         $this->grammar = $grammar;
     }
 
-    public function consume(string $input)
+    public function consume(string $input): void
     {
         $this->grammar->consume($input);
         $this->pointer  = new Stack();
@@ -43,7 +43,7 @@ class Parser
         $this->node->push(new Node('$S', []));
     }
 
-    public function advance()
+    public function advance(): void
     {
         if ($this->reduceId == 1) {
             $this->Action = self::ACCEPT;
@@ -121,22 +121,22 @@ class Parser
         }
     }
 
-    public function getAction()
+    public function getAction(): int
     {
         return $this->Action;
     }
 
-    public function getReduceId()
+    public function getReduceId(): int
     {
         return $this->reduceId;
     }
 
-    public function getNode()
+    public function getNode(): ?Node
     {
         return $this->node->peek();
     }
 
-    public function dump()
+    public function dump(): array
     {
         $dump = [
             'nodes'     => $this->node,

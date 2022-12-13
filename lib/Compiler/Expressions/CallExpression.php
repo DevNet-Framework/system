@@ -22,7 +22,7 @@ class CallExpression extends Expression
         $this->Arguments = $arguments;
     }
 
-    public function accept(ExpressionVisitor $visitor)
+    public function accept(ExpressionVisitor $visitor): void
     {
         $visitor->visitCall($this);
     }
