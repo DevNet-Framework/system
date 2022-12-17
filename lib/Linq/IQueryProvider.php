@@ -16,5 +16,5 @@ interface IQueryProvider
 {
     public function createQuery(object $entityType, Expression $expression): IQueryable;
 
-    public function execute(object $entityType, Expression $expression);
+    public function execute(object $entityType, Expression $expression): void;
 }
