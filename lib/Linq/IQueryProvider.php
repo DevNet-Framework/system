@@ -9,6 +9,7 @@
 
 namespace DevNet\System\Linq;
 
+use DevNet\System\Collections\Enumerator;
 use DevNet\System\Compiler\Expressions\Expression;
 use DevNet\System\Linq\IQueryable;
 
@@ -16,5 +17,5 @@ interface IQueryProvider
 {
     public function createQuery(object $entityType, Expression $expression): IQueryable;
 
-    public function execute(object $entityType, Expression $expression): void;
+    public function execute(object $entityType, Expression $expression): array;
 }
