@@ -7,10 +7,12 @@
  * @link        https://github.com/DevNet-Framework
  */
 
-namespace DevNet\System\Tasks;
+namespace DevNet\System\Async;
 
-use Exception;
-
-class CancelationException extends Exception
+interface IAwaitable
 {
+    /**
+     * return wait handle of type IAwaiter.
+     */
+    public function getAwaiter(): IAwaiter;
 }

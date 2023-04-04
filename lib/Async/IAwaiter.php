@@ -7,7 +7,7 @@
  * @link        https://github.com/DevNet-Framework
  */
 
-namespace DevNet\System\Tasks;
+namespace DevNet\System\Async;
 
 use Closure;
 

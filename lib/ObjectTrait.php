@@ -9,7 +9,7 @@
 
 namespace DevNet\System;
 
-use DevNet\System\Tasks\AsyncFunction;
+use DevNet\System\Async\AsyncFunction;
 use DevNet\System\Exceptions\MethodException;
 use DevNet\System\Exceptions\PropertyException;
 use DevNet\System\Exceptions\TypeException;
