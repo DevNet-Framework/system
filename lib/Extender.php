@@ -46,14 +46,14 @@ class Extender
 
     function getUsedClasses(): array
     {
-        $file = '';
+        $file  = '';
         $count = 0;
         $trace = debug_backtrace();
         foreach ($trace as $info) {
             $class = $info['class'] ?? null;
             $function = $info['function'] ?? null;
             if ($class == get_class($this->target) && $function == '__call') {
-                $file = $info['file'] ?? null;
+                $file = $info['file'] ?? '';
                 break;
             }
             $count++;
@@ -68,12 +68,13 @@ class Extender
             self::$classes[$file] = $classes;
         }
 
-        $contents = file_get_contents($file);
-        preg_match_all("%(?i)use\s+([A-Za-z_\\\]+);%", $contents, $matches);
-
-        if (isset($matches[1])) {
-            $classes = array_merge($classes, $matches[1]);
-            self::$classes[$file] = $classes;
+        if (file_exists($file)) {
+            $contents = file_get_contents($file);
+            preg_match_all("%(?i)use\s+([A-Za-z_\\\]+);%", $contents, $matches);
+            if (isset($matches[1])) {
+                $classes = array_merge($classes, $matches[1]);
+                self::$classes[$file] = $classes;
+            }
         }
 
         return $classes;
