@@ -13,6 +13,7 @@ use DevNet\System\Action;
 use DevNet\System\Collections\IEnumerable;
 use DevNet\System\Collections\Enumerator;
 use DevNet\System\Exceptions\MethodException;
+use DevNet\System\Exceptions\TypeException;
 use ReflectionMethod;
 
 abstract class Delegate implements IEnumerable
@@ -24,7 +25,7 @@ abstract class Delegate implements IEnumerable
     public function __construct(?callable $action = null)
     {
         if (!method_exists($this, 'delegate')) {
-            throw new MethodException("Undefined signature, Delegate method not found");
+            throw new MethodException("Undefined signature, Delegate method not found", 0, 1);
         }
 
         $this->Method = new ReflectionMethod($this, 'delegate');
@@ -34,7 +35,15 @@ abstract class Delegate implements IEnumerable
         }
 
         if ($action) {
-            $this->add($action);
+            try {
+                $this->add($action);
+            } catch (\Throwable $error) {
+                if ($error instanceof TypeException) {
+                    throw new TypeException($error->getMessage(), $error->getCode(), 1);
+                }
+
+                throw $error;
+            }
         }
     }
 
@@ -43,7 +52,8 @@ abstract class Delegate implements IEnumerable
         $action = new Action($action);
 
         if (!$this->matchSignature($action)) {
-            throw new \Exception("incompatible signature, function must be compatible with : {$this->getSignature()}");
+            $delegate = $this::class;
+            throw new TypeException("The delegated function must be compatible with the signature of the delegate {$delegate}", 0, 1);
         }
 
         $this->Actions[] = $action;
@@ -60,7 +70,6 @@ abstract class Delegate implements IEnumerable
             if ($parameter->hasType()) {
                 $typeName = $parameter->getType()->getName();
                 $typeSignature = $this->Parameters[$index]->getType()->getName();
-                
                 if ($typeName != $typeSignature && !is_subclass_of($typeName, $typeSignature)) {
                     return false;
                 }
