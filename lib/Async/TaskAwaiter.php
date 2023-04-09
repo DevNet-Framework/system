@@ -54,7 +54,7 @@ class TaskAwaiter implements IAwaiter
 
         if ($this->token && $this->token->IsCancellationRequested) {
             $this->isCompleted = true;
-            throw new CancelationException('A task was canceled');
+            $this->generator->throw(new CancelationException('The task was canceled!'));
         }
 
         $this->next();
@@ -85,7 +85,7 @@ class TaskAwaiter implements IAwaiter
         if (!$this->generator->valid()) {
             try {
                 $this->result = $this->generator->getReturn();
-            } catch (\Throwable $th) {
+            } catch (\Throwable $error) {
                 $this->result = null;
             }
             $this->isCompleted = true;
@@ -97,27 +97,6 @@ class TaskAwaiter implements IAwaiter
         }
 
         $result = $this->generator->current();
-
-        if ($result instanceof Generator) {
-            if (!$this->asyncResult) {
-                $this->asyncResult = new AsyncResult($result);
-            }
-            $result = $this->asyncResult;
-        }
-
-        if ($result instanceof IAwaitable) {
-            try {
-                if ($result->getAwaiter()->isCompleted()) {
-                    $this->generator->send($result->getAwaiter()->getResult());
-                    if ($this->asyncResult) {
-                        $this->asyncResult = null;
-                    }
-                }
-            } catch (\Throwable $exception) {
-                $this->generator->throw($exception);
-            }
-        } else {
-            $this->generator->send($result);
-        }
+        $this->generator->send($result);
     }
 }
