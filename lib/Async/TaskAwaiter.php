@@ -13,7 +13,7 @@ use DevNet\System\ObjectTrait;
 use Generator;
 use Closure;
 
-class AsyncAwaiter implements IAwaiter
+class TaskAwaiter implements IAwaiter
 {
     use ObjectTrait;
 

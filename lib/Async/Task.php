@@ -39,19 +39,19 @@ class Task implements IAwaitable
         $this->id        = spl_object_id($this);
         $this->status    = Self::Succeeded;
         $this->scheduler = TaskScheduler::getDefaultScheduler();
-        $this->awaiter   = new AsyncAwaiter();
+        $this->awaiter   = new TaskAwaiter();
         $this->token     = $token;
 
         if ($action) {
             $this->status = Self::Created;
             $action = new Action($action);
             if ($action->Function->isGenerator()) {
-                $this->awaiter = new AsyncAwaiter($action(), $token);
+                $this->awaiter = new TaskAwaiter($action(), $token);
             } else {
                 $function = function () use ($action) {
                     return yield $action();
                 };
-                $this->awaiter = new AsyncAwaiter($function(), $token);
+                $this->awaiter = new TaskAwaiter($function(), $token);
             }
         }
     }
