@@ -9,19 +9,41 @@
 
 namespace DevNet\System\Async;
 
-use DevNet\System\Action;
+use Fiber;
 
-class AsyncFunction extends Action
+class AsyncFunction
 {
-    public function invokeArgs(array $args = []): Task
+    private Fiber $fiber;
+
+    public function __construct(callable $action)
     {
-        $function = $this->function;
-        $task = new Task(function () use ($function, $args) {
-            $result = yield $function->invokeArgs($args);
-            return $result;
+        $this->fiber = new Fiber($action);
+    }
+
+    public function invokeAsync(array $args = []): Task
+    {
+        $task = Task::run(function () use ($args) {
+            $asyncResult = $this->fiber->start($args);
+            while (!$this->fiber->isTerminated()) {
+                yield;
+                if ($asyncResult instanceof IAwaitable) {
+                    if ($asyncResult->getAwaiter()->isCompleted()) {
+                        $asyncResult = $this->fiber->resume($asyncResult->getAwaiter()->getResult());
+                    }
+                } else {
+                    $asyncResult = $this->fiber->throw(new \Exception("Async function must await an IAwaitable task!"));
+                }
+            }
+
+            return $this->fiber->getReturn();
         });
 
         $task->start(new TaskScheduler());
         return $task;
+    }
+
+    public function __invoke(...$args): Task
+    {
+        return $this->invokeAsync($args);
     }
 }
