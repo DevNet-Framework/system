@@ -9,29 +9,34 @@
 
 namespace Devnet\System {
 
-    use DevNet\System\Diagnostics\Debug;
     use DevNet\System\Async\AsyncFunction;
+    use DevNet\System\Async\IAwaitable;
+    use DevNet\System\Diagnostics\Debug;
+    use DevNet\System\Exceptions\ArrayException;
     use DevNet\System\Type;
+    use Fiber;
 
-    /**
-     * add async helper.
-     */
     function async(callable $action): AsyncFunction
     {
         return new AsyncFunction($action);
     }
 
-    /**
-     * add typeOf helper.
-     */
+    function await(IAwaitable $task): mixed
+    {
+        return Fiber::suspend($task);
+    };
+
     function typeOf(string $typeName, array $typeArguments = []): Type
     {
-        return new Type($typeName, $typeArguments);
+        try {
+            $type = new Type($typeName, $typeArguments);
+        } catch (ArrayException $exception) {
+            throw new ArrayException($exception->getMessage(), $exception->getCode(), 1);
+        }
+
+        return $type;
     }
 
-    /**
-     * add debug helper.
-     */
     function debug($value = null): Debug
     {
         $debug = Debug::getInstance();
@@ -50,13 +55,12 @@ namespace Devnet\System {
 
 namespace {
 
-    use DevNet\System\Diagnostics\Debug;
     use DevNet\System\Async\AsyncFunction;
+    use DevNet\System\Async\IAwaitable;
+    use DevNet\System\Diagnostics\Debug;
+    use DevNet\System\Exceptions\ArrayException;
     use DevNet\System\Type;
 
-    /**
-     * add async helper.
-     */
     if (!function_exists("async")) {
         function async(callable $action): AsyncFunction
         {
@@ -64,19 +68,26 @@ namespace {
         }
     }
 
-    /**
-     * add typeOf helper.
-     */
+    if (!function_exists("await")) {
+        function await(IAwaitable $task): mixed
+        {
+            return Fiber::suspend($task);
+        };
+    }
+
     if (!function_exists("typeOf")) {
         function typeOf(string $typeName, array $typeArguments = []): Type
         {
-            return new Type($typeName, $typeArguments);
+            try {
+                $type = new Type($typeName, $typeArguments);
+            } catch (ArrayException $exception) {
+                throw new ArrayException($exception->getMessage(), $exception->getCode(), 1);
+            }
+
+            return $type;
         }
     }
 
-    /**
-     * add debug helper.
-     */
     if (!function_exists("debug")) {
         function debug($value = null): Debug
         {
