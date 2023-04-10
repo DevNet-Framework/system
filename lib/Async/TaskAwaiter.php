@@ -10,30 +10,18 @@
 namespace DevNet\System\Async;
 
 use DevNet\System\ObjectTrait;
-use Generator;
 use Closure;
 
 class TaskAwaiter implements IAwaiter
 {
     use ObjectTrait;
 
-    private ?Generator $generator = null;
-    private ?AsyncResult $asyncResult = null;
-    private ?CancelationToken $token = null;
+    private Task $task;
     private ?Closure $onCompleted = null;
-    private bool $isCompleted = false;
-    private bool $isRunning = false;
-    private $result = null;
 
-    public function __construct($result = null, ?CancelationToken $token = null)
+    public function __construct(Task $task)
     {
-        if ($result instanceof Generator) {
-            $this->generator = $result;
-            $this->token = $token;
-        } else {
-            $this->result = $result;
-            $this->isCompleted = true;
-        }
+        $this->task = $task;
     }
 
     public function get_OnCompleted(): ?Closure
@@ -41,62 +29,18 @@ class TaskAwaiter implements IAwaiter
         return $this->onCompleted;
     }
 
-    public function onCompleted(Closure $continuation): void
-    {
-        $this->onCompleted = $continuation;
-    }
-
     public function isCompleted(): bool
     {
-        if ($this->isCompleted) {
-            return $this->isCompleted;
-        }
-
-        if ($this->token && $this->token->IsCancellationRequested) {
-            $this->isCompleted = true;
-            $this->generator->throw(new CancelationException('The task was canceled!'));
-        }
-
-        $this->next();
-        return $this->isCompleted;
+        return $this->task->IsCompleted;
     }
 
-    public function getResult()
+    public function getResult(): mixed
     {
-        while (!$this->isCompleted) {
-            $this->next();
-        }
-
-        if ($this->onCompleted) {
-            $continuation = $this->onCompleted;
-            $this->onCompleted = null;
-            $continuation();
-        }
-
-        return $this->result;
+        return $this->task->Result;
     }
 
-    public function next(): void
+    public function onCompleted(Closure $continuation): void
     {
-        if (!$this->generator) {
-            return;
-        }
-
-        if (!$this->generator->valid()) {
-            try {
-                $this->result = $this->generator->getReturn();
-            } catch (\Throwable $error) {
-                $this->result = null;
-            }
-            $this->isCompleted = true;
-            $this->isRunning = false;
-            return;
-        } else if (!$this->isRunning) {
-            $this->isRunning = true;
-            return;
-        }
-
-        $result = $this->generator->current();
-        $this->generator->send($result);
+        $this->task->then($continuation);
     }
 }
