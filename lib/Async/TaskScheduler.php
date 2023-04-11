@@ -55,7 +55,7 @@ class TaskScheduler
             if ($count > $vacancy) {
                 break;
             }
-            if ($task->Status == Task::Pending) {
+            if ($task->Status == TaskStatus::Pending) {
                 $task->start();
                 $count++;
             }
@@ -66,7 +66,7 @@ class TaskScheduler
     {
         $tasks = [];
         foreach ($this->tasks as $task) {
-            if ($task->Status == Task::Running) {
+            if ($task->Status == TaskStatus::Running) {
                 $tasks[] = $task;
             }
         }
