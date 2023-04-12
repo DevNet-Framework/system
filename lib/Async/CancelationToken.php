@@ -9,16 +9,16 @@
 
 namespace DevNet\System\Async;
 
-use Closure;
 use DevNet\System\ObjectTrait;
+use Closure;
 
 class CancelationToken
 {
     use ObjectTrait;
 
     private CancelationSource $source;
-    private Closure $action;
     private bool $isCancellationRequested = false;
+    private ?Closure $action = null;
 
     public function __construct($source)
     {
@@ -37,10 +37,10 @@ class CancelationToken
 
     public function get_IsCancellationRequested(): bool
     {
-        return $this->ssCancellationRequested;
+        return $this->isCancellationRequested;
     }
 
-    public function register(Closure $action)
+    public function register(Closure $action): void
     {
         $this->action = $action;
     }
