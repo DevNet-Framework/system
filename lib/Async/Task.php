@@ -9,51 +9,34 @@
 
 namespace DevNet\System\Async;
 
-use DevNet\System\Action;
 use DevNet\System\Exceptions\ArrayException;
 use DevNet\System\ObjectTrait;
 use Closure;
+use Fiber;
+use Throwable;
 
 class Task implements IAwaitable
 {
     use ObjectTrait;
 
-    public const Created   = 0;
-    public const Pending   = 1;
-    public const Running   = 2;
-    public const Succeeded = 3;
-    public const Canceled  = -1;
-    public const Failed    = -2;
-
     private int $id;
-    private int $status = 0;
+    private Fiber $fiber;
+    private TaskAwaiter $awaiter;
+    private TaskStatus $status;
+    private mixed $asyncResult;
     private TaskScheduler $scheduler;
     private ?Task $continuationTask = null;
-    private ?IAwaiter $awaiter = null;
     private ?CancelationToken $token = null;
-    private bool $isCompleted = false;
-    private $result = null;
+    private ?Throwable $exception = null;
 
-    public function __construct(Closure $action = null, ?CancelationToken $token = null)
+    public function __construct(Closure $action, ?CancelationToken $token = null)
     {
         $this->id        = spl_object_id($this);
-        $this->status    = Self::Succeeded;
+        $this->fiber     = new Fiber($action);
+        $this->awaiter   = new TaskAwaiter($this);
+        $this->status    = TaskStatus::Created;
         $this->scheduler = TaskScheduler::getDefaultScheduler();
-        $this->awaiter   = new TaskAwaiter();
         $this->token     = $token;
-
-        if ($action) {
-            $this->status = Self::Created;
-            $action = new Action($action);
-            if ($action->Function->isGenerator()) {
-                $this->awaiter = new TaskAwaiter($action(), $token);
-            } else {
-                $function = function () use ($action) {
-                    return yield $action();
-                };
-                $this->awaiter = new TaskAwaiter($function(), $token);
-            }
-        }
     }
 
     public function get_Id(): int
@@ -61,39 +44,59 @@ class Task implements IAwaitable
         return $this->id;
     }
 
-    public function get_Status(): int
+    public function get_Status(): TaskStatus
     {
         return $this->status;
     }
 
     public function get_IsCompleted(): bool
     {
-        if (!$this->isCompleted && $this->status == Task::Running) {
-            if ($this->awaiter->IsCompleted()) {
-                $this->wait();
+        if ($this->fiber->isTerminated()) {
+            return true;
+        }
+
+        if ($this->token && $this->token->IsCancellationRequested) {
+            try {
+                $this->fiber->throw(new CancelationException("The task with Id: {$this->id} was canceled!"));
+            } catch (\Throwable $exception) {
+                $this->exception = $exception;
+                $this->status = TaskStatus::Canceled;
             }
         }
 
-        return $this->isCompleted;
-    }
-
-    public function get_Result()
-    {
-        if (!$this->isCompleted) {
-            $this->wait();
+        if ($this->fiber->isSuspended()) {
+            try {
+                $this->asyncResult = $this->fiber->resume($this->asyncResult);
+            } catch (\Throwable $exception) {
+                $this->exception = $exception;
+                $this->status = TaskStatus::Failed;
+            }
         }
 
-        return $this->result;
+        if ($this->fiber->isTerminated()) {
+            if (!$this->exception) {
+                $this->status = TaskStatus::Succeeded;
+            }
+            $this->scheduler->dequeue($this);
+        }
+
+        return false;
     }
 
-    public function getAwaiter(): IAwaiter
+    public function get_Result(): mixed
     {
-        return $this->awaiter;
+        $this->wait();
+
+        if ($this->exception) {
+            return $this->exception;
+        }
+
+        return $this->fiber->getReturn();
     }
 
     public function start(TaskScheduler $taskScheduler = null): void
     {
-        if ($this->status == Task::Running || $this->isCompleted) {
+        if ($this->fiber->isStarted()) {
             return;
         }
 
@@ -101,15 +104,17 @@ class Task implements IAwaitable
             $this->scheduler = $taskScheduler;
         }
 
-        $this->status = Self::Pending;
-        $continuationAction = $this->awaiter->OnCompleted;
-
+        $this->status = TaskStatus::Pending;
         if ($this->scheduler->MaxConcurrency == 0 || $this->scheduler->MaxConcurrency - count($this->scheduler->getScheduledTasks()) > 0) {
-            $this->status = Task::Running;
-        }
 
-        if ($continuationAction) {
-            $this->awaiter->onCompleted($continuationAction);
+            try {
+                $this->asyncResult = $this->fiber->start();
+                $this->status = TaskStatus::Running;
+            } catch (\Throwable $exception) {
+                $this->exception = $exception;
+                $this->status = TaskStatus::Failed;
+                return;
+            }
         }
 
         $this->scheduler->enqueue($this);
@@ -117,30 +122,8 @@ class Task implements IAwaitable
 
     public function wait(): void
     {
-        if ($this->isCompleted) {
-            return;
-        }
-
-        if ($this->status == Task::Created || $this->status == Task::Pending) {
-            $this->status = Task::Running;
-        }
-
-        if ($this->status == Task::Running) {
-            try {
-                $this->isCompleted = true;
-                $this->result = $this->awaiter->getResult();
-                $this->scheduler->dequeue($this);
-            } catch (\Throwable $exception) {
-                if ($exception instanceof CancelationException) {
-                    $this->status = self::Canceled;
-                    throw $exception;
-                }
-
-                $this->status = self::Failed;
-                throw $exception;
-            }
-
-            $this->status = Task::Succeeded;
+        while (!$this->IsCompleted) {
+            // 
         }
     }
 
@@ -148,7 +131,9 @@ class Task implements IAwaitable
     {
         $previousTask = $this;
         $continuationTask = new Task(function () use ($continuationAction, $previousTask) {
-            yield $previousTask;
+            while (!$previousTask->IsCompleted) {
+                Fiber::suspend();
+            }
             return $continuationAction($previousTask);
         }, $token);
 
@@ -157,6 +142,11 @@ class Task implements IAwaitable
         });
 
         return $continuationTask;
+    }
+
+    public function getAwaiter(): IAwaiter
+    {
+        return $this->awaiter;
     }
 
     public static function run(Closure $action, ?CancelationToken $token = null): Task
@@ -171,7 +161,8 @@ class Task implements IAwaitable
         $task = new Task(function () use ($seconds) {
             $startTime = microtime(true);
             do {
-                $elapsedTime = yield microtime(true) - $startTime;
+                Fiber::suspend();
+                $elapsedTime = microtime(true) - $startTime;
             } while ($elapsedTime < $seconds);
             return true;
         });
@@ -199,7 +190,11 @@ class Task implements IAwaitable
 
     public static function completedTask(): Task
     {
-        return new Task();
+        $task = new Task(function () {
+            return null;
+        });
+        $task->wait();
+        return $task;
     }
 
     public static function waitAll(array $tasks): void
