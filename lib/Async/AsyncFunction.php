@@ -25,7 +25,7 @@ class AsyncFunction
         $task = Task::run(function () use ($args) {
             $asyncResult = $this->fiber->start($args);
             while (!$this->fiber->isTerminated()) {
-                Fiber::suspend();
+                yield;
                 if ($asyncResult instanceof IAwaitable) {
                     if ($asyncResult->getAwaiter()->isCompleted()) {
                         $asyncResult = $this->fiber->resume($asyncResult->getAwaiter()->getResult());
