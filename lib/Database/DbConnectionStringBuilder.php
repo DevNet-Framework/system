@@ -9,11 +9,11 @@
 
 namespace DevNet\System\Database;
 
-use DevNet\System\ObjectTrait;
+use DevNet\System\PropertyTrait;
 
 class DbConnectionStringBuilder
 {
-    use ObjectTrait;
+    use PropertyTrait;
 
     private string $connectionString = "";
     public ?string $Driver           = null;

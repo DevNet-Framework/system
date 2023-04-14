@@ -9,12 +9,12 @@
 
 namespace DevNet\System\Database;
 
-use DevNet\System\ObjectTrait;
+use DevNet\System\PropertyTrait;
 use PDOStatement;
 
 class DbCommand
 {
-    use ObjectTrait;
+    use PropertyTrait;
 
     private ?DbConnection $connection = null;
     private ?PDOStatement $statement = null;

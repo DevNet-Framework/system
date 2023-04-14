@@ -15,7 +15,7 @@ use DevNet\System\Type;
 
 trait ArrayTrait
 {
-    use ObjectTrait;
+    use TypeTrait;
 
     protected array $array = [];
 

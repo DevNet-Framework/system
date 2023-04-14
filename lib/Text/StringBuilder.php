@@ -9,11 +9,11 @@
 
 namespace DevNet\System\Text;
 
-use DevNet\System\ObjectTrait;
+use DevNet\System\MethodTrait;
 
 class StringBuilder
 {
-    use ObjectTrait;
+    use MethodTrait;
 
     private int $capacity = 0;
     private string $text  = '';

@@ -10,7 +10,7 @@
 namespace DevNet\System\Async;
 
 use DevNet\System\Exceptions\ArrayException;
-use DevNet\System\ObjectTrait;
+use DevNet\System\PropertyTrait;
 use Closure;
 use Exception;
 use Generator;
@@ -18,7 +18,7 @@ use Throwable;
 
 class Task implements IAwaitable
 {
-    use ObjectTrait;
+    use PropertyTrait;
 
     private int $id;
     private TaskStatus $status;

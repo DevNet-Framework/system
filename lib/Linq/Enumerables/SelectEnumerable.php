@@ -11,12 +11,12 @@ namespace DevNet\System\Linq\Enumerables;
 
 use DevNet\System\Collections\Enumerator;
 use DevNet\System\Collections\IEnumerable;
-use DevNet\System\ObjectTrait;
+use DevNet\System\MethodTrait;
 use Closure;
 
 class SelectEnumerable implements IEnumerable
 {
-    use ObjectTrait;
+    use MethodTrait;
 
     private IEnumerable $enumerable;
     private array $array = [];
