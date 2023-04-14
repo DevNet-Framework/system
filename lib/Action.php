@@ -37,18 +37,13 @@ class Action
         return $this->function;
     }
 
-    public function invokeArgs(array $args = [])
+    public function invoke(array $args = [])
     {
         return $this->function->invokeArgs($args);
     }
 
-    public function invoke(...$args)
-    {
-        return $this->invokeArgs($args);
-    }
-
     public function __invoke(...$args)
     {
-        return $this->invokeArgs($args);
+        return $this->invoke($args);
     }
 }
