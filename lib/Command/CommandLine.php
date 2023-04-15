@@ -142,6 +142,6 @@ class CommandLine implements ICommand
             return;
         }
 
-        $this->handler->invoke($this, $eventArgs);
+        $this->handler->invoke([$this, $eventArgs]);
     }
 }
