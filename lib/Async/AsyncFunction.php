@@ -23,7 +23,7 @@ class AsyncFunction
     public function invokeAsync(array $args = []): Task
     {
         $task = Task::run(function () use ($args) {
-            $asyncResult = $this->fiber->start($args);
+            $asyncResult = call_user_func_array([$this->fiber, 'start'], $args);
             while (!$this->fiber->isTerminated()) {
                 yield;
                 if ($asyncResult instanceof IAwaitable) {
