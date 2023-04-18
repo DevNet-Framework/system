@@ -32,8 +32,6 @@ class MainMethodRunner
         }
 
         $this->mainClass::main($args);
-
-        Task::waitAll(TaskScheduler::getDefaultScheduler()->Tasks);
         return 0;
     }
 }
