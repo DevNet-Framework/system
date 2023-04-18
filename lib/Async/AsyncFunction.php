@@ -20,7 +20,7 @@ class AsyncFunction
         $this->fiber = new Fiber($action);
     }
 
-    public function invokeAsync(array $args = []): Task
+    public function invoke(array $args = []): Task
     {
         $task = Task::run(function () use ($args) {
             $asyncResult = call_user_func_array([$this->fiber, 'start'], $args);
@@ -44,6 +44,6 @@ class AsyncFunction
 
     public function __invoke(...$args): Task
     {
-        return $this->invokeAsync($args);
+        return $this->invoke($args);
     }
 }

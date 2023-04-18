@@ -10,6 +10,7 @@
 namespace DevNet\System;
 
 use DevNet\System\Async\AsyncFunction;
+use DevNet\System\Async\Task;
 use DevNet\System\Exceptions\MethodException;
 use ReflectionMethod;
 
@@ -20,7 +21,7 @@ trait MethodTrait
         $asyncMethod = 'async_' . $method;
         if (method_exists($this, $asyncMethod)) {
             $action = new AsyncFunction([$this, $asyncMethod]);
-            return $action->invokeAsync($args);
+            return $action->invoke($args);
         }
 
         $extender = new Extender($this);
@@ -41,5 +42,15 @@ trait MethodTrait
         }
 
         throw new MethodException("Call to undefined method "  . static::class . "::{$method}()", 0, 1);
+    }
+
+    public function __invoke(...$args): Task
+    {
+        if (method_exists($this, "async_invoke")) {
+            $action = new AsyncFunction([$this, "async_invoke"]);
+            return $action->invoke($args);
+        }
+
+        throw new \Exception("Can not invoke object of type ". $this::class);
     }
 }
