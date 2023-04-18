@@ -145,7 +145,22 @@ class Task implements IAwaitable
             while (!$previousTask->IsCompleted) {
                 yield;
             }
-            return $continuationAction($previousTask);
+            $result = $continuationAction($previousTask);
+            if ($result instanceof Generator) {
+                while ($result->valid()) {
+                    yield;
+                    $value = $result->current();
+                    $result->send($value);
+                }
+
+                try {
+                    return $result->getReturn();
+                } catch (\Throwable $error) {
+                    return null;
+                }
+            } else {
+                return $result;
+            }
         }, $token);
 
         return $continuationTask;
