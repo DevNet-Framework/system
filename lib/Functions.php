@@ -21,9 +21,10 @@ namespace Devnet\System {
         return new AsyncFunction($action);
     }
 
-    function await(IAwaitable $task): mixed
+    function await(IAwaitable $awaitable): mixed
     {
-        return Fiber::suspend($task);
+        $awaitable = Fiber::suspend($awaitable);
+        return $awaitable->getAwaiter()->getResult();
     };
 
     function typeOf(string $typeName, array $typeArguments = []): Type
@@ -69,9 +70,10 @@ namespace {
     }
 
     if (!function_exists("await")) {
-        function await(IAwaitable $task): mixed
+        function await(IAwaitable $awaitable): mixed
         {
-            return Fiber::suspend($task);
+            $awaitable = Fiber::suspend($awaitable);
+            return $awaitable->getAwaiter()->getResult();
         };
     }
 
