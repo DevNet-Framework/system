@@ -120,6 +120,13 @@ class Task implements IAwaitable
         $this->status = TaskStatus::Pending;
         if ($this->scheduler->MaxConcurrency == 0 || $this->scheduler->MaxConcurrency - count($this->scheduler->getScheduledTasks()) > 0) {
             $this->status = TaskStatus::Running;
+            try {
+                $this->generator->valid();
+            } catch (\Throwable $exception) {
+                $this->exception = $exception;
+                $this->status = TaskStatus::Failed;
+                return;
+            }
         }
 
         $this->scheduler->enqueue($this);
