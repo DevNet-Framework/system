@@ -13,29 +13,30 @@ use Fiber;
 
 class AsyncFunction
 {
-    private Fiber $fiber;
+    private object|array $action;
 
     public function __construct(callable $action)
     {
-        $this->fiber = new Fiber($action);
+        $this->action = $action;
     }
 
     public function invoke(array $args = []): Task
     {
-        $task = Task::run(function () use ($args) {
-            $asyncResult = call_user_func_array([$this->fiber, 'start'], $args);
-            while (!$this->fiber->isTerminated()) {
+        $task = new Task(function () use ($args) {
+            $fiber = new Fiber ($this->action);
+            $asyncResult = call_user_func_array([$fiber, 'start'], $args);
+            while (!$fiber->isTerminated()) {
                 yield;
                 if ($asyncResult instanceof IAwaitable) {
                     if ($asyncResult->getAwaiter()->isCompleted()) {
-                        $asyncResult = $this->fiber->resume($asyncResult->getAwaiter()->getResult());
+                        $asyncResult = $fiber->resume($asyncResult);
                     }
                 } else {
-                    $asyncResult = $this->fiber->throw(new \Exception("Async function must await an IAwaitable task!"));
+                    $asyncResult = $fiber->throw(new \Exception("Async function must await an IAwaitable task!"));
                 }
             }
 
-            return $this->fiber->getReturn();
+            return $fiber->getReturn();
         });
 
         $task->start(new TaskScheduler());
