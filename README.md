@@ -15,7 +15,7 @@ This dependency is the core library of **DevNet Framework**, which includes the 
 - Boot Loader
 
 ## Requirements
-- [PHP](https://www.php.net/) version 8.0 or higher
+- [PHP](https://www.php.net/) version 8.1 or higher
 - [Composer](https://getcomposer.org/) version 2.0 or higher
 
 ## Installation
