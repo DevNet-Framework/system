@@ -13,21 +13,16 @@ use DevNet\System\IO\Stream;
 
 class Socket extends Stream
 {
-    public function __construct(string $host, int $port, bool $blocking = true, float $timeout = 0)
+    public function __construct(string $host, int $port, ?float $timeout = null)
     {
-        $this->Blocking = $blocking;
-        $this->Timeout  = $timeout;
+        $this->resource = fsockopen($host, $port, $errorCode, $errorMessage, $timeout);
 
-        if ($this->Timeout) {
-            $this->Resource = fsockopen($host, $port, $errorCode, $errorMessage, $this->Timeout);
-        } else {
-            $this->Resource = fsockopen($host, $port, $errorCode, $errorMessage);
-        }
-
-        if (!$this->Resource) {
+        if (!$this->resource) {
             throw new NetworkException($errorMessage, $errorCode);
         }
 
-        stream_set_blocking($this->Resource, $this->Blocking);
+        if ($timeout) {
+            stream_set_timeout($this->resource, (int) $timeout, $timeout * 1000000 % 1000000);
+        }
     }
 }
