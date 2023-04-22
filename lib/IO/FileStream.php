@@ -11,11 +11,12 @@ namespace DevNet\System\IO;
 
 class FileStream extends Stream
 {
-    public function __construct(string $filename, string $mode, bool $blocking = true, float $timeout = 0)
+    public function __construct(string $filename, string $mode, float $timeout = 0)
     {
-        $this->Blocking = $blocking;
-        $this->Timeout  = $timeout;
-        $this->Resource = fopen($filename, $mode);
-        stream_set_blocking($this->Resource, $this->Blocking);
+        $this->resource = fopen($filename, $mode);
+
+        if ($timeout) {
+            stream_set_timeout($this->resource, (int) $timeout, $timeout * 1000000 % 1000000);
+        }
     }
 }
