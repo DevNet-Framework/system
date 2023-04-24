@@ -11,9 +11,13 @@ namespace DevNet\System\IO;
 
 class FileStream extends Stream
 {
-    public function __construct(string $filename, string $mode, float $timeout = 0)
+    public function __construct(string $filename, string $mode, ?float $timeout = null)
     {
         $this->resource = fopen($filename, $mode);
+
+        if (!$this->resource) {
+            throw new FileException("Can not open the file: '{$filename}'", 0, 1);
+        }
 
         if ($timeout) {
             stream_set_timeout($this->resource, (int) $timeout, $timeout * 1000000 % 1000000);
