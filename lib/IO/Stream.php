@@ -9,41 +9,33 @@
 
 namespace DevNet\System\IO;
 
+use DevNet\System\Async\CancelationToken;
+use DevNet\System\Async\Task;
+use DevNet\System\PropertyTrait;
+
 abstract class Stream
 {
-    protected float $Timeout = 0;
-    protected bool $Blocking = true;
-    protected $Resource = null;
+    use PropertyTrait;
 
-    public function isSeekable(): bool
+    protected $resource;
+
+    public function get_IsSeekable(): bool
     {
-        if (!$this->Resource) {
-            return false;
-        }
-
-        $meta = stream_get_meta_data($this->Resource);
+        $meta = stream_get_meta_data($this->resource);
         return $meta['seekable'];
     }
 
-    public function isReadable(): bool
+    public function get_IsReadable(): bool
     {
-        if (!$this->Resource) {
-            return false;
-        }
-
-        $meta = stream_get_meta_data($this->Resource);
+        $meta = stream_get_meta_data($this->resource);
         $mode = $meta['mode'];
 
         return (strstr($mode, 'r') || strstr($mode, '+'));
     }
 
-    public function isWritable(): bool
+    public function get_IsWritable(): bool
     {
-        if (!$this->Resource) {
-            return false;
-        }
-
-        $meta = stream_get_meta_data($this->Resource);
+        $meta = stream_get_meta_data($this->resource);
         $mode = $meta['mode'];
 
         return (strstr($mode, 'x')
@@ -53,22 +45,14 @@ abstract class Stream
             || strstr($mode, '+'));
     }
 
-    public function eof(): bool
+    public function get_EndOfStream(): bool
     {
-        if (!$this->Resource) {
-            return true;
-        }
-
-        return feof($this->Resource);
+        return feof($this->resource);
     }
 
-    public function getSize(): ?int
+    public function get_Length(): ?int
     {
-        if (null === $this->Resource) {
-            return null;
-        }
-
-        $stats = fstat($this->Resource);
+        $stats = fstat($this->resource);
 
         if ($stats !== false) {
             return $stats['size'];
@@ -77,143 +61,178 @@ abstract class Stream
         return null;
     }
 
-    public function seek($offset, $whence = SEEK_SET)
+    public function get_Position(): ?int
     {
-        if (!$this->Resource) {
-            throw new \Exception("Missing Resource");
+        $position = ftell($this->resource);
+
+        if ($position === false) {
+            return null;
         }
 
-        if (!$this->isSeekable()) {
-            throw new \Exception("Resource is not seekable");
+        return $position;
+    }
+
+    public function set_Position(int $offset): void
+    {
+        $this->seek($offset);
+    }
+
+    public function seek(int $offset, int $whence = SEEK_SET): int
+    {
+        if (!$this->IsSeekable) {
+            throw new StreamException("The resource is not seekable");
         }
 
-        $result = fseek($this->Resource, $offset, $whence);
+        $result = fseek($this->resource, $offset, $whence);
 
         return $result;
+    }
+
+    public function read(int $length): string
+    {
+        if ($length <= 0) {
+            throw new StreamException("Length must be greater than 0", 0, 1);
+        }
+
+        if ($this->IsSeekable && $this->Position == $this->Length) {
+            $this->seek(0);
+        }
+
+        stream_set_blocking($this->resource, true);
+        $result = fread($this->resource, $length);
+
+        if ($result === false) {
+            throw new StreamException("Unable to read from the resource", 0, 1);
+        }
+
+        return $result;
+    }
+
+    public function readAsync(int $length, ?CancelationToken $cancellation = null): Task
+    {
+        return Task::run(function () use ($length) {
+            if ($length <= 0) {
+                throw new StreamException("Length must be greater than 0", 0, 1);
+            }
+
+            if ($this->IsSeekable && $this->Position == $this->Length) {
+                $this->seek(0);
+            }
+
+            do {
+                stream_set_blocking($this->resource, false);
+                $result = yield fread($this->resource, $length);
+                if ($result === false) {
+                    throw new StreamException("Unable to read from the resource", 0, 1);
+                }
+            } while (!$this->EndOfStream && $result === '');
+
+            return $result;
+        }, $cancellation);
+    }
+
+    public function readLine(): string
+    {
+        stream_set_blocking($this->resource, true);
+        $result = fgets($this->resource);
+
+        if ($result === false) {
+            throw new StreamException("Unable to read from the resource", 0, 1);
+        }
+
+        return $result;
+    }
+
+    public function readLineAsync(?CancelationToken $cancellation = null): Task
+    {
+        return Task::run(function () {
+            do {
+                $result = yield fgets($this->resource);
+                stream_set_blocking($this->resource, false);
+                if ($result === false) {
+                    throw new StreamException("Unable to read from the resource", 0, 1);
+                }
+            } while (!$this->EndOfStream && $result === '');
+
+            return $result;
+        }, $cancellation);
     }
 
     public function write(string $string): int
     {
-        if (!$this->Resource) {
-            throw new \Exception('Missing resource');
-        }
+        stream_set_blocking($this->resource, true);
+        $result = fwrite($this->resource, $string);
 
-        if (!$this->isWritable()) {
-            throw new \Exception('not writible');
-        }
-
-        $result = fwrite($this->Resource, $string);
-
-        if (false === $result) {
-            throw new \Exception('Unable to write to resource');
+        if ($result === false) {
+            throw new StreamException('Unable to write to resource', 0, 1);
         }
 
         return $result;
     }
 
-    public function read(int $buffer = null): ?string
+    public function writeAsync(string $value, ?CancelationToken $cancellation = null): Task
     {
-        if (!$this->Resource) {
-            throw new \Exception('Missing resource');
-        }
+        return Task::run(function () use ($value) {
+            do {
+                stream_set_blocking($this->resource, false);
+                $result = yield fwrite($this->resource, $value);
+                if ($result === false) {
+                    throw new StreamException('Unable to write to resource', 0, 1);
+                }
 
-        if (!$this->isReadable()) {
-            throw new \Exception('Not readable');
-        }
+                if ($result < strlen($value)) {
+                    $value = substr($value, $result);
+                    $result = 0;
+                }
+            } while ($result !== strlen($value));
 
-        if ($buffer == null) {
-            if (!$this->getSize()) {
-                return null;
+            return $result;
+        }, $cancellation);
+    }
+
+    public function flush(): void
+    {
+        $result = fflush($this->resource);
+
+        if ($result === false) {
+            throw new StreamException("Unable to flush the resource", 0, 1);
+        }
+    }
+
+    public function flushAsync(): Task
+    {
+        return Task::run(function () {
+            $result = yield fflush($this->resource);
+
+            if ($result === false) {
+                throw new StreamException("Unable to flush the resource", 0, 1);
             }
-            $buffer = $this->getSize();
-            $this->seek(0);
-        }
+        });
+    }
 
-        if ($this->Timeout) {
-            stream_set_timeout($this->Resource, (int) $this->Timeout, $this->Timeout * 1000000 % 1000000);
-        }
-
-        $result = fread($this->Resource, $buffer);
+    public function truncate(int $size): void
+    {
+        $result = ftruncate($this->resource, $size);
 
         if ($result === false) {
-            return null;
+            throw new StreamException("Unable to truncate the resource", 0, 1);
         }
-
-        return $result;
-    }
-
-    public function readLine(): ?string
-    {
-        if (!$this->Resource) {
-            throw new \Exception('Missing resource');
-        }
-
-        if (!$this->isReadable()) {
-            throw new \Exception('Not readable');
-        }
-
-        if ($this->Timeout) {
-            stream_set_timeout($this->Resource, (int) $this->Timeout, $this->Timeout * 1000000 % 1000000);
-        }
-
-        $result = fgets($this->Resource);
-
-        if ($result === false) {
-            return null;
-        }
-
-        return $result;
-    }
-
-    public function truncate(int $size): bool
-    {
-        if (!$this->Resource) {
-            throw new \Exception('Missing resource');
-        }
-
-        if (!$this->isWritable()) {
-            throw new \Exception('not writible');
-        }
-
-        return ftruncate($this->Resource, $size);
-    }
-
-    public function flush(): bool
-    {
-        if (!$this->Resource) {
-            throw new \Exception('Missing resource');
-        }
-
-        if (!$this->isWritable()) {
-            throw new \Exception('not writible');
-        }
-
-        return fflush($this->Resource);
     }
 
     public function close(): void
     {
-        if ($this->Resource) {
-            fclose($this->Resource);
-            $this->Resource = null;
-        }
+        fclose($this->resource);
     }
 
     public function __toString(): string
     {
-        if (!$this->isSeekable()) {
-            return '';
+        if ($this->IsSeekable) {
+            $this->seek(0);
         }
 
-        if (!$this->isReadable()) {
-            return '';
-        }
-
-        $this->seek(0);
-        $result = stream_get_contents($this->Resource);
-
-        if ($result == false) {
-            throw new \Exception("Unable to read from the stream");
+        $result = "";
+        while (!$this->EndOfStream) {
+            $result .= $this->read(1024);
         }
 
         return $result;
