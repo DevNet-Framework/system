@@ -64,20 +64,16 @@ class Console
         return trim((string)self::$In->readLine());
     }
 
-    public static function foregroundColor(int $color): void
+    public static function foregroundColor(ConsoleColor $color): void
     {
-        $color = ConsoleColor::parse('frontground', $color);
-        if ($color !== null) {
-            self::write("\e[${color}m");
-        }
+        $code = $color->parse(1);
+        self::write("\e[{$code}m");
     }
 
-    public static function backgroundColor(int $color): void
+    public static function backgroundColor(ConsoleColor $color): void
     {
-        $color = ConsoleColor::parse('background', $color);
-        if ($color !== null) {
-            self::write("\e[${color}m");
-        }
+        $code = $color->parse(2);
+        self::write("\e[{$code}m");
     }
 
     public static function resetColor(): void
