@@ -12,12 +12,14 @@ namespace DevNet\System\Collections;
 use DevNet\System\ArrayTrait;
 use DevNet\System\Exceptions\ArgumentException;
 use DevNet\System\Exceptions\TypeException;
+use DevNet\System\MethodTrait;
 use DevNet\System\Type;
 use ArrayAccess;
 
 class ArrayList implements ArrayAccess, IList
 {
     use ArrayTrait;
+    use MethodTrait;
 
     public function __construct(string $valueType)
     {
