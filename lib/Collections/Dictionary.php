@@ -11,12 +11,14 @@ namespace DevNet\System\Collections;
 
 use DevNet\System\ArrayTrait;
 use DevNet\System\Exceptions\ArgumentException;
+use DevNet\System\MethodTrait;
 use DevNet\System\Type;
 use ArrayAccess;
 
 class Dictionary implements ArrayAccess, IDictionary
 {
     use ArrayTrait;
+    use MethodTrait;
 
     public function __construct(string $keyType, string $valueType)
     {
