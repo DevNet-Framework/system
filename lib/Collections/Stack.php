@@ -10,11 +10,11 @@
 namespace DevNet\System\Collections;
 
 use DevNet\System\Exceptions\TypeException;
-use DevNet\System\ObjectTrait;
+use DevNet\System\MethodTrait;
 
 class Stack implements IEnumerable
 {
-    use ObjectTrait;
+    use MethodTrait;
 
     private array $array = [];
 
