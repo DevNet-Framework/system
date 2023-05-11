@@ -11,7 +11,7 @@ namespace DevNet\System;
 
 use ReflectionMethod;
 
-class Extender
+class Extension
 {
     private object $target;
     private static array $classes;

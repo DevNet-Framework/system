@@ -24,8 +24,8 @@ trait MethodTrait
             return $action->invoke($args);
         }
 
-        $extender = new Extender($this);
-        $extensionMethod = $extender->getMethod($method);
+        $extension = new Extension($this);
+        $extensionMethod = $extension->getMethod($method);
         if ($extensionMethod) {
             array_unshift($args, $this);
             return $extensionMethod->invokeArgs(null, $args);
@@ -51,6 +51,6 @@ trait MethodTrait
             return $action->invoke($args);
         }
 
-        throw new \Exception("Can not invoke object of type ". $this::class);
+        throw new \Exception("Can not invoke object of type " . $this::class);
     }
 }
