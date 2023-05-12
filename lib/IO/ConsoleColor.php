@@ -39,34 +39,42 @@ enum ConsoleColor: int
         switch ($type) {
             case 1:
                 return match ($this) {
-                    self::Black       => '0;30',
-                    self::DarkGrey    => '1;30',
-                    self::DarkRed     => '0;31',
-                    self::DarkMagenta => '0;35',
-                    self::DarkBlue    => '0;34',
-                    self::DarkCyan    => '0;36',
-                    self::DarkGreen   => '0;32',
-                    self::DarkYellow  => '0;33',
-                    self::Gray        => '0;37',
-                    self::Red         => '1;31',
-                    self::Magenta     => '1;35',
-                    self::Blue        => '1;34',
-                    self::Cyan        => '1;36',
-                    self::Green       => '1;32',
-                    self::Yellow      => '1;33',
-                    self::White       => '1;37'
+                    self::Black       => '30',
+                    self::DarkGrey    => '90',
+                    self::DarkRed     => '31',
+                    self::DarkMagenta => '35',
+                    self::DarkBlue    => '34',
+                    self::DarkCyan    => '36',
+                    self::DarkGreen   => '32',
+                    self::DarkYellow  => '33',
+                    self::Gray        => '37',
+                    self::Red         => '91',
+                    self::Magenta     => '95',
+                    self::Blue        => '94',
+                    self::Cyan        => '96',
+                    self::Green       => '92',
+                    self::Yellow      => '93',
+                    self::White       => '97'
                 };
                 break;
             case 2:
                 return match ($this) {
-                    self::Gray    => '40',
-                    self::Red     => '41',
-                    self::Magenta => '45',
-                    self::Blue    => '44',
-                    self::Cyan    => '46',
-                    self::Green   => '42',
-                    self::Yellow  => '43',
-                    self::White   => '47'
+                    self::Black       => '40',
+                    self::DarkGrey    => '100',
+                    self::DarkRed     => '41',
+                    self::DarkMagenta => '45',
+                    self::DarkBlue    => '44',
+                    self::DarkCyan    => '46',
+                    self::DarkGreen   => '42',
+                    self::DarkYellow  => '43',
+                    self::Gray        => '47',
+                    self::Red         => '101',
+                    self::Magenta     => '105',
+                    self::Blue        => '104',
+                    self::Cyan        => '106',
+                    self::Green       => '102',
+                    self::Yellow      => '103',
+                    self::White       => '107'
                 };
                 break;
             default:
