@@ -13,76 +13,82 @@ class Console
 {
     private static FileStream $In;
     private static FileStream $Out;
+    public static ?ConsoleColor $ForegroundColor = null;
+    public static ?ConsoleColor $BackgroundColor = null;
 
-    public static function write(string $value, ...$args): void
+    public static function write(string $format, array|string ...$args): void
     {
-        if (!isset(self::$Out)) {
-            self::$Out = new FileStream('php://stdout', 'w');
+        if (!isset(static::$Out)) {
+            static::$Out = new FileStream('php://stdout', 'w');
         }
 
-        // overide the arguments if the fist argument is an array
+        // if the fist argument is an array use it as arguments.
         if (isset($args[0]) && is_array($args[0])) {
             $args = $args[0];
         }
 
-        $replace = [];
-        foreach ($args as $key => $arg) {
-            // map the arguments if the value can be casted to string
-            if (!is_array($arg) && (!is_object($arg) || method_exists($arg, '__toString'))) {
-                $replace['{' . $key . '}'] = $arg;
+        $pattern = '/\{(\d+)(?:,\s*(-?\d+))?\}/';
+        $string = preg_replace_callback($pattern, function ($match) use ($args) {
+            $index = $match[1];
+            $space = isset($match[2]) ? (int)$match[2] : 0;
+            $value = isset($args[$index]) ? $args[$index] : '';
+            if ($space > 0) {
+                return str_pad($value, $space, ' ', STR_PAD_LEFT);
+            } else if ($space < 0) {
+                return str_pad($value, -$space, ' ', STR_PAD_RIGHT);
+            } else {
+                return $value;
             }
+        }, $format);
+
+        $color = '';
+        if (static::$ForegroundColor) {
+            $code = static::$ForegroundColor->parse(1);
+            $color = "\e[{$code}m";
         }
 
-        // interpolate replacement values into the string format
-        if ($replace) {
-            $value = strtr($value, $replace);
+        $bgcolor = '';
+        if (static::$BackgroundColor) {
+            $code = static::$BackgroundColor->parse(2);
+            $bgcolor = "\e[{$code}m";
         }
 
-        self::$Out->write($value);
+        static::$Out->write("{$color}{$bgcolor}{$string}");
     }
 
-    public static function writeLine(?string $value = null, ...$args): void
+    public static function writeLine(?string $format = null, array|string ...$args): void
     {
         // overide the arguments if the fist argument is an array
         if (isset($args[0]) && is_array($args[0])) {
             $args = $args[0];
         }
 
-        self::write((string) $value . PHP_EOL, $args);
+        static::write((string) $format, $args);
+        static::write("\e[0m" . PHP_EOL);
     }
 
-    public static function readLine(string $value = null): string
+    public static function readLine(?string $prompt = null): string
     {
-        if (!isset(self::$In)) {
-            self::$In = new FileStream('php://stdin', 'r');
+        if (!isset(static::$In)) {
+            static::$In = new FileStream('php://stdin', 'r');
         }
 
-        if ($value) {
-            self::write($value);
+        if ($prompt) {
+            static::write($prompt);
         }
 
-        return trim((string)self::$In->readLine());
-    }
-
-    public static function foregroundColor(ConsoleColor $color): void
-    {
-        $code = $color->parse(1);
-        self::write("\e[{$code}m");
-    }
-
-    public static function backgroundColor(ConsoleColor $color): void
-    {
-        $code = $color->parse(2);
-        self::write("\e[{$code}m");
+        return trim((string)static::$In->readLine());
     }
 
     public static function resetColor(): void
     {
-        self::write("\e[0m");
+        static::$ForegroundColor = null;
+        static::$BackgroundColor = null;
+        static::write("\e[0m");
     }
 
     public static function clear(): void
     {
-        self::write("\e[H\e[J");
+        static::write("\e[H\e[J");
     }
 }
