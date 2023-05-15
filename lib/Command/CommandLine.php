@@ -10,20 +10,20 @@
 namespace DevNet\System\Command;
 
 use DevNet\System\Command\Help\HelpBuilder;
+use DevNet\System\Command\Parsing\Parser;
 use DevNet\System\Event\EventHandler;
 use DevNet\System\IO\Console;
 use DevNet\System\IO\ConsoleColor;
-use DevNet\System\Command\Parsing\Parser;
 use Closure;
 
-class CommandLine implements ICommand
+class CommandLine
 {
     private string $name;
     private string $description;
     private array $arguments = [];
     private array $options = [];
     private array $commands = [];
-    private ?ICommand $parent = null;
+    private ?CommandLine $parent = null;
     private ?EventHandler $handler = null;
     private ?Closure $customize = null;
 
@@ -64,7 +64,7 @@ class CommandLine implements ICommand
         return $this->options;
     }
 
-    public function addCommand(ICommand $command): void
+    public function addCommand(CommandLine $command): void
     {
         $command->setParent($this);
         $this->commands[$command->getName()] = $command;
@@ -75,12 +75,12 @@ class CommandLine implements ICommand
         return $this->commands;
     }
 
-    public function setParent(ICommand $command): void
+    public function setParent(CommandLine $command): void
     {
         $this->parent = $command;
     }
 
-    public function getParent(): ?ICommand
+    public function getParent(): ?CommandLine
     {
         return $this->parent;
     }
