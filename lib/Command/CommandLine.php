@@ -119,7 +119,7 @@ class CommandLine implements ICommand
         }
 
         if ($input) {
-            Console::foregroundColor(ConsoleColor::Red);
+            Console::$ForegroundColor = ConsoleColor::Red;
             Console::writeline("Unrecognized command or argument '{$input}', try '--help' option for usage information.");
             Console::resetColor();
             return;
