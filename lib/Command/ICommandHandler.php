@@ -16,5 +16,5 @@ interface ICommandHandler
      * @param object $sender, the command that raised the event.
      * @param CommandEventArgs $args, a collection of parsed arguments and options.
      */
-    public function __invoke(object $sender, CommandEventArgs $args): void;
+    public function onExecute(object $sender, CommandEventArgs $args): void;
 }
