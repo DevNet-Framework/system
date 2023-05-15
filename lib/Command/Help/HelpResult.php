@@ -32,7 +32,7 @@ class HelpResult
             switch ($layout['type']) {
                 case 'heading':
                     if ($this->primaryColor) {
-                        Console::foregroundColor($this->primaryColor);
+                        Console::$ForegroundColor = $this->primaryColor;
                     }
                     Console::writeLine($layout['content']);
                     Console::resetColor();
@@ -40,7 +40,7 @@ class HelpResult
                 case 'rows':
                     foreach ($layout['content'] as $name => $description) {
                         if ($this->secondaryColor) {
-                            Console::foregroundColor($this->secondaryColor);
+                            Console::$ForegroundColor = $this->secondaryColor;
                         }
                         $lenth = strlen($name);
                         $space = str_repeat(" ", $this->maxWidth - $lenth + 4);
