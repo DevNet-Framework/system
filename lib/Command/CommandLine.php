@@ -128,7 +128,7 @@ class CommandLine
         $parameters = array_merge($result->getArguments(), $result->getOptions());
         $eventArgs = new CommandEventArgs($parameters, $args);
 
-        $help = $eventArgs->getParameter('--help');
+        $help = $eventArgs->get('--help');
         if ($help) {
             $help = new HelpBuilder($this);
             if ($this->customize) {

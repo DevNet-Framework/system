@@ -9,8 +9,12 @@
 
 namespace DevNet\System\Event;
 
+use DevNet\System\PropertyTrait;
+
 class EventArgs
 {
+    use PropertyTrait;
+
     protected array $parameters = [];
 
     public function __construct(array $parameters = [])
@@ -18,12 +22,17 @@ class EventArgs
         $this->parameters = $parameters;
     }
 
-    public function set(string $name, $parameter): void
+    public function get_Parameters(): array
     {
-        $this->parameters[$name] = $parameter;
+        return $this->parameters;
     }
 
-    public function get(string $name)
+    public function set(string $name, mixed $value): void
+    {
+        $this->parameters[$name] = $value;
+    }
+
+    public function get(string $name): mixed
     {
         return $this->parameters[$name] ?? null;
     }
