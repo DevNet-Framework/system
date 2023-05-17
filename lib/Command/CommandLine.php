@@ -14,10 +14,13 @@ use DevNet\System\Command\Parsing\Parser;
 use DevNet\System\Event\EventHandler;
 use DevNet\System\IO\Console;
 use DevNet\System\IO\ConsoleColor;
+use DevNet\System\PropertyTrait;
 use Closure;
 
 class CommandLine
 {
+    use PropertyTrait;
+
     private string $name;
     private string $description;
     private array $arguments = [];
@@ -32,47 +35,57 @@ class CommandLine
         $this->name = strtolower($name);
         $this->description = $description;
         $this->addOption('--help', 'Show help for the given command-line', '-h', null);
+
+        $interfaces = class_implements($this);
+        if (in_array(ICommandHandler::class, $interfaces)) {
+            $this->handler = new EventHandler([$this, 'onExecute']);
+        }
     }
 
-    public function getName(): string
+    public function get_Name(): string
     {
         return (string) $this->name;
     }
 
-    public function getDescription(): string
+    public function get_Description(): string
     {
         return (string) $this->description;
     }
 
-    public function addArgument(string $name, string $description = '', $value = ''): void
+    public function get_Options(): array
     {
-        $this->arguments[strtolower($name)] = new CommandArgument($name, $description, $value);
+        return $this->options;
     }
 
-    public function getArguments(): array
+    public function get_Arguments(): array
     {
         return $this->arguments;
     }
 
-    public function addOption(string $name, string $description = '', string $alias = '', $value = ''): void
+    public function get_Commands(): array
     {
-        $this->options[strtolower($name)] = new CommandOption($name, $description, $alias, $value);
+        return $this->commands;
     }
 
-    public function getOptions(): array
+    public function get_Parent(): ?CommandLine
     {
-        return $this->options;
+        return $this->parent;
+    }
+
+    public function addArgument(string $name, string $description = '', $value = null): void
+    {
+        $this->arguments[strtolower($name)] = new CommandArgument($name, $description, $value);
+    }
+
+    public function addOption(string $name, string $description = '', string $alias = '', $value = null): void
+    {
+        $this->options[strtolower($name)] = new CommandOption($name, $description, $alias, $value);
     }
 
     public function addCommand(CommandLine $command): void
     {
         $command->setParent($this);
-        $this->commands[$command->getName()] = $command;
-    }
-
-    public function getCommands(): array
-    {
-        return $this->commands;
+        $this->commands[$command->Name] = $command;
     }
 
     public function setParent(CommandLine $command): void
@@ -80,13 +93,12 @@ class CommandLine
         $this->parent = $command;
     }
 
-    public function getParent(): ?CommandLine
+    public function setHandler(ICommandHandler|callable $handler): void
     {
-        return $this->parent;
-    }
+        if ($handler instanceof ICommandHandler) {
+            $handler = [$handler, 'onExecute'];
+        }
 
-    public function setHandler(callable $handler): void
-    {
         $this->handler = new EventHandler($handler);
     }
 
@@ -112,7 +124,7 @@ class CommandLine
         $input = (string) array_shift($unparsedTokens);
 
         foreach ($this->commands as $command) {
-            if ($command->getName() == $input) {
+            if ($command->Name == $input) {
                 $command->invoke($unparsedTokens);
                 return;
             }

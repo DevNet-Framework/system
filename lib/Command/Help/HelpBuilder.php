@@ -68,7 +68,7 @@ class HelpBuilder
     public function writeDescription(): void
     {
         $this->writeHeading('Description:');
-        $this->writeLine($this->indent . "{$this->command->getDescription()}");
+        $this->writeLine($this->indent . "{$this->command->Description}");
         $this->writeLine();
     }
 
@@ -80,31 +80,31 @@ class HelpBuilder
         $parents = [];
         $command = $this->command;
 
-        while ($command->getParent()) {
-            $parents[] = $command->getParent();
-            $command = $command->getParent();
+        while ($command->Parent) {
+            $parents[] = $command->Parent;
+            $command = $command->Parent;
         }
 
         $parents = array_reverse($parents);
 
         foreach ($parents as $parent) {
-            $usage .= $parent->getName();
+            $usage .= $parent->Name;
             $usage .= ' ';
         }
 
-        $usage .= $this->command->getName();
+        $usage .= $this->command->Name;
 
-        if ($this->command->getArguments()) {
+        if ($this->command->Arguments) {
             $usage .= ' ';
             $usage .= '[arguments]';
         }
 
-        if ($this->command->getCommands()) {
+        if ($this->command->Commands) {
             $usage .= ' ';
             $usage .= '[command]';
         }
 
-        if ($this->command->getOptions()) {
+        if ($this->command->Options) {
             $usage .= ' ';
             $usage .= '[options]';
         }
@@ -115,10 +115,10 @@ class HelpBuilder
 
     public function writeArguments(): void
     {
-        if ($this->command->getArguments()) {
+        if ($this->command->Arguments) {
             $this->writeHeading("Arguments:");
             $rows = [];
-            foreach ($this->command->getArguments() as $argument) {
+            foreach ($this->command->Arguments as $argument) {
                 $rows[$argument->getName()] = $argument->getDescription();
             }
             $this->writeRows($rows);
@@ -128,10 +128,10 @@ class HelpBuilder
 
     public function writeOptions(): void
     {
-        if ($this->command->getOptions()) {
+        if ($this->command->Options) {
             $this->writeHeading("Options:");
             $rows = [];
-            foreach ($this->command->getOptions() as $option) {
+            foreach ($this->command->Options as $option) {
                 $name = $option->getName();
                 if ($option->getAlias()) {
                     $name .= ', ' . $option->getAlias();
@@ -145,11 +145,11 @@ class HelpBuilder
 
     public function writeCommands(): void
     {
-        if ($this->command->getCommands()) {
+        if ($this->command->Commands) {
             $this->writeHeading("Commands:");
             $rows = [];
-            foreach ($this->command->getCommands() as $command) {
-                $rows[$command->getName()] = $command->getDescription();
+            foreach ($this->command->Commands as $command) {
+                $rows[$command->Name] = $command->Description;
             }
             $this->writeRows($rows);
             $this->writeline();
