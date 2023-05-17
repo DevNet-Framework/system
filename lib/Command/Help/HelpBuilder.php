@@ -133,8 +133,8 @@ class HelpBuilder
             $rows = [];
             foreach ($this->command->Options as $option) {
                 $name = $option->Name;
-                if ($option->getAlias()) {
-                    $name .= ', ' . $option->getAlias();
+                if ($option->Alias) {
+                    $name .= ', ' . $option->Alias;
                 }
                 $rows[$name] = $option->Description;
             }

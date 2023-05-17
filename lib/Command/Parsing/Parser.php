@@ -38,7 +38,7 @@ class Parser
             $match = false;
             $token  = $args[0] ?? '';
             foreach ($options as $index => $option) {
-                if ($token == $option->Name || $token == $option->getAlias()) {
+                if ($token == $option->Name || $token == $option->Alias) {
                     if ($option->Value !== null) {
                         $option->setValue($args[1] ?? '');
                         array_shift($args);
