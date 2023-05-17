@@ -9,35 +9,39 @@
 
 namespace DevNet\System\Command;
 
+use DevNet\System\PropertyTrait;
+
 class CommandArgument
 {
+    use PropertyTrait;
+
     protected string $name;
     protected string $description;
-    protected $value;
+    protected string $value;
 
-    public function __construct(string $name, string $description = '', $value = '')
+    public function __construct(string $name, string $description = '', string $value = '')
     {
         $this->name = strtolower($name);
         $this->description = $description;
         $this->value = $value;
     }
 
-    public function getName(): string
+    public function get_Name(): string
     {
         return $this->name;
     }
 
-    public function getDescription(): string
+    public function get_Description(): string
     {
         return $this->description;
     }
 
-    public function getValue()
+    public function get_Value(): string
     {
         return $this->value;
     }
 
-    public function setValue($value): void
+    public function setValue(string $value): void
     {
         $this->value = $value;
     }

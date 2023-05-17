@@ -38,12 +38,12 @@ class Parser
             $match = false;
             $token  = $args[0] ?? '';
             foreach ($options as $index => $option) {
-                if ($token == $option->getName() || $token == $option->getAlias()) {
-                    if ($option->getValue() !== null) {
+                if ($token == $option->Name || $token == $option->getAlias()) {
+                    if ($option->Value !== null) {
                         $option->setValue($args[1] ?? '');
                         array_shift($args);
                     }
-                    $parsedOptions[$option->getName()] = $option;
+                    $parsedOptions[$option->Name] = $option;
                     unset($options[$index]);
                     array_shift($args);
                     $match = true;
@@ -55,7 +55,7 @@ class Parser
                 if ($arguments) {
                     foreach ($arguments as $index => $argument) {
                         $argument->setValue($token);
-                        $parsedArguments[$argument->getName()] = $argument;
+                        $parsedArguments[$argument->Name] = $argument;
                         unset($arguments[$index]);
                         array_shift($args);
                         break;

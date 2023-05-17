@@ -34,7 +34,7 @@ class CommandLine
     {
         $this->name = strtolower($name);
         $this->description = $description;
-        $this->addOption('--help', 'Show help for the given command-line', '-h', null);
+        $this->addOption('--help', 'Show help for the given command-line', '-h');
 
         $interfaces = class_implements($this);
         if (in_array(ICommandHandler::class, $interfaces)) {
@@ -44,12 +44,12 @@ class CommandLine
 
     public function get_Name(): string
     {
-        return (string) $this->name;
+        return $this->name;
     }
 
     public function get_Description(): string
     {
-        return (string) $this->description;
+        return $this->description;
     }
 
     public function get_Options(): array
@@ -72,12 +72,12 @@ class CommandLine
         return $this->parent;
     }
 
-    public function addArgument(string $name, string $description = '', $value = null): void
+    public function addArgument(string $name, string $description = '', string $value = ''): void
     {
         $this->arguments[strtolower($name)] = new CommandArgument($name, $description, $value);
     }
 
-    public function addOption(string $name, string $description = '', string $alias = '', $value = null): void
+    public function addOption(string $name, string $description = '', string $alias = '', string $value = ''): void
     {
         $this->options[strtolower($name)] = new CommandOption($name, $description, $alias, $value);
     }

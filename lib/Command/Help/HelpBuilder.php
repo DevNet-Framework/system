@@ -119,7 +119,7 @@ class HelpBuilder
             $this->writeHeading("Arguments:");
             $rows = [];
             foreach ($this->command->Arguments as $argument) {
-                $rows[$argument->getName()] = $argument->getDescription();
+                $rows[$argument->Name] = $argument->Description;
             }
             $this->writeRows($rows);
             $this->writeline();
@@ -132,11 +132,11 @@ class HelpBuilder
             $this->writeHeading("Options:");
             $rows = [];
             foreach ($this->command->Options as $option) {
-                $name = $option->getName();
+                $name = $option->Name;
                 if ($option->getAlias()) {
                     $name .= ', ' . $option->getAlias();
                 }
-                $rows[$name] = $option->getDescription();
+                $rows[$name] = $option->Description;
             }
             $this->writeRows($rows);
             $this->writeline();
