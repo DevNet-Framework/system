@@ -10,63 +10,32 @@
 namespace DevNet\System\Database;
 
 use DevNet\System\Collections\Enumerator;
-use IteratorAggregate;
-use PDO;
+use DevNet\System\Collections\IEnumerable;
 
-class DbReader implements IteratorAggregate
+abstract class DbReader implements IEnumerable
 {
-    private DbCommand $command;
-    private array $row = [];
+    /**
+     * Advances the reader to the next record in the result set.
+     */
+    public abstract function read(): bool;
 
-    public function __construct(DbCommand $command)
-    {
-        $this->command = $command;
-        $this->command->Statement->setFetchMode(PDO::FETCH_ASSOC);
-    }
+    /**
+     * Gets the name of the column, by given column ordinal.
+     */
+    public abstract function getName(int $ordinal): ?string;
 
-    public function read(): bool
-    {
-        if ($this->command->Connection->getState() === 1) {
-            $row = $this->command->Statement->fetch();
+    /**
+     * Gets the value of the specified column.
+     */
+    public abstract function getValue(string $name);
 
-            if ($row) {
-                $this->row = $row;
-                return true;
-            }
-        }
+    /**
+     * Closes the DbReader object.
+     */
+    public abstract function close(): void;
 
-        $this->row = [];
-        $this->command->Statement->closeCursor();
-        return false;
-    }
-
-    public function getValue(string $name)
-    {
-        return $this->row[$name] ?? null;
-    }
-
-    public function getName(int $ordinal): ?string
-    {
-        $row = array_keys($this->row);
-        return $row[$ordinal] ?? null;
-    }
-
-    public function reset(): void
-    {
-        $this->row = [];
-        $this->command->Statement->closeCursor();
-    }
-
-    public function close(): void
-    {
-        $this->row = [];
-        $this->command->Statement->closeCursor();
-        $this->command->Statement = null;
-        $this->command->Connection = null;
-    }
-
-    public function getIterator(): Enumerator
-    {
-        return new Enumerator($this->command->Statement->fetchAll());
-    }
+    /**
+     * Iterates through the rows in the DbReader.
+     */
+    public abstract function getIterator(): Enumerator;
 }

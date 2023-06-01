@@ -9,43 +9,20 @@
 
 namespace DevNet\System\Database;
 
-class DbTransaction
+use DevNet\System\PropertyTrait;
+
+abstract class DbTransaction
 {
-    private DbConnection $connection;
+    use PropertyTrait;
 
-    public function __construct(DbConnection $connection)
+    protected DbConnection $connection;
+
+    public function get_Connection(): ?DbConnection
     {
-        $connector = $connection->getConnector();
-        if (!$connector) {
-            throw new \Exception("DB connection is closed");
-        }
-
-        $connector->beginTransaction();
-        $this->connection = $connection;
+        return $this->connection ?? null;
     }
 
-    public function commit(): void
-    {
-        $connector = $this->connection->getConnector();
-        if (!$connector) {
-            throw new \Exception("DB connection is closed");
-        }
+    public abstract function commit(): void;
 
-        if ($connector->inTransaction()) {
-            $connector->commit();
-        }
-
-    }
-
-    public function rollBack(): void
-    {
-        $connector = $this->connection->getConnector();
-        if (!$connector) {
-            throw new \Exception("DB connection is closed");
-        }
-
-        if ($connector->inTransaction()) {
-            $connector->rollBack();
-        }
-    }
+    public abstract function rollBack(): void;
 }

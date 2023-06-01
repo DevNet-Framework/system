@@ -9,54 +9,24 @@
 
 namespace DevNet\System\Database;
 
-use PDO;
+use DevNet\System\PropertyTrait;
 
-class DbConnection
+abstract class DbConnection
 {
-    private string $datasource;
-    private string $username;
-    private string $password;
-    private ?PDO $connector;
-    private int $state = 0;
+    use PropertyTrait;
 
-    public function __construct(string $datasource, string $username = "", string $password = "")
-    {
-        $this->datasource = $datasource;
-        $this->username   = $username;
-        $this->password   = $password;
-    }
+    protected int $state = 0;
 
-    public function open(): void
-    {
-        if ($this->state == 0) {
-            $this->connector = new PDO($this->datasource, $this->username, $this->password);
-            $this->state = 1;
-        }
-    }
-
-    public function getConnector(): PDO
-    {
-        return $this->connector;
-    }
-
-    public function getState(): int
+    public function get_State(): int
     {
         return $this->state;
     }
 
-    public function beginTransaction(): DbTransaction
-    {
-        return new DbTransaction($this);
-    }
+    public abstract function open(): void;
 
-    public function createCommand(string $sql = null): DbCommand
-    {
-        return new DbCommand($this, $sql);
-    }
+    public abstract function beginTransaction(): DbTransaction;
 
-    public function close(): void
-    {
-        $this->connector = null;
-        $this->state = 0;
-    }
+    public abstract function createCommand(string $sql): DbCommand;
+
+    public abstract function close(): void;
 }
