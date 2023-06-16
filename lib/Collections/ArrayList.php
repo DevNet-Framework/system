@@ -9,16 +9,14 @@
 
 namespace DevNet\System\Collections;
 
-use DevNet\System\ArrayTrait;
+use DevNet\System\AbstractArray;
 use DevNet\System\Exceptions\ArgumentException;
 use DevNet\System\Exceptions\TypeException;
 use DevNet\System\MethodTrait;
 use DevNet\System\Type;
-use ArrayAccess;
 
-class ArrayList implements ArrayAccess, IList
+class ArrayList extends AbstractArray implements IList
 {
-    use ArrayTrait;
     use MethodTrait;
 
     public function __construct(string $valueType)
@@ -38,25 +36,25 @@ class ArrayList implements ArrayAccess, IList
         }
     }
 
-    public function add($item): void
+    public function add($element): void
     {
         try {
-            $this->offsetSet(null, $item);
+            $this->offsetSet(null, $element);
         } catch (TypeException $exception) {
             $genericArgs = $this->getType()->getGenericArguments();
             throw new ArgumentException(self::class . "::add(): The argument #1, must be of type {$genericArgs[1]}", 0, 1);
         }
     }
 
-    public function contains($item): bool
+    public function contains(mixed $element): bool
     {
         $genericArgs = $this->getType()->getGenericArguments();
-        if (!Type::getType($item)->isEquivalentTo($genericArgs[1])) {
+        if (!Type::getType($element)->isEquivalentTo($genericArgs[1])) {
             throw new ArgumentException(self::class . "::contains(): The argument #1, must be of type {$genericArgs[1]}", 0, 1);
         }
 
         foreach ($this->getIterator() as $value) {
-            if ($value == $item) {
+            if ($value == $element) {
                 return true;
             }
         }
@@ -64,15 +62,15 @@ class ArrayList implements ArrayAccess, IList
         return false;
     }
 
-    public function remove($item): void
+    public function remove(mixed $element): void
     {
         $genericArgs = $this->getType()->getGenericArguments();
-        if (!Type::getType($item)->isEquivalentTo($genericArgs[1])) {
+        if (!Type::getType($element)->isEquivalentTo($genericArgs[1])) {
             throw new ArgumentException(self::class . "::remove(): The argument #1, must be of type {$genericArgs[1]}", 0, 1);
         }
 
         foreach ($this->getIterator() as $key => $value) {
-            if ($item == $value) {
+            if ($element == $value) {
                 $this->offsetUnset($key);
                 break;
             }

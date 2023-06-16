@@ -9,22 +9,20 @@
 
 namespace DevNet\System\Collections;
 
-use DevNet\System\ArrayTrait;
+use DevNet\System\AbstractArray;
 use DevNet\System\Exceptions\ArgumentException;
 use DevNet\System\MethodTrait;
 use DevNet\System\Type;
-use ArrayAccess;
 
-class Dictionary implements ArrayAccess, IDictionary
+class Dictionary extends AbstractArray implements IDictionary
 {
-    use ArrayTrait;
     use MethodTrait;
 
     public function __construct(string $keyType, string $valueType)
     {
         $keyType = strtolower($keyType);
         if ($keyType != 'int' && $keyType != 'integer' &&  $keyType != 'string') {
-            throw new ArgumentException(self::class."::__construct(): Key type must be defined as integer or string", 0, 1);
+            throw new ArgumentException(self::class . "::__construct(): Key type must be defined as integer or string", 0, 1);
         }
 
         $this->setGenericType([$keyType, $valueType]);

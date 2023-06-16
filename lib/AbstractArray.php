@@ -12,15 +12,16 @@ namespace DevNet\System;
 use DevNet\System\Collections\Enumerator;
 use DevNet\System\Exceptions\TypeException;
 use DevNet\System\Type;
+use ArrayAccess;
 
-trait ArrayTrait
+abstract class AbstractArray implements ArrayAccess
 {
     use TypeTrait;
 
     protected array $array = [];
 
     /** 
-     * set to the array an element with the provided key and value.
+     * Sets a specified key and value to the array.
      */
     public function offsetSet($key, $value): void
     {
@@ -43,7 +44,7 @@ trait ArrayTrait
     }
 
     /**
-     * check if the array contains an element with the specified key.
+     * Checks if the array contains a specified key.
      */
     public function offsetExists($key): bool
     {
@@ -55,10 +56,9 @@ trait ArrayTrait
     }
 
     /**
-     * Gets the element associated with the specified key.
+     * Gets the value associated with the specified key.
      */
-    #[\ReturnTypeWillChange]
-    public function offsetGet($key)
+    public function offsetGet($key): mixed
     {
         $genericArgs = $this->getType()->getGenericArguments();
         if (!Type::getType($key)->isEquivalentTo($genericArgs[0])) {
@@ -68,19 +68,19 @@ trait ArrayTrait
     }
 
     /**
-     * unset an element associated with the specified key.
+     * Unsets the value with the specified key from the array.
      */
     public function offsetUnset($key): void
     {
         $genericArgs = $this->getType()->getGenericArguments();
-        if  (!Type::getType($key)->isEquivalentTo($genericArgs[0])) {
+        if (!Type::getType($key)->isEquivalentTo($genericArgs[0])) {
             throw new TypeException("Illegal key type, the key must be of type {$genericArgs[0]}", 0, 1);
         }
         unset($this->array[$key]);
     }
 
     /** 
-     * reverse the order of the array items.
+     * Reverses the order of the elements in the array.
      */
     public function reverse(): static
     {
@@ -89,7 +89,7 @@ trait ArrayTrait
     }
 
     /**
-     * Removes all elements.
+     * Removes all the elements from the array.
      */
     public function clear(): void
     {
@@ -97,7 +97,7 @@ trait ArrayTrait
     }
 
     /**
-     * Copies the elements to new array.
+     * Copies all the elements to a new array.
      */
     public function toArray(): array
     {
@@ -105,7 +105,7 @@ trait ArrayTrait
     }
 
     /**
-     * return the size of the array.
+     * Returns the size of the array.
      */
     public function getLength(): int
     {
@@ -113,7 +113,7 @@ trait ArrayTrait
     }
 
     /**
-     * return Iterable collection of values.
+     * Returns an enumerator that iterates through a collection.
      */
     public function getIterator(): Enumerator
     {
