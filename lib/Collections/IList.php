@@ -9,11 +9,7 @@
 
 namespace DevNet\System\Collections;
 
-interface IList extends IEnumerable
+interface IList extends ICollection
 {
-    public function add($item): void;
-
-    public function contains($item): bool;
-
-    public function remove($item): void;
+    public function add($element): void;
 }
