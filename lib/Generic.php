@@ -16,8 +16,9 @@ class Generic
 {
     private array $types = [];
 
-    public function __construct(string ...$typeNames)
+    public function __construct(string $typeName, string ...$typeNames)
     {
+        $this->types[] = new Type($typeName);
         foreach ($typeNames as $typeName) {
             $this->types[] = new Type($typeName);
         }
