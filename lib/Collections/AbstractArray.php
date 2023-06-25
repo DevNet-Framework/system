@@ -7,10 +7,11 @@
  * @link        https://github.com/DevNet-Framework
  */
 
-namespace DevNet\System;
+namespace DevNet\System\Collections;
 
 use DevNet\System\Collections\Enumerator;
 use DevNet\System\Exceptions\TypeException;
+use DevNet\System\TypeTrait;
 use DevNet\System\Type;
 use ArrayAccess;
 

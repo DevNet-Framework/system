@@ -9,7 +9,6 @@
 
 namespace DevNet\System\Collections;
 
-use DevNet\System\AbstractArray;
 use DevNet\System\Exceptions\ArgumentException;
 use DevNet\System\Exceptions\TypeException;
 use DevNet\System\MethodTrait;
