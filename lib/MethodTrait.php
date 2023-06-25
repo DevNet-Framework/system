@@ -24,8 +24,8 @@ trait MethodTrait
             return $action->invoke($args);
         }
 
-        $extension = new Extension($this);
-        $extensionMethod = $extension->getMethod($method);
+        $provider = new MethodProvider($this);
+        $extensionMethod = $provider->getMethod($method);
         if ($extensionMethod) {
             array_unshift($args, $this);
             return $extensionMethod->invokeArgs(null, $args);

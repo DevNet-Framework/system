@@ -11,7 +11,7 @@ namespace DevNet\System;
 
 use ReflectionMethod;
 
-class Extension
+class MethodProvider
 {
     private object $target;
     private static array $classes;
