@@ -9,6 +9,7 @@
 
 namespace DevNet\System;
 
+use DevNet\System\Exceptions\TypeException;
 use Attribute;
 
 #[Attribute]
@@ -18,9 +19,12 @@ class Generic
 
     public function __construct(string $typeName, string ...$typeNames)
     {
-        $this->types[] = new Type($typeName);
+        $this->types[$typeName] = new Type($typeName);
         foreach ($typeNames as $typeName) {
-            $this->types[] = new Type($typeName);
+            if (isset($this->types[$typeName])) {
+                throw new TypeException("The generic type should not have a repeated parameter type.", 0, 1);
+            }
+            $this->types[$typeName] = new Type($typeName);
         }
     }
 
