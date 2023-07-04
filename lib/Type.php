@@ -10,15 +10,19 @@
 namespace DevNet\System;
 
 use DevNet\System\Exceptions\ArrayException;
+use DevNet\System\Exceptions\TypeException;
+use DevNet\System\Generic\T;
+use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
 
 class Type
 {
     public readonly string $Name;
-    private array $arguments = [];
+    private array $parameters = [];
+
     private static array $properties = [];
-    private static array $methods = [];
+    private static array $methods    = [];
 
     public function __construct(string $name, array $arguments = [])
     {
@@ -50,16 +54,44 @@ class Type
                 break;
         }
 
-        // the remaining case is considered a class and must be in PascalCase
+        // The remaining case is considered a class and must be in PascalCase.
         $this->Name = $name;
 
-        foreach ($arguments as $argument) {
-            if (!is_string($argument)) {
-                $type = gettype($argument);
-                throw new ArrayException("Generic type arguments must be defind by an array of string values, {$type} was given", 0, 1);
-            }
+        if ($this->isClass()) {
+            $class = new ReflectionClass($this->Name);
+            foreach ($class->getAttributes() as $attribute) {
+                if ($attribute->getName() == Generic::class) {
+                    $generic = $attribute->newInstance();
+                    foreach ($generic->getTypes() as $type) {
+                        if (!is_subclass_of($type->Name, T::class)) {
+                            throw new TypeException("Parameter types must of type T or equivalent", 0, 1);
+                        }
 
-            $this->arguments[] = new Type($argument);
+                        if (!isset($this->parameters[$type->Name])) {
+                            throw new TypeException("The generic type should not have a repeated generic parameter.", 0, 1);
+                        }
+
+                        $this->parameters[$type->Name] = $type;
+                    }
+
+                    // No need to look for other attributes.
+                    break;
+                }
+            }
+        }
+
+        if (count($this->parameters) != count($arguments)) {
+            throw new ArrayException("The number of generic arguments must be the same as the number of generic parameters.", 1);
+        }
+
+        $index = 0;
+        foreach ($this->parameters as &$parameter) {
+            $argument = $arguments[$index] ?? null;
+            if (!$argument || !is_string($argument)) {
+                throw new ArrayException("Type arguments must be of type array<int, string>", 0, 1);
+            }
+            $parameter = new Type($argument);
+            $index++;
         }
     }
 
@@ -70,7 +102,7 @@ class Type
 
     public function getGenericArguments(): array
     {
-        return $this->arguments;
+        return $this->parameters;
     }
 
     public function getInterfaces(): array
@@ -84,8 +116,8 @@ class Type
 
     public function getProperty(string $property): ?ReflectionProperty
     {
-        if (isset(self::$properties[$this->Name][$property])) 
-        return self::$properties[$this->Name][$property];
+        if (isset(self::$properties[$this->Name][$property]))
+            return self::$properties[$this->Name][$property];
 
         if ($this->isClass()) {
             if (property_exists($this->Name, $property)) {
@@ -118,9 +150,7 @@ class Type
     public function isPrimitive(): bool
     {
         $types = ['boolean', 'integer', 'float', 'string'];
-        if (in_array($this->Name, $types)) return true;
-
-        return false;
+        return in_array($this->Name, $types) ? true : false;
     }
 
     public function isInterface(): bool
@@ -133,16 +163,19 @@ class Type
         return class_exists($this->Name);
     }
 
+    public function isGenericType(): bool
+    {
+        return $this->isClass() && $this->parameters ? true : false;
+    }
+
+    public function isGenericParameter(): bool
+    {
+        return $this->Name == T::class || is_subclass_of($this->Name, T::class) ? true : false;
+    }
+
     public function isSubclassOf(Type $class): bool
     {
         return is_subclass_of($this->Name, $class->Name);
-    }
-
-    public function isGeneric(): bool
-    {
-        if ($this->isClass() && $this->arguments) return true;
-
-        return false;
     }
 
     public function isEquivalentTo(Type $type): bool
@@ -159,7 +192,7 @@ class Type
         if ($type->isEquivalentTo($this)) return true;
 
         if ($type->isSubclassOf($this)) {
-            if ($this->arguments != $type->getGenericArguments()) return false;
+            if ($this->parameters != $type->getGenericArguments()) return false;
             return true;
         }
 
@@ -175,7 +208,7 @@ class Type
         if ($this->isEquivalentTo($type)) return true;
 
         if ($this->isSubclassOf($type)) {
-            if ($this->arguments != $type->getGenericArguments()) return false;
+            if ($this->parameters != $type->getGenericArguments()) return false;
             return true;
         }
 
@@ -195,7 +228,7 @@ class Type
     public function __toString(): string
     {
         $name = $this->Name;
-        if ($this->isGeneric()) $name .= '<' . implode(',', $this->arguments) . '>';
+        if ($this->isGenericType()) $name .= '<' . implode(',', $this->parameters) . '>';
 
         return $name;
     }
