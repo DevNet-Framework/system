@@ -17,12 +17,16 @@ class T
 {
     use PropertyTrait;
 
-    protected mixed $type;
+    protected Type $type;
     protected mixed $value;
 
-    public function __construct(string $typeName)
+    public function __construct(Type $type)
     {
-        $this->type = new Type($typeName);
+        if ($type->isGenericType() || $type->isGenericParameter()) {
+            throw new TypeException("Generic argument must not be a generic type nor a generic parameter", 0, 1);
+        }
+
+        $this->type = $type;
     }
 
     public function get_Value(): mixed
