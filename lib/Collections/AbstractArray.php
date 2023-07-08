@@ -11,13 +11,13 @@ namespace DevNet\System\Collections;
 
 use DevNet\System\Collections\Enumerator;
 use DevNet\System\Exceptions\TypeException;
-use DevNet\System\TypeTrait;
+use DevNet\System\MethodTrait;
 use DevNet\System\Type;
 use ArrayAccess;
 
 abstract class AbstractArray implements ArrayAccess
 {
-    use TypeTrait;
+    use MethodTrait;
 
     protected array $array = [];
 
