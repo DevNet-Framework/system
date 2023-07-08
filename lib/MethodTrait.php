@@ -17,6 +17,8 @@ use ReflectionMethod;
 
 trait MethodTrait
 {
+    private static ?Type $__type = null;
+
     public function __call(string $method, array $args)
     {
         if (!method_exists($this, $method)) {
@@ -80,6 +82,25 @@ trait MethodTrait
             return $action->invoke($args);
         }
 
-        throw new \Exception("Can not invoke object of type " . $this::class);
+        throw new MethodException("Can not invoke object of type " . $this::class, 0, 1);
+    }
+
+    protected function setGenericArguments(string ...$typeArguments): void
+    {
+        if (!static::$__type) {
+            static::$__type = new Type(static::class, $typeArguments);
+        }
+    }
+
+    /**
+     * Get the type of the current object.
+     */
+    public function getType(): Type
+    {
+        if (!static::$__type) {
+            static::$__type = new Type(static::class);
+        }
+
+        return static::$__type;
     }
 }
