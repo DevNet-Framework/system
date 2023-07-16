@@ -27,20 +27,27 @@ abstract class AbstractArray implements ArrayAccess
     public function offsetSet($key, $value): void
     {
         $genericArgs = $this->getType()->getGenericArguments();
-        if (!Type::getType($value)->isEquivalentTo($genericArgs[1])) {
-            throw new TypeException("Illegal value type, the value must be of type {$genericArgs[1]}", 0, 1);
+        $valueType = end($genericArgs);
+
+        if (!Type::getType($value)->isAssignableTo($valueType)) {
+            throw new TypeException("Illegal value type, the value must be of type {$valueType}", 0, 1);
         }
 
-        if ($key != null) {
-            if (!Type::getType($key)->isEquivalentTo($genericArgs[0])) {
-                throw new TypeException("Illegal key type, the key must be of type {$genericArgs[0]}", 0, 1);
+        if (count($genericArgs) == 1) {
+            if (!is_int($key) && !is_null($key)) {
+                throw new TypeException("Illegal key type, the key must be of type integer", 0, 1);
             }
-            $this->array[$key] = $value;
         } else {
-            if ($genericArgs[0]->Name != 'integer') {
-                throw new TypeException("undefined key, expecting a key of type {$genericArgs[0]}", 0, 1);
+            $keyType = reset($genericArgs);
+            if ((is_null($key) && $keyType->Name != 'integer') || (!is_null($key) && Type::getType($key) != $keyType)) {
+                throw new TypeException("Illegal key type, the key must be of type {$keyType}", 0, 1);
             }
+        }
+
+        if (is_null($key)) {
             $this->array[] = $value;
+        } else {
+            $this->array[$key] = $value;
         }
     }
 
@@ -50,8 +57,15 @@ abstract class AbstractArray implements ArrayAccess
     public function offsetExists($key): bool
     {
         $genericArgs = $this->getType()->getGenericArguments();
-        if (!Type::getType($key)->isEquivalentTo($genericArgs[0])) {
-            throw new TypeException("Illegal key type, the key must be of type {$genericArgs[0]}", 0, 1);
+        if (count($genericArgs) == 1) {
+            if (!is_int($key)) {
+                throw new TypeException("Illegal key type, the key must be of type integer", 0, 1);
+            }
+        } else {
+            $keyType = reset($genericArgs);
+            if (!Type::getType($key)->isEquivalentTo($keyType)) {
+                throw new TypeException("Illegal key type, the key must be of type {$keyType}", 0, 1);
+            }
         }
         return isset($this->array[$key]);
     }
@@ -62,8 +76,15 @@ abstract class AbstractArray implements ArrayAccess
     public function offsetGet($key): mixed
     {
         $genericArgs = $this->getType()->getGenericArguments();
-        if (!Type::getType($key)->isEquivalentTo($genericArgs[0])) {
-            throw new TypeException("Illegal key type, the key must be of type {$genericArgs[0]}", 0, 1);
+        if (count($genericArgs) == 1) {
+            if (!is_int($key)) {
+                throw new TypeException("Illegal key type, the key must be of type integer", 0, 1);
+            }
+        } else {
+            $keyType = reset($genericArgs);
+            if (!Type::getType($key)->isEquivalentTo($keyType)) {
+                throw new TypeException("Illegal key type, the key must be of type {$keyType}", 0, 1);
+            }
         }
         return $this->array[$key] ?? null;
     }
@@ -74,8 +95,15 @@ abstract class AbstractArray implements ArrayAccess
     public function offsetUnset($key): void
     {
         $genericArgs = $this->getType()->getGenericArguments();
-        if (!Type::getType($key)->isEquivalentTo($genericArgs[0])) {
-            throw new TypeException("Illegal key type, the key must be of type {$genericArgs[0]}", 0, 1);
+        if (count($genericArgs) == 1) {
+            if (!is_int($key)) {
+                throw new TypeException("Illegal key type, the key must be of type integer", 0, 1);
+            }
+        } else {
+            $keyType = reset($genericArgs);
+            if (!Type::getType($key)->isEquivalentTo($keyType)) {
+                throw new TypeException("Illegal key type, the key must be of type {$keyType}", 0, 1);
+            }
         }
         unset($this->array[$key]);
     }
