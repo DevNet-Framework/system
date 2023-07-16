@@ -63,11 +63,11 @@ class Type
                 if ($attribute->getName() == Generic::class) {
                     $generic = $attribute->newInstance();
                     foreach ($generic->getTypes() as $type) {
-                        if (!is_subclass_of($type->Name, T::class)) {
+                        if ($type->Name != T::class && !is_subclass_of($type->Name, T::class)) {
                             throw new TypeException("Parameter types must of type T or equivalent", 0, 1);
                         }
 
-                        if (!isset($this->parameters[$type->Name])) {
+                        if (isset($this->parameters[$type->Name])) {
                             throw new TypeException("The generic type should not have a repeated generic parameter.", 0, 1);
                         }
 
