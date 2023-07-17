@@ -10,9 +10,13 @@
 namespace DevNet\System\Collections;
 
 use DevNet\System\Exceptions\ArgumentException;
+use DevNet\System\Generic\K;
+use DevNet\System\Generic\V;
+use DevNet\System\Generic;
 use DevNet\System\MethodTrait;
 use DevNet\System\Type;
 
+#[Generic(K::class, V::class)]
 class Dictionary extends AbstractArray implements IDictionary
 {
     use MethodTrait;
@@ -24,7 +28,7 @@ class Dictionary extends AbstractArray implements IDictionary
             throw new ArgumentException(self::class . "::__construct(): Key type must be defined as integer or string", 0, 1);
         }
 
-        $this->setGenericType([$keyType, $valueType]);
+        $this->setGenericArguments($keyType, $valueType);
     }
 
     public function add($key, $value): void
