@@ -11,16 +11,19 @@ namespace DevNet\System\Collections;
 
 use DevNet\System\Exceptions\ArgumentException;
 use DevNet\System\Exceptions\TypeException;
+use DevNet\System\Generic\T;
+use DevNet\System\Generic;
 use DevNet\System\MethodTrait;
 use DevNet\System\Type;
 
+#[Generic(T::class)]
 class ArrayList extends AbstractArray implements IList
 {
     use MethodTrait;
 
     public function __construct(string $valueType)
     {
-        $this->setGenericType(['int', $valueType]);
+        $this->setGenericArguments($valueType);
     }
 
     public function addRange(array $array): void
