@@ -11,7 +11,6 @@ namespace DevNet\System;
 
 use DevNet\System\Exceptions\ArrayException;
 use DevNet\System\Exceptions\TypeException;
-use DevNet\System\Generic\T;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
@@ -63,7 +62,7 @@ class Type
                 if ($attribute->getName() == Generic::class) {
                     $generic = $attribute->newInstance();
                     foreach ($generic->getTypes() as $type) {
-                        if ($type->Name != T::class && !is_subclass_of($type->Name, T::class)) {
+                        if (!is_subclass_of($type->Name, TypeParameter::class)) {
                             throw new TypeException("Parameter types must of type T or equivalent", 0, 1);
                         }
 
