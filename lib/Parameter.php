@@ -11,7 +11,7 @@ namespace DevNet\System;
 
 use DevNet\System\Exceptions\TypeException;
 
-abstract class TypeParameter
+abstract class Parameter
 {
     use PropertyTrait;
 
