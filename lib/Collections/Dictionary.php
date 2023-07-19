@@ -10,11 +10,12 @@
 namespace DevNet\System\Collections;
 
 use DevNet\System\Exceptions\ArgumentException;
-use DevNet\System\Generic\K;
-use DevNet\System\Generic\V;
 use DevNet\System\Generic;
 use DevNet\System\MethodTrait;
 use DevNet\System\Type;
+
+class K extends \DevNet\System\Parameter {}
+class V extends \DevNet\System\Parameter {}
 
 #[Generic(K::class, V::class)]
 class Dictionary extends AbstractArray implements IDictionary
