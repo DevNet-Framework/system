@@ -9,11 +9,11 @@
 
 namespace DevNet\System\Async;
 
-use DevNet\System\PropertyTrait;
+use DevNet\System\Tweak;
 
 class TaskScheduler
 {
-    use PropertyTrait;
+    use Tweak;
 
     private static TaskScheduler $scheduler;
 

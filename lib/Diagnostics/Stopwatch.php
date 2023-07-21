@@ -9,11 +9,11 @@
 
 namespace DevNet\System\Diagnostics;
 
-use DevNet\System\PropertyTrait;
+use DevNet\System\Tweak;
 
 class Stopwatch
 {
-    use PropertyTrait;
+    use Tweak;
 
     private float $elapsed = 0;
     private float $startTimeStamp = 0;

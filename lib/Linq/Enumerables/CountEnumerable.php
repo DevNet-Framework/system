@@ -11,12 +11,12 @@ namespace DevNet\System\Linq\Enumerables;
 
 use DevNet\System\Collections\Enumerator;
 use DevNet\System\Collections\IEnumerable;
-use DevNet\System\MethodTrait;
+use DevNet\System\Tweak;
 use Closure;
 
 class CountEnumerable implements IEnumerable
 {
-    use MethodTrait;
+    use Tweak;
 
     private IEnumerable $enumerable;
 

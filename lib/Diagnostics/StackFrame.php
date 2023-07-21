@@ -9,11 +9,11 @@
 
 namespace DevNet\System\Diagnostics;
 
-use DevNet\System\PropertyTrait;
+use DevNet\System\Tweak;
 
 class StackFrame
 {
-    use PropertyTrait;
+    use Tweak;
 
     private ?string $fileName;
     private ?int $lineNumber;

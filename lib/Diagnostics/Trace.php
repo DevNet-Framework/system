@@ -9,11 +9,11 @@
 
 namespace DevNet\System\Diagnostics;
 
-use DevNet\System\PropertyTrait;
+use DevNet\System\Tweak;
 
 class Trace
 {
-    use PropertyTrait;
+    use Tweak;
 
     protected TraceListenerCollection $listeners;
     protected int $indentSize = 4;

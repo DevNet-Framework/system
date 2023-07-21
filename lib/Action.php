@@ -15,7 +15,7 @@ use Closure;
 
 class Action
 {
-    use PropertyTrait;
+    use Tweak;
 
     protected ReflectionFunction $function;
 

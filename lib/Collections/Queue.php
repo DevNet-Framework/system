@@ -10,11 +10,11 @@
 namespace DevNet\System\Collections;
 
 use DevNet\System\Exceptions\TypeException;
-use DevNet\System\MethodTrait;
+use DevNet\System\Tweak;
 
 class Queue implements IEnumerable
 {
-    use MethodTrait;
+    use Tweak;
 
     private array $array = [];
 

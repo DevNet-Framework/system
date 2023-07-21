@@ -12,14 +12,14 @@ namespace DevNet\System\Dependency;
 use DevNet\System\Exceptions\ArgumentException;
 use DevNet\System\Exceptions\ClassException;
 use DevNet\System\Exceptions\TypeException;
-use DevNet\System\PropertyTrait;
+use DevNet\System\Tweak;
 use DevNet\System\Type;
 use ReflectionFunction;
 use Closure;
 
 class ServiceDescriptor
 {
-    use PropertyTrait;
+    use Tweak;
 
     public const Singleton = 1;
     public const Transient = 2;

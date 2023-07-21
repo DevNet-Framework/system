@@ -9,11 +9,11 @@
 
 namespace DevNet\System\Logging;
 
-use DevNet\System\PropertyTrait;
+use DevNet\System\Tweak;
 
 class Logger implements ILogger
 {
-    use PropertyTrait;
+    use Tweak;
 
     private int $minimumLevel;
     private array $loggers;

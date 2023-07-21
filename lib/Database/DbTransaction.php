@@ -9,11 +9,11 @@
 
 namespace DevNet\System\Database;
 
-use DevNet\System\PropertyTrait;
+use DevNet\System\Tweak;
 
 abstract class DbTransaction
 {
-    use PropertyTrait;
+    use Tweak;
 
     protected DbConnection $connection;
 

@@ -11,14 +11,12 @@ namespace DevNet\System\Linq\Enumerables;
 
 use DevNet\System\Collections\Enumerator;
 use DevNet\System\Collections\IEnumerable;
-use DevNet\System\MethodTrait;
-use DevNet\System\PropertyTrait;
+use DevNet\System\Tweak;
 use Closure;
 
 class GroupEnumerable implements IEnumerable
 {
-    use MethodTrait;
-    use PropertyTrait;
+    use Tweak;
 
     private IEnumerable $enumerable;
     private array $array = [];

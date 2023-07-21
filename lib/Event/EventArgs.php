@@ -9,11 +9,11 @@
 
 namespace DevNet\System\Event;
 
-use DevNet\System\PropertyTrait;
+use DevNet\System\Tweak;
 
 class EventArgs
 {
-    use PropertyTrait;
+    use Tweak;
 
     protected array $parameters = [];
 

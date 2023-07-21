@@ -11,11 +11,11 @@ namespace DevNet\System\Linq\Enumerables;
 
 use DevNet\System\Collections\Enumerator;
 use DevNet\System\Collections\IEnumerable;
-use DevNet\System\MethodTrait;
+use DevNet\System\Tweak;
 
 class TakeEnumerable implements IEnumerable
 {
-    use MethodTrait;
+    use Tweak;
 
     private array $array = [];
 

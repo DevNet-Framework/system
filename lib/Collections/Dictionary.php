@@ -11,7 +11,7 @@ namespace DevNet\System\Collections;
 
 use DevNet\System\Exceptions\ArgumentException;
 use DevNet\System\Generic;
-use DevNet\System\MethodTrait;
+use DevNet\System\Tweak;
 use DevNet\System\Type;
 
 class K extends \DevNet\System\Parameter {}
@@ -20,7 +20,7 @@ class V extends \DevNet\System\Parameter {}
 #[Generic(K::class, V::class)]
 class Dictionary extends AbstractArray implements IDictionary
 {
-    use MethodTrait;
+    use Tweak;
 
     public function __construct(string $keyType, string $valueType)
     {

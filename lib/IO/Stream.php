@@ -11,11 +11,11 @@ namespace DevNet\System\IO;
 
 use DevNet\System\Async\CancelationToken;
 use DevNet\System\Async\Task;
-use DevNet\System\PropertyTrait;
+use DevNet\System\Tweak;
 
 abstract class Stream
 {
-    use PropertyTrait;
+    use Tweak;
 
     protected $resource;
 

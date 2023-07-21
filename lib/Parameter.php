@@ -13,7 +13,7 @@ use DevNet\System\Exceptions\TypeException;
 
 abstract class Parameter
 {
-    use PropertyTrait;
+    use Tweak;
 
     protected Type $type;
     protected mixed $value;
