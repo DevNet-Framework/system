@@ -13,11 +13,75 @@ use DevNet\System\Async\AsyncFunction;
 use DevNet\System\Async\Task;
 use DevNet\System\Exceptions\ArgumentException;
 use DevNet\System\Exceptions\MethodException;
+use DevNet\System\Exceptions\PropertyException;
+use DevNet\System\Exceptions\TypeException;
 use ReflectionMethod;
+use ReflectionProperty;
 
-trait MethodTrait
+trait Tweak
 {
     private static ?Type $__type = null;
+
+    public function &__get(string $property)
+    {
+        $accessor = 'get_' . $property;
+        if (method_exists($this, $accessor)) {
+            $name = substr(strrchr($accessor, '_'), 1);
+            if ($name == $property) {
+                $value = $this->$accessor();
+                return $value;
+            }
+        }
+
+        if (method_exists($this, $property)) {
+            return [$this, $property];
+        }
+
+        if (property_exists($this, $property)) {
+            $modifier = 'private';
+            $propertyInfo = new ReflectionProperty($this, $property);
+            if ($propertyInfo->isProtected()) {
+                $modifier = 'protected';
+            }
+
+            throw new PropertyException("Cannot access {$modifier} property " . static::class . "::{$property}", 0, 1);
+        }
+
+        throw new PropertyException("Cannot access undefined property " . static::class . "::{$property}", 0, 1);
+    }
+
+    public function __set(string $property, $value): void
+    {
+        $accessor = 'set_' . $property;
+        if (method_exists($this, $accessor)) {
+            $name = substr(strrchr($accessor, '_'), 1);
+            if ($name == $property) {
+                try {
+                    $this->$accessor($value);
+                    return;
+                } catch (\TypeError $error) {
+                    $type = Type::getType($value);
+                    throw new TypeException("Cannot assign a value of type '{$type}' to property " . static::class . "::{$property}", 0, 1);
+                }
+            }
+        }
+
+        if (method_exists($this, 'get_' . $property)) {
+            throw new PropertyException("Cannot assign a value to read only property " . static::class . "::{$property}", 0, 1);
+        }
+
+        if (property_exists($this, $property)) {
+            $modifier = 'private';
+            $propertyInfo = new ReflectionProperty($this, $property);
+            if ($propertyInfo->isProtected()) {
+                $modifier = 'protected';
+            }
+
+            throw new PropertyException("Cannot access {$modifier} property " . static::class . "::{$property}", 0, 1);
+        }
+
+        throw new PropertyException("Cannot access undefined property " . static::class . "::{$property}", 0, 1);
+    }
 
     public function __call(string $method, array $args)
     {
