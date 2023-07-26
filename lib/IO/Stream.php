@@ -147,8 +147,8 @@ abstract class Stream
     {
         return Task::run(function () {
             do {
-                $result = yield fgets($this->resource);
                 stream_set_blocking($this->resource, false);
+                $result = yield fgets($this->resource);
                 if ($result === false) {
                     throw new StreamException("Unable to read from the resource", 0, 1);
                 }
