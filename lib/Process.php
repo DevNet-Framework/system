@@ -20,9 +20,9 @@ class Process
     public function __construct(?string $cwd = null, array $env = null)
     {
         $this->descriptors = [
-            0 => ["pipe", "r"],
-            1 => ["pipe", "w"],
-            2 => ["pipe", "w"]
+            ["pipe", "r"],
+            ["pipe", "w"],
+            ["pipe", "w"]
         ];
 
         $this->cwd = $cwd;
@@ -59,33 +59,31 @@ class Process
         return null;
     }
 
-    public function write(string $data): void
+    public function input(string $data): void
     {
         fwrite($this->pipes[0], $data);
     }
 
-    public function read(int $chunk = 0): ?string
+    public function output(): ?string
     {
         $result = null;
         if (is_resource($this->process)) {
-            if ($chunk > 0) {
-                $result = fread($this->pipes[1], 221024);
-            } else {
-                $result = stream_get_contents(($this->pipes[1]));
+            $result = stream_get_contents($this->pipes[1]);
+            if ($result === false) {
+                $result = null;
             }
         }
 
         return $result;
     }
 
-    public function report(int $chunk = 0): ?string
+    public function report(): ?string
     {
         $result = null;
         if (is_resource($this->process)) {
-            if ($chunk > 0) {
-                $result = fread($this->pipes[2], 221024);
-            } else {
-                $result = stream_get_contents(($this->pipes[2]));
+            $result = stream_get_contents($this->pipes[2]);
+            if ($result === false) {
+                $result = null;
             }
         }
 
