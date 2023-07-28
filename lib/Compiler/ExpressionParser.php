@@ -12,9 +12,10 @@ namespace DevNet\System\Compiler;
 use DevNet\System\Compiler\Expressions\Expression;
 use DevNet\System\Compiler\Lexing\LexerBuilder;
 use DevNet\System\Compiler\Parsing\ParserBuilder;
-use DevNet\System\Compiler\Parsing\Stack;
-use DevNet\System\Compiler\Parsing\Parser;
 use DevNet\System\Compiler\Parsing\ParserException;
+use DevNet\System\Compiler\Parsing\Parser;
+use DevNet\System\Compiler\Parsing\Stack;
+use ReflectionFunction;
 use Closure;
 
 class ExpressionParser
@@ -23,6 +24,7 @@ class ExpressionParser
     private Parser $parser;
     private int $startLine;
     private int $position;
+    private ReflectionFunction $function;
     private array $outerVariables = [];
 
     public function __construct(Parser $parser)
@@ -116,12 +118,12 @@ class ExpressionParser
     {
         $this->position = 0;
         $this->startLine = 0;
-        $this->functionReflector = new \ReflectionFunction($function);
-        $this->outerVariables =  $this->functionReflector->getStaticVariables();
+        $this->function = new ReflectionFunction($function);
+        $this->outerVariables =  $this->function->getStaticVariables();
 
-        $fileName = $this->functionReflector->getFileName();
-        $startLine = $this->functionReflector->getStartLine() - 1; // adjustment by - 1, because line 1 is in inedx 0
-        $endLine = $this->functionReflector->getEndLine();
+        $fileName = $this->function->getFileName();
+        $startLine = $this->function->getStartLine() - 1; // adjustment by - 1, because line 1 is in inedx 0
+        $endLine = $this->function->getEndLine();
         $length = $endLine - $startLine;
 
         $source = file($fileName, FILE_IGNORE_NEW_LINES);
@@ -280,7 +282,7 @@ class ExpressionParser
     public function getParameters(): array
     {
         $parameters = [];
-        foreach ($this->functionReflector->getParameters() as $paramReflector) {
+        foreach ($this->function->getParameters() as $paramReflector) {
             $parameterName = $paramReflector->getName();
             $parameterType = null;
             if ($paramReflector->getType()) {
