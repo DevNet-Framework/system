@@ -9,9 +9,11 @@
 
 namespace DevNet\System\Event;
 
+use DevNet\System\Delegate;
+
 class EventHandler extends Delegate
 {
-    public function delegate(object $sender, EventArgs $args): void
+    public function eventHandler(object $sender, EventArgs $args): void
     {
     }
 }
