@@ -9,80 +9,139 @@
 
 namespace DevNet\System;
 
-use DevNet\System\Action;
-use DevNet\System\Collections\IEnumerable;
 use DevNet\System\Collections\Enumerator;
+use DevNet\System\Collections\IEnumerable;
 use DevNet\System\Exceptions\MethodException;
 use DevNet\System\Exceptions\TypeException;
+use ArrayAccess;
+use Closure;
+use ReflectionClass;
+use ReflectionFunction;
 use ReflectionMethod;
 
-abstract class Delegate implements IEnumerable
+abstract class Delegate implements ArrayAccess, IEnumerable
 {
-    protected ReflectionMethod $Method;
-    protected array $Parameters = [];
-    protected array $Actions    = [];
+    protected ReflectionMethod $signature;
+    protected array $functions = [];
 
-    public function __construct(?callable $action = null)
+    public function __construct(?callable $target = null)
     {
-        if (!method_exists($this, 'delegate')) {
-            throw new MethodException("Undefined signature, Delegate method not found", 0, 1);
+        $delegate = new ReflectionClass($this);
+        if (!$delegate->hasMethod($delegate->getShortName())) {
+            throw new MethodException("Missing delegate signature!");
         }
 
-        $this->Method = new ReflectionMethod($this, 'delegate');
+        $this->signature = $delegate->getMethod($delegate->getShortName());
 
-        foreach ($this->Method->getParameters() as $parameter) {
-            $this->Parameters[] = $parameter;
-        }
-
-        if ($action) {
-            try {
-                $this->add($action);
-            } catch (\Throwable $error) {
-                if ($error instanceof TypeException) {
-                    throw new TypeException($error->getMessage(), $error->getCode(), 1);
-                }
-
-                throw $error;
+        try {
+            if ($target) {
+                $this->offsetSet(null, $target);
             }
+        } catch (TypeException $e) {
+            throw new TypeException($e->getMessage(), 1, 0);
         }
     }
 
-    public function add(callable $action): void
+    public function offsetSet($key, $action): void
     {
-        $action = new Action($action);
-
-        if (!$this->matchSignature($action)) {
-            $delegate = $this::class;
-            throw new TypeException("The delegated function must be compatible with the signature of the delegate {$delegate}", 0, 1);
+        if (!is_callable($action)) {
+            throw new TypeException("Illegal value type, the value must be of type callable", 0, 1);
         }
 
-        $this->Actions[] = $action;
-    }
-
-    public function matchSignature(Action $action): bool
-    {
-        if ($this->Method->getReturnType() && $this->Method->getReturnType() != $action->Function->getReturnType()) {
-            return false;
+        if (is_array($action)) {
+            $reflection = new ReflectionMethod($action[0], $action[1]);
+            $action = $reflection->getClosure($action[0]);
+        } else if (is_object($action) && !$action instanceof Closure) {
+            $reflection = new ReflectionMethod($action, '__invoke');
+            $action = $reflection->getClosure($action);
         }
 
-        $parameters = $action->Function->getParameters();
-        foreach ($parameters as $index => $parameter) {
+        $function = new ReflectionFunction($action);
+
+        if (is_null($key)) {
+            $this->functions[] = $function;
+        } else {
+            if (!is_int($key)) {
+                throw new TypeException("Illegal key type, the key must be of type integer or null", 1, 0);
+            }
+            $this->functions[$key] = $function;
+        }
+
+
+        foreach ($function->getParameters() as $index => $parameter) {
             if ($parameter->hasType()) {
-                $typeName = $parameter->getType()->getName();
-                $typeSignature = $this->Parameters[$index]->getType()->getName();
-                if ($typeName != $typeSignature && !is_subclass_of($typeName, $typeSignature)) {
-                    return false;
+                $parameterTypeName = $parameter->getType()->getName();
+                $signatureParameter = $this->signature->getParameters()[$index] ?? null;
+
+                $signatureTypeName = '';
+                if ($signatureParameter && $signatureParameter->hasType()) {
+                    $signatureTypeName = $signatureParameter->getType()->getName();
+                }
+
+                if ($parameterTypeName != $signatureTypeName && !is_subclass_of($parameterTypeName, $signatureTypeName)) {
+                    throw new TypeException("The parameter type of the associated function not compatibale with the delegate " . $this::class, 0, 1);
                 }
             }
         }
 
-        return true;
+        if ($function->getReturnType() != $this->signature->getReturnType()) {
+            throw new TypeException("The return type of the associated function not compatibale with the delegate " . $this::class, 0, 1);
+        }
     }
 
-    public function getSignature(): string
+    public function offsetGet($key): mixed
+    {
+        if (!is_int($key)) {
+            throw new TypeException("Illegal key type, the key must be of type integer", 0, 1);
+        }
+
+        return $this->functions[$key] ?? null;
+    }
+
+    public function offsetUnset($key): void
+    {
+        if (!is_int($key)) {
+            throw new TypeException("Illegal key type, the key must be of type integer", 0, 1);
+        }
+
+        unset($this->functions[$key]);
+    }
+
+    public function offsetExists($key): bool
+    {
+        if (!is_int($key)) {
+            throw new TypeException("Illegal key type, the key must be of type integer", 0, 1);
+        }
+
+        return isset($this->functions[$key]);
+    }
+
+    public function getIterator(): Enumerator
+    {
+        return new Enumerator($this->functions);
+    }
+
+
+    public function invoke(...$args)
+    {
+        foreach ($this->functions as $function) {
+            $result = $function->invoke(...$args);
+        }
+
+        if (isset($result)) {
+            return $result;
+        }
+    }
+
+    public function __invoke(...$args)
+    {
+        return $this->invoke(...$args);
+    }
+
+    public function __toString(): string
     {
         $parameters = [];
-        foreach ($this->Parameters as $parameter) {
+        foreach ($this->signature->getParameters() as $parameter) {
             $typeName = "mixed";
             if ($parameter->getType()) {
                 $typeName = $parameter->getType()->getName();
@@ -94,32 +153,11 @@ abstract class Delegate implements IEnumerable
         $parameters = implode(', ', $parameters);
 
         $returnTypeName = 'mixed';
-        if ($this->Method->getReturnType()) {
-            $returnTypeName = $this->Method->getReturnType()->getName();
+        if ($this->signature->getReturnType()) {
+            $returnTypeName = $this->signature->getReturnType()->getName();
         }
 
         $delegateName = get_class($this);
         return "{$delegateName} ({$parameters}) : {$returnTypeName}";
-    }
-
-    public function getIterator(): Enumerator
-    {
-        return new Enumerator($this->Actions);
-    }
-
-    public function invoke(array $args = [])
-    {
-        foreach ($this->Actions as $action) {
-            $result = $action->invoke($args);
-        }
-
-        if (isset($result)) {
-            return $result;
-        }
-    }
-
-    public function __invoke(...$args)
-    {
-        return $this->invoke($args);
     }
 }
