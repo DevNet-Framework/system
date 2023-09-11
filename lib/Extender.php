@@ -11,19 +11,13 @@ namespace DevNet\System;
 
 use ReflectionMethod;
 
-class MethodProvider
+class Extender
 {
-    private object $target;
     private static array $classes;
 
-    public function __construct(object $target)
+    public static function getExtension(object $target, string $method): ?string
     {
-        $this->target = $target;
-    }
-
-    public function getMethod(string $method): ?ReflectionMethod
-    {
-        foreach ($this->getUsedClasses() as $class) {
+        foreach (static::getImports($target) as $class) {
             if (class_exists($class)) {
                 if (method_exists($class, $method)) {
                     $reflectionMethod = new ReflectionMethod($class, $method);
@@ -33,8 +27,8 @@ class MethodProvider
                             $fistParameterType = $reflectionParams[0]->getType()->getName();
                         }
 
-                        if ($this->target instanceof $fistParameterType) {
-                            return $reflectionMethod;
+                        if ($target instanceof $fistParameterType) {
+                            return $class;
                         }
                     }
                 }
@@ -44,7 +38,7 @@ class MethodProvider
         return null;
     }
 
-    function getUsedClasses(): array
+    public static function getImports(object $target): array
     {
         $file  = '';
         $count = 0;
@@ -52,7 +46,8 @@ class MethodProvider
         foreach ($trace as $info) {
             $class = $info['class'] ?? null;
             $function = $info['function'] ?? null;
-            if ($class == get_class($this->target) && $function == '__call') {
+            // Looking for the file where the target calls the method __call().
+            if ($class == get_class($target) && $function == '__call') {
                 $file = $info['file'] ?? '';
                 break;
             }
@@ -60,14 +55,17 @@ class MethodProvider
         }
 
         $classes = self::$classes[$file] ?? [];
+        // Return the imports if they are already stored.
         if ($classes) return $classes;
 
+        // Add the case where the extension method used inside the extension class.
         $callerClass = $trace[$count + 1]['class'] ?? null;
         if ($callerClass) {
             $classes[] = $callerClass;
             self::$classes[$file] = $classes;
         }
 
+        // Looking for all the imports in the file.
         if (file_exists($file)) {
             $contents = file_get_contents($file);
             preg_match_all("%(?i)use\s+([A-Za-z_\\\]+);%", $contents, $matches);

@@ -92,11 +92,10 @@ trait Tweak
                 return $action->invoke($args);
             }
 
-            $provider = new MethodProvider($this);
-            $extensionMethod = $provider->getMethod($method);
-            if ($extensionMethod) {
+            $extension = Extender::getExtension($this, $method);
+            if ($extension) {
                 array_unshift($args, $this);
-                return $extensionMethod->invokeArgs(null, $args);
+                return $extension::$method(...$args);
             }
 
             throw new MethodException("Call to undefined method "  . static::class . "::{$method}()", 0, 1);
