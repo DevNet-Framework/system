@@ -30,24 +30,24 @@ class ConsoleLogger implements ILogger
                 $severity = 'Trace: ';
                 break;
             case LogLevel::Debug:
-                Console::foregroundColor(ConsoleColor::Blue);
+                Console::$ForegroundColor = ConsoleColor::Blue;
                 $severity = 'Debug: ';
                 break;
             case LogLevel::Information:
-                Console::foregroundColor(ConsoleColor::Green);
+                Console::$ForegroundColor = ConsoleColor::Green;
                 $severity = 'Info : ';
                 break;
             case LogLevel::Warning:
-                Console::foregroundColor(ConsoleColor::Yellow);
+                Console::$ForegroundColor = ConsoleColor::Yellow;
                 $severity = 'Warn : ';
                 break;
             case LogLevel::Error:
-                Console::foregroundColor(ConsoleColor::Red);
+                Console::$ForegroundColor = ConsoleColor::Red;
                 $severity = 'Error: ';
                 break;
             case LogLevel::Fatal:
-                Console::foregroundColor(ConsoleColor::White);
-                Console::backgroundColor(ConsoleColor::Red);
+                Console::$ForegroundColor =ConsoleColor::White;
+                Console::$BackgroundColor = ConsoleColor::Red;
                 $severity = 'Fatal: ';
                 break;
             default:
