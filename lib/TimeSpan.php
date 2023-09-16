@@ -11,7 +11,7 @@ namespace DevNet\System;
 
 class TimeSpan
 {
-    use Tweak;
+    use PropertyTrait;
 
     private float $seconds = 0;
 
