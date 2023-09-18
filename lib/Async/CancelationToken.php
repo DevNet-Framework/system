@@ -9,12 +9,12 @@
 
 namespace DevNet\System\Async;
 
-use DevNet\System\Tweak;
+use DevNet\System\PropertyTrait;
 use Closure;
 
 class CancelationToken
 {
-    use Tweak;
+    use PropertyTrait;
 
     private CancelationSource $source;
     private bool $isCancellationRequested = false;

@@ -9,11 +9,11 @@
 
 namespace DevNet\System\Configuration;
 
-use DevNet\System\Tweak;
+use DevNet\System\PropertyTrait;
 
 class ConfigurationRoot implements IConfiguration
 {
-    use Tweak;
+    use PropertyTrait;
 
     private array $settings = [];
 

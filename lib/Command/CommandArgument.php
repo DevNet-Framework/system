@@ -9,11 +9,11 @@
 
 namespace DevNet\System\Command;
 
-use DevNet\System\Tweak;
+use DevNet\System\PropertyTrait;
 
 class CommandArgument
 {
-    use Tweak;
+    use PropertyTrait;
 
     protected string $name;
     protected string $description;

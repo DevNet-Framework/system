@@ -11,12 +11,12 @@ namespace DevNet\System\Linq\Enumerables;
 
 use DevNet\System\Collections\Enumerator;
 use DevNet\System\Collections\IEnumerable;
-use DevNet\System\Tweak;
+use DevNet\System\PropertyTrait;
 use Closure;
 
 class WhereEnumerable implements IEnumerable
 {
-    use Tweak;
+    use PropertyTrait;
 
     private IEnumerable $enumerable;
     private array $array = [];

@@ -9,11 +9,11 @@
 
 namespace DevNet\System\Async;
 
-use DevNet\System\Tweak;
+use DevNet\System\PropertyTrait;
 
 class CancelationSource
 {
-    use Tweak;
+    use PropertyTrait;
 
     private CancelationToken $token;
     private bool $isCancellationRequested = false;

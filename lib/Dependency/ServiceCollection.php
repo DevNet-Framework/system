@@ -13,13 +13,13 @@ use DevNet\System\Exceptions\ArgumentException;
 use DevNet\System\Exceptions\ClassException;
 use DevNet\System\Exceptions\SystemException;
 use DevNet\System\Exceptions\TypeException;
-use DevNet\System\Tweak;
+use DevNet\System\PropertyTrait;
 use ArrayIterator;
 use Traversable;
 
 class ServiceCollection implements IServiceCollection
 {
-    use Tweak;
+    use PropertyTrait;
 
     private array $services = [];
 

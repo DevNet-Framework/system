@@ -9,12 +9,12 @@
 
 namespace DevNet\System\Async;
 
-use DevNet\System\Tweak;
+use DevNet\System\PropertyTrait;
 use Closure;
 
 class TaskAwaiter implements IAwaiter
 {
-    use Tweak;
+    use PropertyTrait;
 
     private Task $task;
     private ?Closure $onCompleted = null;

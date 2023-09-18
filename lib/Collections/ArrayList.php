@@ -12,7 +12,6 @@ namespace DevNet\System\Collections;
 use DevNet\System\Exceptions\ArgumentException;
 use DevNet\System\Exceptions\TypeException;
 use DevNet\System\Generic;
-use DevNet\System\Tweak;
 use DevNet\System\Type;
 
 class T extends \DevNet\System\Parameter {}
@@ -20,8 +19,6 @@ class T extends \DevNet\System\Parameter {}
 #[Generic(T::class)]
 class ArrayList extends AbstractArray implements IList
 {
-    use Tweak;
-
     public function __construct(string $valueType)
     {
         $this->setGenericArguments($valueType);

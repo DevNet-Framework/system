@@ -14,12 +14,12 @@ use DevNet\System\Command\Parsing\Parser;
 use DevNet\System\Event\EventHandler;
 use DevNet\System\IO\Console;
 use DevNet\System\IO\ConsoleColor;
-use DevNet\System\Tweak;
+use DevNet\System\PropertyTrait;
 use Closure;
 
 class CommandLine
 {
-    use Tweak;
+    use PropertyTrait;
 
     private string $name;
     private string $description;

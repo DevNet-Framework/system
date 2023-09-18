@@ -11,11 +11,11 @@ namespace DevNet\System\Logging;
 
 use DevNet\System\Logging\Console\ConsoleLoggerProvider;
 use DevNet\System\Logging\File\FileLoggerProvider;
-use DevNet\System\Tweak;
+use DevNet\System\PropertyTrait;
 
 class LoggerOptions
 {
-    use Tweak;
+    use PropertyTrait;
 
     private array $filters = [];
     private array $providers = [];

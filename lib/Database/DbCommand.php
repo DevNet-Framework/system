@@ -9,12 +9,11 @@
 
 namespace DevNet\System\Database;
 
-use DevNet\System\Collections\Dictionary;
-use DevNet\System\Tweak;
+use DevNet\System\PropertyTrait;
 
 abstract class DbCommand
 {
-    use Tweak;
+    use PropertyTrait;
 
     protected DbConnection $connection;
     protected string $sql = '';
