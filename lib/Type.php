@@ -58,24 +58,22 @@ class Type
 
         if ($this->isClass()) {
             $class = new ReflectionClass($this->Name);
-            foreach ($class->getAttributes() as $attribute) {
-                if ($attribute->getName() == Generic::class) {
-                    $generic = $attribute->newInstance();
-                    foreach ($generic->getTypes() as $type) {
-                        if (!is_subclass_of($type->Name, Parameter::class)) {
-                            throw new TypeException("Parameter types must of type T or equivalent", 0, 1);
-                        }
-
-                        if (isset($this->parameters[$type->Name])) {
-                            throw new TypeException("The generic type should not have a repeated generic parameter.", 0, 1);
-                        }
-
-                        $this->parameters[$type->Name] = $type;
+            foreach ($class->getAttributes(Generic::class) as $attribute) {
+                $generic = $attribute->newInstance();
+                foreach ($generic->getTypes() as $type) {
+                    if (!is_subclass_of($type->Name, Parameter::class)) {
+                        throw new TypeException("Parameter types must of type T or equivalent", 0, 1);
                     }
 
-                    // No need to look for other attributes.
-                    break;
+                    if (isset($this->parameters[$type->Name])) {
+                        throw new TypeException("The generic type should not have a repeated generic parameter.", 0, 1);
+                    }
+
+                    $this->parameters[$type->Name] = $type;
                 }
+
+                // No need to look for other attributes.
+                break;
             }
         }
 
