@@ -11,12 +11,12 @@ namespace DevNet\System\Collections;
 
 use DevNet\System\Exceptions\ArgumentException;
 use DevNet\System\Exceptions\TypeException;
-use DevNet\System\Generic;
+use DevNet\System\Template;
 use DevNet\System\Type;
 
 class T extends \DevNet\System\Parameter {}
 
-#[Generic(T::class)]
+#[Template(T::class)]
 class ArrayList extends AbstractArray implements IList
 {
     public function __construct(string $valueType)

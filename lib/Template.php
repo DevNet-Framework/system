@@ -9,11 +9,10 @@
 
 namespace DevNet\System;
 
-use DevNet\System\Exceptions\TypeException;
 use Attribute;
 
 #[Attribute]
-class Generic
+class Template
 {
     private array $types = [];
 

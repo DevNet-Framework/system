@@ -10,13 +10,13 @@
 namespace DevNet\System\Collections;
 
 use DevNet\System\Exceptions\ArgumentException;
-use DevNet\System\Generic;
+use DevNet\System\Template;
 use DevNet\System\Type;
 
 class K extends \DevNet\System\Parameter {}
 class V extends \DevNet\System\Parameter {}
 
-#[Generic(K::class, V::class)]
+#[Template(K::class, V::class)]
 class Dictionary extends AbstractArray implements IDictionary
 {
     public function __construct(string $keyType, string $valueType)
