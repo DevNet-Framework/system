@@ -11,14 +11,17 @@ namespace DevNet\System;
 
 use DevNet\System\Exceptions\ArrayException;
 use DevNet\System\Exceptions\TypeException;
+use Attribute;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
 
+#[Attribute]
 class Type
 {
     public readonly string $Name;
     private array $parameters = [];
+    private array $arguments = [];
 
     private static array $properties = [];
     private static array $methods    = [];
@@ -28,41 +31,46 @@ class Type
         // normalizing the built-in type names
         switch (strtolower($name)) {
             case 'null':
-                $name = 'null';
+                $this->Name = 'null';
                 break;
             case 'boolean':
             case 'bool':
-                $name = 'boolean';
+                $this->Name = 'boolean';
                 break;
             case 'integer':
             case 'int':
-                $name = 'integer';
+                $this->Name = 'integer';
                 break;
             case 'float':
             case 'double':
-                $name = 'float';
+                $this->Name = 'float';
                 break;
             case 'string':
-                $name = 'string';
+                $this->Name = 'string';
+                break;
+            case 'array':
+                $this->Name = 'array';
                 break;
             case 'object':
-                $name = 'object';
+                $this->Name = 'object';
                 break;
             case 'callable':
-                $name = 'callable';
+                $this->Name = 'callable';
+                break;
+            default:
+                // The remaining case is considered a class or type parameter.
+                $this->Name = $name;
                 break;
         }
 
-        // The remaining case is considered a class and must be in PascalCase.
-        $this->Name = $name;
-
+        // set the type parameters and arguments
         if ($this->isClass()) {
             $class = new ReflectionClass($this->Name);
-            foreach ($class->getAttributes(Generic::class) as $attribute) {
+            foreach ($class->getAttributes(Template::class) as $attribute) {
                 $generic = $attribute->newInstance();
                 foreach ($generic->getTypes() as $type) {
-                    if (!is_subclass_of($type->Name, Parameter::class)) {
-                        throw new TypeException("Parameter types must of type T or equivalent", 0, 1);
+                    if (!$type->isGenericParameter()) {
+                        throw new TypeException("The generic type parameter should not be an existing type.", 0, 1);
                     }
 
                     if (isset($this->parameters[$type->Name])) {
@@ -82,12 +90,12 @@ class Type
         }
 
         $index = 0;
-        foreach ($this->parameters as &$parameter) {
+        foreach ($this->parameters as $parameter) {
             $argument = $arguments[$index] ?? null;
             if (!$argument || !is_string($argument)) {
                 throw new ArrayException("Type arguments must be of type array<int, string>", 0, 1);
             }
-            $parameter = new Type($argument);
+            $this->arguments[$parameter->Name] = new Type($argument);
             $index++;
         }
     }
@@ -97,9 +105,14 @@ class Type
         return new Type($this->Name, $typeArguments);
     }
 
-    public function getGenericArguments(): array
+    public function getGenericParameters(): array
     {
         return $this->parameters;
+    }
+
+    public function getGenericArguments(): array
+    {
+        return $this->arguments;
     }
 
     public function getInterfaces(): array
@@ -167,7 +180,12 @@ class Type
 
     public function isGenericParameter(): bool
     {
-        return $this->Name == T::class || is_subclass_of($this->Name, T::class) ? true : false;
+        $types = ['boolean', 'integer', 'float', 'string', 'array', 'object', 'callable'];
+        if (in_array($this->Name, $types) || $this->isClass() || $this->isInterface()) {
+            return false;
+        }
+
+        return true;
     }
 
     public function isSubclassOf(Type $class): bool
