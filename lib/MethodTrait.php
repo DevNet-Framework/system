@@ -11,67 +11,36 @@ namespace DevNet\System;
 
 use DevNet\System\Async\AsyncFunction;
 use DevNet\System\Async\Task;
-use DevNet\System\Exceptions\ArgumentException;
 use DevNet\System\Exceptions\MethodException;
 use ReflectionMethod;
 
 trait MethodTrait
 {
-    private static ?Type $__type = null;
-
-    public function __call(string $method, array $args)
+    public function __call(string $methodName, array $args)
     {
-        if (!method_exists($this, $method)) {
-            $asyncMethod = 'async_' . $method;
+        if (!method_exists($this, $methodName)) {
+            $asyncMethod = 'async_' . $methodName;
             if (method_exists($this, $asyncMethod)) {
                 $action = new AsyncFunction([$this, $asyncMethod]);
                 return $action->invoke($args);
             }
 
-            $extension = Extender::getExtension($this, $method);
+            $extension = Extender::getExtension($this, $methodName);
             if ($extension) {
                 array_unshift($args, $this);
-                return $extension::$method(...$args);
+                return $extension::$methodName(...$args);
             }
 
-            throw new MethodException("Call to undefined method "  . static::class . "::{$method}()", 0, 1);
-        } else {
-            $hasGenericParameter = false;
-            $genericArgs = $this->getType()->getGenericArguments();
-            if ($genericArgs) {
-                $methodInfo = new ReflectionMethod($this, $method);
-                foreach ($methodInfo->getParameters() as $index => $param) {
-                    if ($param->hasType()) {
-                        $paramTypeName = $param->getType()->getName();
-                        $genericArgument = $genericArgs[$paramTypeName] ?? null;
-                        if ($genericArgument) {
-                            $hasGenericParameter = true;
-                            $argument = $args[$index];
-                            $typeArgument = Type::getType($argument);
-                            if (!$typeArgument->isAssignableTo($genericArgument)) {
-                                $index++;
-                                throw new ArgumentException("Argument #{$index} must be of type {$genericArgument}", 0, 1);
-                            }
-                            $element = new $paramTypeName($typeArgument);
-                            $element->Value = $args[$index];
-                            $args[$index] = $element;
-                        }
-                    }
-                }
-
-                if ($hasGenericParameter) {
-                    $methodInfo->setAccessible(true);
-                    return $methodInfo->invokeArgs($this, $args);
-                }
-
-                $modifier = 'private';
-                if ($methodInfo->isProtected()) {
-                    $modifier = 'protected';
-                }
-
-                throw new MethodException("Call to {$modifier} method " . static::class . "::{$method}()", 0, 1);
-            }
+            throw new MethodException("Call to undefined method "  . static::class . "::{$methodName}()", 0, 1);
         }
+
+        $method = new ReflectionMethod($this, $methodName);
+        $modifier = 'private';
+        if ($method->isProtected()) {
+            $modifier = 'protected';
+        }
+
+        throw new MethodException("Call to {$modifier} method " . static::class . "::{$methodName}()", 0, 1);
     }
 
     public function __invoke(...$args): Task
@@ -82,24 +51,5 @@ trait MethodTrait
         }
 
         throw new MethodException("Can not invoke object of type " . $this::class, 0, 1);
-    }
-
-    protected function setGenericArguments(string ...$typeArguments): void
-    {
-        if (!static::$__type) {
-            static::$__type = new Type(static::class, $typeArguments);
-        }
-    }
-
-    /**
-     * Get the type of the current object.
-     */
-    public function getType(): Type
-    {
-        if (!static::$__type) {
-            static::$__type = new Type(static::class);
-        }
-
-        return static::$__type;
     }
 }
