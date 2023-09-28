@@ -9,14 +9,11 @@
 
 namespace DevNet\System\Collections;
 
-use DevNet\System\Exceptions\ArgumentException;
 use DevNet\System\Exceptions\TypeException;
 use DevNet\System\Template;
 use DevNet\System\Type;
 
-class T extends \DevNet\System\Parameter {}
-
-#[Template(T::class)]
+#[Template('T')]
 class ArrayList extends AbstractArray implements IList
 {
     public function __construct(string $valueType)
@@ -32,27 +29,19 @@ class ArrayList extends AbstractArray implements IList
             }
         } catch (TypeException $exception) {
             $genericArgs = $this->getType()->getGenericArguments();
-            throw new ArgumentException(self::class . "::addRange(): The argument #1, must be of type array<{$genericArgs[1]}>", 0, 1);
+            throw new TypeException(static::class . "::addRange(): Argument #1, must be of type array<{$genericArgs['T']}>", 0, 1);
         }
     }
 
-    public function add($element): void
+    public function add(#[Type('T')] $element): void
     {
-        try {
-            $this->offsetSet(null, $element);
-        } catch (TypeException $exception) {
-            $genericArgs = $this->getType()->getGenericArguments();
-            throw new ArgumentException(self::class . "::add(): The argument #1, must be of type {$genericArgs[1]}", 0, 1);
-        }
+        $this->checkArgumentTypes(func_get_args());
+        $this->array[] = $element;
     }
 
-    public function contains(mixed $element): bool
+    public function contains(#[Type('T')] mixed $element): bool
     {
-        $genericArgs = $this->getType()->getGenericArguments();
-        if (!Type::getType($element)->isEquivalentTo($genericArgs[1])) {
-            throw new ArgumentException(self::class . "::contains(): The argument #1, must be of type {$genericArgs[1]}", 0, 1);
-        }
-
+        $this->checkArgumentTypes(func_get_args());
         foreach ($this->getIterator() as $value) {
             if ($value == $element) {
                 return true;
@@ -62,13 +51,9 @@ class ArrayList extends AbstractArray implements IList
         return false;
     }
 
-    public function remove(mixed $element): void
+    public function remove(#[Type('T')] mixed $element): void
     {
-        $genericArgs = $this->getType()->getGenericArguments();
-        if (!Type::getType($element)->isEquivalentTo($genericArgs[1])) {
-            throw new ArgumentException(self::class . "::remove(): The argument #1, must be of type {$genericArgs[1]}", 0, 1);
-        }
-
+        $this->checkArgumentTypes(func_get_args());
         foreach ($this->getIterator() as $key => $value) {
             if ($element == $value) {
                 $this->offsetUnset($key);
