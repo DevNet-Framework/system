@@ -9,30 +9,25 @@
 
 namespace DevNet\System\Collections;
 
-use DevNet\System\Exceptions\TypeException;
-use DevNet\System\MethodTrait;
-use DevNet\System\PropertyTrait;
+use DevNet\System\Template;
+use DevNet\System\Type;
+use DevNet\System\TypeTrait;
 
+#[Template('T')]
 class Stack implements IEnumerable
 {
-    use PropertyTrait;
-    use MethodTrait;
+    use TypeTrait;
 
     private array $array = [];
 
     public function __construct(string $valueType)
     {
-        $this->setGenericType([$valueType]);
+        $this->setGenericArguments($valueType);
     }
 
-    public function push($value): void
+    public function push(#[Type('T')] $value): void
     {
-        $genericArgs = $this->getType()->getGenericArguments();
-        if (!$genericArgs[0]->isTypeOf($value)) {
-            $className = get_class($this);
-            throw new TypeException("The value passed to {$className} must be of the type {$genericArgs[0]}", 0, 1);
-        }
-
+        $this->checkArgumentTypes(func_get_args());
         $this->array[] = $value;
     }
 
@@ -46,13 +41,15 @@ class Stack implements IEnumerable
         return end($this->array);
     }
 
-    public function contains($item): bool
+    public function contains(#[Type('T')] $item): bool
     {
+        $this->checkArgumentTypes(func_get_args());
         return in_array($item, $this->array);
     }
 
-    public function remove($item): void
+    public function remove(#[Type('T')] $item): void
     {
+        $this->checkArgumentTypes(func_get_args());
         if (isset($this->array[$item])) {
             unset($this->array[$item]);
         }
