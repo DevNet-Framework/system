@@ -9,41 +9,11 @@
 
 namespace DevNet\System;
 
-use ReflectionFunction;
-use ReflectionMethod;
-use Closure;
+use DevNet\System\Delegate;
 
-class Action
+class Action extends Delegate
 {
-    use PropertyTrait;
-
-    protected ReflectionFunction $function;
-
-    public function __construct(callable $action)
+    public function action()
     {
-        if (is_array($action)) {
-            $reflection = new ReflectionMethod($action[0], $action[1]);
-            $action = $reflection->getClosure($action[0]);
-        } else if (is_object($action) && !$action instanceof Closure) {
-            $reflection = new ReflectionMethod($action, '__invoke');
-            $action = $reflection->getClosure($action);
-        }
-
-        $this->function = new ReflectionFunction($action);
-    }
-
-    public function get_Function(): ReflectionFunction
-    {
-        return $this->function;
-    }
-
-    public function invoke(array $args = [])
-    {
-        return $this->function->invokeArgs($args);
-    }
-
-    public function __invoke(...$args)
-    {
-        return $this->invoke($args);
     }
 }
