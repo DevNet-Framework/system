@@ -154,6 +154,6 @@ class CommandLine
             return;
         }
 
-        $this->handler->invoke([$this, $eventArgs]);
+        $this->handler->invoke($this, $eventArgs);
     }
 }
