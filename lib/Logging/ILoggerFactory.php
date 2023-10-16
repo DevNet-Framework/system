@@ -11,5 +11,7 @@ namespace DevNet\System\Logging;
 
 interface ILoggerFactory
 {
+    public function addProvider(ILoggerProvider $provider): void;
+
     public function createLogger(string $category): ILogger;
 }
