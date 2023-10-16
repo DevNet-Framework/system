@@ -79,13 +79,13 @@ abstract class Delegate implements ArrayAccess, IEnumerable
                 }
 
                 if ($parameterTypeName != $signatureTypeName && !is_subclass_of($parameterTypeName, $signatureTypeName)) {
-                    throw new TypeException("The parameter type of the associated function not compatibale with the delegate " . $this::class, 0, 1);
+                    throw new TypeException("The parameter type of the associated function not compatible with the delegate " . $this::class, 0, 1);
                 }
             }
         }
 
-        if ($function->getReturnType() != $this->signature->getReturnType()) {
-            throw new TypeException("The return type of the associated function not compatibale with the delegate " . $this::class, 0, 1);
+        if ($this->signature->hasReturnType() && $this->signature->getReturnType() != $function->getReturnType()) {
+            throw new TypeException("The return type of the associated function not compatible with the delegate " . $this::class, 0, 1);
         }
     }
 
