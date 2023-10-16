@@ -21,8 +21,13 @@ class SystemException extends Exception
         if ($scope > 0) {
             $trace = $this->getTrace();
             if (isset($trace[$scope - 1])) {
-                $this->file = $trace[$scope - 1]['file'];
-                $this->line = $trace[$scope - 1]['line'];
+                if (isset($trace[$scope - 1]['file'])) {
+                    $this->file = $trace[$scope - 1]['file'];
+                }
+
+                if (isset($trace[$scope - 1]['line'])) {
+                    $this->line = $trace[$scope - 1]['line'];
+                }
             }
         }
     }
