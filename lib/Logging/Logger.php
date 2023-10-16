@@ -15,29 +15,24 @@ class Logger implements ILogger
 {
     use PropertyTrait;
 
-    private int $minimumLevel;
+    private LogLevel $minimumLevel;
     private array $loggers;
 
-    public function __construct(array $loggers, int $minimumLevel = 0)
+    public function __construct(array $loggers, LogLevel $minimumLevel = LogLevel::None)
     {
         $this->minimumLevel = $minimumLevel;
         $this->loggers = $loggers;
     }
 
-    public function get_MinimumLevel(): int
+    public function get_MinimumLevel(): LogLevel
     {
         return $this->minimumLevel;
     }
 
-    public function log(int $level, string $message, array $args = []): void
+    public function log(LogLevel $level, string $message, array $args = []): void
     {
-        // overide the arguments if the fist and only argument is an array
-        if (count($args) == 1 && isset($args[0]) && is_array($args[0])) {
-            $args = $args[0];
-        }
-
         foreach ($this->loggers as $logger) {
-            if ($level >= $this->minimumLevel) {
+            if ($level->value >= $this->minimumLevel->value) {
                 $logger->log($level, $message, $args);
             }
         }

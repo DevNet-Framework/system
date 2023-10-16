@@ -27,7 +27,7 @@ class FileLogger implements ILogger
         $this->trace->Listeners->add(new WriterTraceListener(new FileStream($fileName, 'a')));
     }
 
-    public function log(int $level, string $message, array $args = []): void
+    public function log(LogLevel $level, string $message, array $args = []): void
     {
         switch ($level) {
             case LogLevel::Trace:

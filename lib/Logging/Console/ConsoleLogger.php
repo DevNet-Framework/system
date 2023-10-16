@@ -23,7 +23,7 @@ class ConsoleLogger implements ILogger
         $this->category = $category;
     }
 
-    public function log(int $level, string $message, array $args = []): void
+    public function log(LogLevel $level, string $message, array $args = []): void
     {
         switch ($level) {
             case LogLevel::Trace:

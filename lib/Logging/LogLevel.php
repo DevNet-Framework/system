@@ -8,41 +8,41 @@
 
 namespace DevNet\System\Logging;
 
-interface LogLevel
+enum LogLevel: int
 {
     /**
      * Logs that contain the most detailed messages.
      */
-    const Trace = 0;
+    case Trace = 0;
 
     /**
      * Logs that are used for interactive investigation during development.
      */
-    const Debug = 1;
+    case Debug = 1;
 
     /**
      * Logs that track the general flow of the application.
      */
-    const Information = 2;
+    case Information = 2;
 
     /**
      * Logs that highlight the abnormal in the application flow, without stopping the execution.
      */
-    const Warning = 3;
+    case Warning = 3;
 
     /**
      * Logs that highlight when the current flow of execution is stopped due to a failure.
      */
-    const Error = 4;
+    case Error = 4;
 
     /**
      * Logs that describe a system crash, or a catastrophic failure that requires immediate attention.
      */
-    const Fatal = 5;
+    case Fatal = 5;
 
     /**
      * Logs that not used for writing log messages.
      */
-    const None = 6;
+    case None = 6;
 
 }

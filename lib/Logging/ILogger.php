@@ -13,5 +13,5 @@ interface ILogger
     /**
      * Writes a log entry.
      */
-    public function log(int $level, string $message, array $args): void;
+    public function log(LogLevel $level, string $message, array $args): void;
 }
