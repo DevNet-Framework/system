@@ -119,13 +119,14 @@ abstract class Stream
                 $this->seek(0);
             }
 
-            do {
-                stream_set_blocking($this->resource, false);
+            $result = null;
+            stream_set_blocking($this->resource, false);
+            while (!feof($this->resource)) {
                 $result = yield fread($this->resource, $length);
-                if ($result === false) {
-                    throw new StreamException("Unable to read from the resource", 0, 1);
+                if ($result) {
+                    break;
                 }
-            } while (!$this->EndOfStream && $result === '');
+            }
 
             return $result;
         }, $cancellation);
@@ -143,16 +144,21 @@ abstract class Stream
         return $result;
     }
 
-    public function readLineAsync(?CancelationToken $cancellation = null): Task
+    public function readLineAsync(?CancellationToken $cancellation = null): Task
     {
         return Task::run(function () {
-            do {
-                stream_set_blocking($this->resource, false);
+            $result = null;
+            stream_set_blocking($this->resource, false);
+            while (!feof($this->resource)) {
                 $result = yield fgets($this->resource);
-                if ($result === false) {
-                    throw new StreamException("Unable to read from the resource", 0, 1);
+                if ($result) {
+                    break;
                 }
-            } while (!$this->EndOfStream && $result === '');
+            }
+
+            if ($result === false) {
+                throw new StreamException("Unable to read from the resource", 0, 1);
+            }
 
             return $result;
         }, $cancellation);
