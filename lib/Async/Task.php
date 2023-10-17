@@ -26,10 +26,10 @@ class Task implements IAwaitable
     private TaskScheduler $scheduler;
     private Generator $generator;
     private ?Task $continuationTask = null;
-    private ?CancelationToken $token = null;
+    private ?CancellationToken $token = null;
     private ?Throwable $exception = null;
 
-    public function __construct(Closure $action, ?CancelationToken $token = null)
+    public function __construct(Closure $action, ?CancellationToken $token = null)
     {
         $this->id        = spl_object_id($this);
         $this->awaiter   = new TaskAwaiter($this);
@@ -145,7 +145,7 @@ class Task implements IAwaitable
         }
     }
 
-    public function then(Closure $continuationAction, ?CancelationToken $token = null): Task
+    public function then(Closure $continuationAction, ?CancellationToken $token = null): Task
     {
         $previousTask = $this;
         $continuationTask = Task::run(function () use ($continuationAction, $previousTask) {
@@ -178,7 +178,7 @@ class Task implements IAwaitable
         return $this->awaiter;
     }
 
-    public static function run(Closure $action, ?CancelationToken $token = null): Task
+    public static function run(Closure $action, ?CancellationToken $token = null): Task
     {
         $task = new Task($action, $token);
         $task->start();

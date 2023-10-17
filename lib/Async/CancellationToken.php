@@ -12,7 +12,7 @@ namespace DevNet\System\Async;
 use DevNet\System\PropertyTrait;
 use Closure;
 
-class CancelationToken
+class CancellationToken
 {
     use PropertyTrait;
 

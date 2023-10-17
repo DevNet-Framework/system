@@ -9,7 +9,7 @@
 
 namespace DevNet\System\IO;
 
-use DevNet\System\Async\CancelationToken;
+use DevNet\System\Async\CancellationToken;
 use DevNet\System\Async\Task;
 use DevNet\System\PropertyTrait;
 
@@ -108,7 +108,7 @@ abstract class Stream
         return $result;
     }
 
-    public function readAsync(int $length, ?CancelationToken $cancellation = null): Task
+    public function readAsync(int $length, ?CancellationToken $cancellation = null): Task
     {
         return Task::run(function () use ($length) {
             if ($length <= 0) {
@@ -170,7 +170,7 @@ abstract class Stream
         return $result;
     }
 
-    public function writeAsync(string $value, ?CancelationToken $cancellation = null): Task
+    public function writeAsync(string $value, ?CancellationToken $cancellation = null): Task
     {
         return Task::run(function () use ($value) {
             do {
