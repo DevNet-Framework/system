@@ -83,7 +83,7 @@ class Task implements IAwaitable
         if ($this->generator->valid()) {
             if ($this->token && $this->token->IsCancellationRequested) {
                 try {
-                    $this->generator->throw(new CancelationException("The task with Id: {$this->id} was canceled!"));
+                    $this->generator->throw(new CancellationException("The task with Id: {$this->id} was canceled!"));
                 } catch (\Throwable $exception) {
                     $this->exception = $exception;
                     $this->status = TaskStatus::Canceled;

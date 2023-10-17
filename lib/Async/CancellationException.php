@@ -11,6 +11,6 @@ namespace DevNet\System\Async;
 
 use Exception;
 
-class CancelationException extends Exception
+class CancellationException extends Exception
 {
 }
