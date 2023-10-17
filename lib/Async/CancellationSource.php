@@ -11,7 +11,7 @@ namespace DevNet\System\Async;
 
 use DevNet\System\PropertyTrait;
 
-class CancelationSource
+class CancellationSource
 {
     use PropertyTrait;
 

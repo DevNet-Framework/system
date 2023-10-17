@@ -16,7 +16,7 @@ class CancelationToken
 {
     use PropertyTrait;
 
-    private CancelationSource $source;
+    private CancellationSource $source;
     private bool $isCancellationRequested = false;
     private ?Closure $action = null;
 
@@ -25,7 +25,7 @@ class CancelationToken
         $this->Source = $source;
     }
 
-    public function get_Source(): CancelationSource
+    public function get_Source(): CancellationSource
     {
         return $this->source;
     }
