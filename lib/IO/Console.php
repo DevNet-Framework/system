@@ -19,7 +19,7 @@ class Console
     public static function write(string $format, array|string ...$args): void
     {
         if (!isset(static::$Out)) {
-            static::$Out = new FileStream('php://stdout', 'w');
+            static::$Out = new FileStream('php://stdout', FileMode::Open, FileAccess::Write);
         }
 
         // if the fist argument is an array use it as arguments.
@@ -70,7 +70,7 @@ class Console
     public static function readLine(?string $prompt = null): string
     {
         if (!isset(static::$In)) {
-            static::$In = new FileStream('php://stdin', 'r');
+            static::$In = new FileStream('php://stdin', FileMode::Open, FileAccess::Read);
         }
 
         if ($prompt) {

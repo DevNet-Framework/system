@@ -11,6 +11,8 @@ namespace DevNet\System\Logging\File;
 use DateTime;
 use DevNet\System\Diagnostics\Trace;
 use DevNet\System\Diagnostics\WriterTraceListener;
+use DevNet\System\IO\FileAccess;
+use DevNet\System\IO\FileMode;
 use DevNet\System\IO\FileStream;
 use DevNet\System\Logging\ILogger;
 use DevNet\System\Logging\LogLevel;
@@ -24,7 +26,7 @@ class FileLogger implements ILogger
     {
         $this->category = $category;
         $this->trace = new Trace();
-        $this->trace->Listeners->add(new WriterTraceListener(new FileStream($fileName, 'a')));
+        $this->trace->Listeners->add(new WriterTraceListener(new FileStream($fileName, FileMode::Open, FileAccess::ReadWrite)));
     }
 
     public function log(LogLevel $level, string $message, array $args = []): void

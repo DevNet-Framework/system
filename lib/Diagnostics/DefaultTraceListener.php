@@ -9,12 +9,14 @@
 
 namespace DevNet\System\Diagnostics;
 
+use DevNet\System\IO\FileAccess;
+use DevNet\System\IO\FileMode;
 use DevNet\System\IO\FileStream;
 
 class DefaultTraceListener extends WriterTraceListener
 {
     public function __construct()
     {
-        $this->Writer = new FileStream('php://stdout', 'w');
+        $this->Writer = new FileStream('php://stdout', FileMode::Open, FileAccess::Write);
     }
 }

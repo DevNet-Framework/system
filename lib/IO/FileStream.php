@@ -11,16 +11,48 @@ namespace DevNet\System\IO;
 
 class FileStream extends Stream
 {
-    public function __construct(string $filename, string $mode, ?float $timeout = null)
+    public function __construct(string $fileName, FileMode $fileMode, FileAccess $fileAccess = FileAccess::ReadWrite)
     {
-        $this->resource = fopen($filename, $mode);
-
-        if (!$this->resource) {
-            throw new FileException("Can not open the file: '{$filename}'", 0, 1);
+        switch ($fileMode->value . $fileAccess->value) {
+            case '12':
+                $mode = 'x';
+                break;
+            case '13':
+                $mode = 'x+';
+                break;
+            case '21':
+                $mode = 'r';
+                break;
+            case '22':
+                $mode = 'r+'; // 'r' to require the existence of the file but it will be changed to 'c' for write only.
+                break;
+            case '23':
+                $mode = 'r+';
+                break;
+            case '32':
+                $mode = 'c';
+                break;
+            case '33':
+                $mode = 'c+';
+                break;
+            default:
+                throw new FileException("The file access '{$fileAccess->name}' not compatible with the file mode 'Open'", 0, 1);
+                break;
         }
 
-        if ($timeout) {
-            stream_set_timeout($this->resource, (int) $timeout, $timeout * 1000000 % 1000000);
+        $this->resource = @fopen($fileName, $mode);
+
+        if (!$this->resource && $fileMode->value == 1) {
+            throw new FileException("The file: {$fileName} already exists!", 0, 1);
+        }
+        
+        if (!$this->resource || !$this->resource && $fileMode->value == 2) {
+            throw new FileException("Could not open the path: {$fileName}", 0, 1);
+        }
+
+        // change 'r' to 'c' in the case of "Open for write only".
+        if ($fileMode->value . $fileAccess->value == '12') {
+            $this->resource = fopen($fileName, 'c');
         }
     }
 }
