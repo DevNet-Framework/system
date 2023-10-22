@@ -77,13 +77,13 @@ abstract class Stream
         $this->seek($offset);
     }
 
-    public function seek(int $offset, int $whence = SEEK_SET): int
+    public function seek(int $offset, SeekOrigin $origin = SeekOrigin::Begin): int
     {
         if (!$this->IsSeekable) {
             throw new StreamException("The resource is not seekable");
         }
 
-        $result = fseek($this->resource, $offset, $whence);
+        $result = fseek($this->resource, $offset, $origin->value);
 
         return $result;
     }
