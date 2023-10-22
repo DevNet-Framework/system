@@ -11,68 +11,65 @@ namespace DevNet\System;
 
 use DevNet\System\Exceptions\PropertyException;
 use DevNet\System\Exceptions\TypeException;
+use ReflectionMethod;
 use ReflectionProperty;
 
 trait PropertyTrait
 {
-    public function &__get(string $property)
+    public function &__get(string $name)
     {
-        $accessor = 'get_' . $property;
-        if (method_exists($this, $accessor)) {
-            $name = substr(strrchr($accessor, '_'), 1);
-            if ($name == $property) {
+        if (method_exists($this, 'get_' . $name)) {
+            $method = new ReflectionMethod($this, 'get_' . $name);
+            $accessor = $method->getName();
+            if ($accessor == 'get_' . $name) {
                 $value = $this->$accessor();
                 return $value;
             }
         }
 
-        if (method_exists($this, $property)) {
-            return [$this, $property];
-        }
-
-        if (property_exists($this, $property)) {
+        if (property_exists($this, $name)) {
             $modifier = 'private';
-            $propertyInfo = new ReflectionProperty($this, $property);
-            if ($propertyInfo->isProtected()) {
+            $property = new ReflectionProperty($this, $name);
+            if ($property->isProtected()) {
                 $modifier = 'protected';
             }
 
-            throw new PropertyException("Cannot access {$modifier} property " . static::class . "::{$property}", 0, 1);
+            throw new PropertyException("Cannot access {$modifier} property " . static::class . "::{$name}", 0, 1);
         }
 
-        throw new PropertyException("Cannot access undefined property " . static::class . "::{$property}", 0, 1);
+        throw new PropertyException("Cannot access undefined property " . static::class . "::{$name}", 0, 1);
     }
 
-    public function __set(string $property, $value): void
+    public function __set(string $name, $value): void
     {
-        $accessor = 'set_' . $property;
-        if (method_exists($this, $accessor)) {
-            $name = substr(strrchr($accessor, '_'), 1);
-            if ($name == $property) {
+        if (method_exists($this, 'set_' . $name)) {
+            $method = new ReflectionMethod($this, 'set_' . $name);
+            $accessor = $method->getName();
+            if ($accessor == 'set_' . $name) {
                 try {
                     $this->$accessor($value);
                     return;
                 } catch (\TypeError $error) {
                     $type = Type::getType($value);
-                    throw new TypeException("Cannot assign a value of type '{$type}' to property " . static::class . "::{$property}", 0, 1);
+                    throw new TypeException("Cannot assign a value of type '{$type}' to property " . static::class . "::{$name}", 0, 1);
                 }
             }
         }
 
-        if (method_exists($this, 'get_' . $property)) {
-            throw new PropertyException("Cannot assign a value to read only property " . static::class . "::{$property}", 0, 1);
+        if (method_exists($this, 'get_' . $name)) {
+            throw new PropertyException("Cannot assign a value to read only property " . static::class . "::{$name}", 0, 1);
         }
 
-        if (property_exists($this, $property)) {
+        if (property_exists($this, $name)) {
             $modifier = 'private';
-            $propertyInfo = new ReflectionProperty($this, $property);
-            if ($propertyInfo->isProtected()) {
+            $property = new ReflectionProperty($this, $name);
+            if ($property->isProtected()) {
                 $modifier = 'protected';
             }
 
-            throw new PropertyException("Cannot access {$modifier} property " . static::class . "::{$property}", 0, 1);
+            throw new PropertyException("Cannot access {$modifier} property " . static::class . "::{$name}", 0, 1);
         }
 
-        throw new PropertyException("Cannot access undefined property " . static::class . "::{$property}", 0, 1);
+        throw new PropertyException("Cannot access undefined property " . static::class . "::{$name}", 0, 1);
     }
 }
