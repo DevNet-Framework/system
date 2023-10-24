@@ -32,9 +32,9 @@ class ClassLoader
 
     public function load(string $class): void
     {
-        $segmets   = explode("\\", $class);
-        $name      = array_pop($segmets);
-        $namespace = implode("\\", $segmets);
+        $segments  = explode("\\", $class);
+        $name      = array_pop($segments);
+        $namespace = implode("\\", $segments);
 
         foreach ($this->map as $root => $prefix) {
             $position = strpos($namespace, $prefix);
@@ -53,8 +53,8 @@ class ClassLoader
             }
         }
 
-        array_shift($segmets);
-        $directory = implode("\\", $segmets);
+        array_shift($segments);
+        $directory = implode("\\", $segments);
         $directory = str_replace("\\", "/", $directory);
         $directory = trim($directory, "/");
         $path      = $this->root . "/" . $directory . "/" . $name . ".php";
