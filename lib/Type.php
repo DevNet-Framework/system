@@ -56,6 +56,8 @@ class Type
                 break;
             case 'callable':
                 $this->Name = 'callable';
+            case 'mixed':
+                $this->Name = 'mixed';
                 break;
             default:
                 // The remaining case is considered a class or type parameter.
@@ -196,6 +198,7 @@ class Type
     public function isEquivalentTo(Type $type): bool
     {
         if ($this == $type) return true;
+        if ($this->Name == 'mixed' || $type->Name == 'mixed') return true;
         if ($this->Name == 'object' && $type->isClass()) return true;
         if ($type->Name == 'object' && $this->isClass()) return true;
 
