@@ -25,9 +25,9 @@ class ClassLoader
         return $this->root;
     }
 
-    public function map(string $prefix, string $root): void
+    public function map(string $namespacePrefix, string $baseDirectory): void
     {
-        $this->map[$root] = $prefix;
+        $this->map[$baseDirectory] = $namespacePrefix;
     }
 
     public function load(string $class): void
@@ -36,20 +36,19 @@ class ClassLoader
         $name      = array_pop($segments);
         $namespace = implode("\\", $segments);
 
-        foreach ($this->map as $root => $prefix) {
-            $position = strpos($namespace, $prefix);
+        foreach ($this->map as $baseDirectory => $namespacePrefix) {
+            $position = strpos($namespace, $namespacePrefix);
 
             if ($position !== false) {
-                $directory = substr_replace($namespace, "", $position, strlen($prefix));
-                $directory = str_replace("\\", "/", $directory);
-                $directory = trim($directory, "/");
-                $path      = $this->root . $root . "/" . $directory . "/" . $name . ".php";
+                $subDirectory = substr_replace($namespace, "", $position, strlen($namespacePrefix));
+                $subDirectory = str_replace("\\", "/", $subDirectory);
+                $subDirectory = trim($subDirectory, "/");
+                $path         = $this->root . $baseDirectory . "/" . $subDirectory . "/" . $name . ".php";
 
-                if (file_exists($path)) {
+                if (is_file($path)) {
                     require_once $path;
+                    return;
                 }
-
-                break;
             }
         }
 
@@ -59,7 +58,7 @@ class ClassLoader
         $directory = trim($directory, "/");
         $path      = $this->root . "/" . $directory . "/" . $name . ".php";
 
-        if (file_exists($path)) {
+        if (is_file($path)) {
             require_once $path;
         }
     }
