@@ -14,17 +14,23 @@ class Launcher extends LauncherProperties
     public function __construct(ClassLoader $loader)
     {
         static::$classLoader = $loader;
-        static::$rootDirectory = $loader->getRoot();
     }
 
     public function launch(array $args = [], ?string $mainClass = null): int
     {
+        $root = scandir(static::$rootDirectory);
+        
+        foreach ($root as $dir) {
+            if (!is_dir(static::$rootDirectory . '/' . $dir) || str_starts_with($dir, '.')) continue;
+            static::$classLoader->map(static::$rootNamespace, '/'.$dir);
+        }
+
         static::$classLoader->register();
         self::$arguments = $args;
         if ($mainClass) {
-            static::$entryPoint = $mainClass;
+            static::$startupObject = $mainClass;
         }
-        $runner = new MainMethodRunner(static::$entryPoint);
+        $runner = new MainMethodRunner(static::$startupObject);
         return $runner->run($args);
     }
 
@@ -33,22 +39,22 @@ class Launcher extends LauncherProperties
         if (!file_exists($projectPath)) {
             return null;
         }
-        
+
         $projectFile = simplexml_load_file($projectPath);
         if (!$projectFile) {
             return null;
         }
 
-        $root = dirname($projectPath);
+        static::$rootDirectory = $root = dirname($projectPath);
+        static::$rootNamespace = $projectFile->Properties->RootNamespace ?? 'Application';
+        static::$startupObject = $projectFile->Properties->StartupObject ?? 'Application\\Program';
+        $codeFiles = $projectFile->Items->CodeFile ?? [];
 
-        static::$entryPoint = $projectFile->Properties->EntryPoint ?? 'Application\\Program';
-        $packages = $projectFile->Dependencies->Package ?? [];
-        
         // load local packages including composer
-        foreach ($packages as $package) {
-            $include = (string)$package->attributes()->include;
-            if (file_exists($root. '/' . $include)) {
-                require $root . '/' . $include;
+        foreach ($codeFiles as $codeFile) {
+            $file = (string)$codeFile->attributes()->include;
+            if (is_file($root . '/' . $file)) {
+                require $root . '/' . $file;
             }
         }
 

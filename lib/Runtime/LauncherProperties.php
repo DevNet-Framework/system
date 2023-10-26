@@ -12,8 +12,10 @@ namespace DevNet\System\Runtime;
 class LauncherProperties
 {
     protected static ?ClassLoader $classLoader = null;
+    protected static string $startupObject = 'Application\Program';
+    protected static string $rootNamespace = 'Application';
     protected static string $rootDirectory = __DIR__;
-    protected static string $entryPoint = 'Application\Program';
+    protected static string $sourceRoot = 'src';
     protected static array $arguments = [];
 
     public static function getLoader(): ?ClassLoader
@@ -21,14 +23,24 @@ class LauncherProperties
         return static::$classLoader ?? null;
     }
 
+    public static function getStartupObject(): string
+    {
+        return static::$startupObject;
+    }
+
+    public static function getRootNamespace(): string
+    {
+        return static::$rootNamespace;
+    }
+
     public static function getRootDirectory(): string
     {
         return static::$rootDirectory;
     }
 
-    public static function getEntryPoint(): string
+    public static function getSourceRoot(): string
     {
-        return static::$entryPoint;
+        return static::$sourceRoot;
     }
 
     public static function getArguments(): array
