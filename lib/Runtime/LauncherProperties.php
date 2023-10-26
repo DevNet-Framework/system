@@ -9,9 +9,12 @@
 
 namespace DevNet\System\Runtime;
 
+use ReflectionMethod;
+
 class LauncherProperties
 {
     protected static ?ClassLoader $classLoader = null;
+    protected static ?ReflectionMethod $entryPoint = null;
     protected static string $startupObject = 'Application\Program';
     protected static string $rootNamespace = 'Application';
     protected static string $rootDirectory = __DIR__;
@@ -21,6 +24,11 @@ class LauncherProperties
     public static function getLoader(): ?ClassLoader
     {
         return static::$classLoader ?? null;
+    }
+
+    public static function getEntryPoint(): ?ReflectionMethod
+    {
+        return static::$entryPoint ?? null;
     }
 
     public static function getStartupObject(): string

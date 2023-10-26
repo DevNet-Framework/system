@@ -9,6 +9,10 @@
 
 namespace DevNet\System\Runtime;
 
+use DevNet\System\Exceptions\ClassException;
+use DevNet\System\Exceptions\MethodException;
+use ReflectionMethod;
+
 class Launcher extends LauncherProperties
 {
     public function __construct(ClassLoader $loader)
@@ -16,13 +20,13 @@ class Launcher extends LauncherProperties
         static::$classLoader = $loader;
     }
 
-    public function launch(array $args = [], ?string $mainClass = null): int
+    public function launch(array $args = [], ?string $mainClass = null): void
     {
         $root = scandir(static::$rootDirectory);
-        
+
         foreach ($root as $dir) {
             if (!is_dir(static::$rootDirectory . '/' . $dir) || str_starts_with($dir, '.')) continue;
-            static::$classLoader->map(static::$rootNamespace, '/'.$dir);
+            static::$classLoader->map(static::$rootNamespace, '/' . $dir);
         }
 
         static::$classLoader->register();
@@ -30,8 +34,17 @@ class Launcher extends LauncherProperties
         if ($mainClass) {
             static::$startupObject = $mainClass;
         }
-        $runner = new MainMethodRunner(static::$startupObject);
-        return $runner->run($args);
+
+        if (!class_exists(static::$startupObject)) {
+            throw new ClassException("Could not find the entry point class: " . static::$startupObject, 0, 1);
+        }
+
+        if (!method_exists(static::$startupObject, 'main')) {
+            throw new MethodException(static::$startupObject . " does not contain a static method 'main' to be suitable for an entry point!", 0, 1);
+        }
+
+        static::$entryPoint = new ReflectionMethod(static::$startupObject, 'main');
+        static::$entryPoint->invoke(null, $args);
     }
 
     public static function initialize(string $projectPath): ?static
