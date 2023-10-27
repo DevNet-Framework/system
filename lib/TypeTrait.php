@@ -13,15 +13,15 @@ use DevNet\System\Exceptions\TypeException;
 
 trait TypeTrait
 {
-    private static ?Type $__type = null;
+    private ?Type $__type = null;
 
     /**
      * Set the generic type arguments
      */
     protected function setGenericArguments(string ...$typeArguments): void
     {
-        if (!static::$__type) {
-            static::$__type = new Type(static::class, $typeArguments);
+        if (!$this->__type) {
+            $this->__type = new Type(static::class, $typeArguments);
         }
     }
 
@@ -41,18 +41,18 @@ trait TypeTrait
                 if ($typeAttribute) {
                     $argument = $args[$index];
                     $argumentType = Type::getType($argument);
-                    $parametertype = $typeAttribute->newInstance();
-                    if ($parametertype->isGenericParameter()) {
-                        $genericArgument = $genericArgs[$parametertype->Name] ?? null;
+                    $parameterType = $typeAttribute->newInstance();
+                    if ($parameterType->isGenericParameter()) {
+                        $genericArgument = $genericArgs[$parameterType->Name] ?? null;
                         if ($genericArgument) {
                             // Replace the generic type parameter with the generic type argument.
-                            $parametertype = $genericArgument;
+                            $parameterType = $genericArgument;
                         }
                     }
 
-                    if (!$argumentType->isAssignableTo($parametertype)) {
+                    if (!$argumentType->isAssignableTo($parameterType)) {
                         $index++;
-                        throw new TypeException(static::class . "::{$methodName}(): Argument #{$index} must be of type {$parametertype}", $index, 2);
+                        throw new TypeException(static::class . "::{$methodName}(): Argument #{$index} must be of type {$parameterType}", $index, 2);
                     }
                 }
             }
@@ -64,10 +64,10 @@ trait TypeTrait
      */
     public function getType(): Type
     {
-        if (!static::$__type) {
-            static::$__type = new Type(static::class);
+        if (!$this->__type) {
+            $this->__type = new Type(static::class);
         }
 
-        return static::$__type;
+        return $this->__type;
     }
 }
