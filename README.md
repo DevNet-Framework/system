@@ -1,16 +1,16 @@
 # DevNet Core
 This dependency is the core library of **DevNet Framework**, which includes the following Base Class Library:
 
-- Property Assessor
-- Extension Method
-- Linq Method
-- Generic Class
-- Async Task
-- Event Delegate
+- Property Accessors
+- Extension Methods
+- Linq Methods
+- Generic Types
+- Asynchronous Operations
+- Delegates & Events
 - Dependency Injection
-- Database Connector
-- IO Stream
 - Event Logging
+- IO Stream
+- Database Connector
 - Generic compiler
 - Boot Loader
 
@@ -19,7 +19,7 @@ This dependency is the core library of **DevNet Framework**, which includes the 
 - [Composer](https://getcomposer.org/) version 2.0 or higher
 
 ## Installation
-You can install DevNet Core as a third-party library with any framework or project, by running the following command in the terminal:
+You can install DevNet Core as a third-party library to work with any PHP project, by running the following command in the terminal:
 
 ```bash
 composer require devnet/core
