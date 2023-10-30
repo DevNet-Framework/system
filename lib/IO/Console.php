@@ -16,15 +16,10 @@ class Console
     public static ?ConsoleColor $ForegroundColor = null;
     public static ?ConsoleColor $BackgroundColor = null;
 
-    public static function write(string $format, array|string ...$args): void
+    public static function write(string $format, string ...$args): void
     {
         if (!isset(static::$Out)) {
             static::$Out = new FileStream('php://stdout', FileMode::Open, FileAccess::Write);
-        }
-
-        // if the fist argument is an array use it as arguments.
-        if (isset($args[0]) && is_array($args[0])) {
-            $args = $args[0];
         }
 
         $pattern = '/\{(\d+)(?:,\s*(-?\d+))?\}/';
@@ -56,14 +51,9 @@ class Console
         static::$Out->write("{$color}{$bgcolor}{$string}");
     }
 
-    public static function writeLine(?string $format = null, array|string ...$args): void
+    public static function writeLine(?string $format = null, string ...$args): void
     {
-        // overide the arguments if the fist argument is an array
-        if (isset($args[0]) && is_array($args[0])) {
-            $args = $args[0];
-        }
-
-        static::write((string) $format, $args);
+        static::write((string) $format, ...$args);
         static::write("\e[0m" . PHP_EOL);
     }
 
