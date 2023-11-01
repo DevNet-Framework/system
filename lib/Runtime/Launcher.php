@@ -22,8 +22,9 @@ class Launcher extends LauncherProperties
 
     public function launch(array $args = [], ?string $mainClass = null): void
     {
+        static::$classLoader->map(static::$rootNamespace, '/');
+        
         $root = scandir(static::$rootDirectory);
-
         foreach ($root as $dir) {
             if (!is_dir(static::$rootDirectory . '/' . $dir) || str_starts_with($dir, '.')) continue;
             static::$classLoader->map(static::$rootNamespace, '/' . $dir);

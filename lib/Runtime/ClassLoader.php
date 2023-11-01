@@ -44,22 +44,18 @@ class ClassLoader
                 $subDirectory = str_replace("\\", "/", $subDirectory);
                 $subDirectory = trim($subDirectory, "/");
                 $path         = $this->root . $baseDirectory . "/" . $subDirectory . "/" . $name . ".php";
-
+                
                 if (is_file($path)) {
-                    require_once $path;
-                    return;
+                    $content = file_get_contents($path);
+                    $tokens = \PhpToken::tokenize($content);
+                    foreach ($tokens as $token) {
+                        if ($token->getTokenName() == 'T_CLASS') {
+                            @include_once $path;
+                            return;
+                        }
+                    }
                 }
             }
-        }
-
-        array_shift($segments);
-        $directory = implode("\\", $segments);
-        $directory = str_replace("\\", "/", $directory);
-        $directory = trim($directory, "/");
-        $path      = $this->root . "/" . $directory . "/" . $name . ".php";
-
-        if (is_file($path)) {
-            require_once $path;
         }
     }
 
