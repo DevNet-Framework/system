@@ -30,19 +30,19 @@ class LoggerOptions
         return $this->providers;
     }
 
-    public function setMinimumLevel(int $level): void
+    public function setMinimumLevel(LogLevel $level): void
     {
         $this->addFilter('', $level);
     }
 
-    public function addFilter(string $category, int $level): void
+    public function addFilter(string $category, LogLevel $level): void
     {
         $this->filters[$category] = $level;
     }
 
     public function addProvider(ILoggerProvider $provider): void
     {
-        $this->providers[get_class($provider)] = $provider;
+        $this->providers[$provider::class] = $provider;
     }
 
     public function addConsole(): void
