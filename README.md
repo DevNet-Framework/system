@@ -1,7 +1,7 @@
 # DevNet Core
 This dependency is the core library of **DevNet Framework**, which includes the following Base Class Library:
 
-- Property Accessors
+- Accessor Properties
 - Extension Methods
 - Linq Methods
 - Generic Types
