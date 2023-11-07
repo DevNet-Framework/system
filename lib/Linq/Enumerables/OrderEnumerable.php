@@ -11,11 +11,13 @@ namespace DevNet\System\Linq\Enumerables;
 
 use DevNet\System\Collections\Enumerator;
 use DevNet\System\Collections\IEnumerable;
+use DevNet\System\MethodTrait;
 use DevNet\System\PropertyTrait;
 use Closure;
 
 class OrderEnumerable implements IEnumerable
 {
+    use MethodTrait;
     use PropertyTrait;
 
     private IEnumerable $enumerable;
@@ -27,50 +29,50 @@ class OrderEnumerable implements IEnumerable
         $this->enumerable = $enumerable;
     }
 
-    public function orderBy(Closure $predecate): static
+    public function orderBy(Closure $predicate): static
     {
         $array       = $this->enumerable->getIterator()->toArray();
-        $this->sort  = $this->sort($array, $predecate);
+        $this->sort  = $this->sort($array, $predicate);
         $list        = $this->list($this->sort);
         $this->array = $list;
         return $this;
     }
 
-    public function orderByDescending(Closure $predecate): static
+    public function orderByDescending(Closure $predicate): static
     {
         $array       = $this->enumerable->getIterator()->toArray();
-        $this->sort  = $this->sort($array, $predecate, true);
+        $this->sort  = $this->sort($array, $predicate, true);
         $list        = $this->list($this->sort);
         $this->array = $list;
         return $this;
     }
 
-    public function thenBy(Closure $predecate): static
+    public function thenBy(Closure $predicate): static
     {
-        $map         = $this->sort($this->sort, $predecate);
+        $map         = $this->sort($this->sort, $predicate);
         $list        = $this->list($map);
         $this->array = $list;
         return $this;
     }
 
-    public function thenByDescending(Closure $predecate): static
+    public function thenByDescending(Closure $predicate): static
     {
-        $map         = $this->sort($this->sort, $predecate, true);
+        $map         = $this->sort($this->sort, $predicate, true);
         $list        = $this->list($map);
         $this->array = $list;
         return $this;
     }
 
-    private function sort(array $array, Closure $predecate, $reverseOrder = false): array
+    private function sort(array $array, Closure $predicate, $reverseOrder = false): array
     {
         $sort = [];
         $leaf = false;
         foreach ($array as $key => $element) {
             $subKey = false;
             if (is_array($element)) {
-                $element = $this->sort($element, $predecate, $reverseOrder);
+                $element = $this->sort($element, $predicate, $reverseOrder);
             } else {
-                $key    = $predecate($element);
+                $key    = $predicate($element);
                 $subKey = true;
                 $leaf   = true;
             }

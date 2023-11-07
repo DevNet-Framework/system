@@ -11,11 +11,13 @@ namespace DevNet\System\Linq\Enumerables;
 
 use DevNet\System\Collections\Enumerator;
 use DevNet\System\Collections\IEnumerable;
+use DevNet\System\MethodTrait;
 use DevNet\System\PropertyTrait;
 use Closure;
 
 class CountEnumerable implements IEnumerable
 {
+    use MethodTrait;
     use PropertyTrait;
 
     private IEnumerable $enumerable;
@@ -25,28 +27,28 @@ class CountEnumerable implements IEnumerable
         $this->enumerable = $enumerable;
     }
 
-    public function count(Closure $predecate = null): int
+    public function count(Closure $predicate = null): int
     {
-        $cout = 0;
+        $count = 0;
         foreach ($this->enumerable as $element) {
-            if ($predecate) {
-                if ($predecate($element)) {
-                    $cout++;
+            if ($predicate) {
+                if ($predicate($element)) {
+                    $count++;
                 }
             } else {
-                $cout++;
+                $count++;
             }
         }
 
-        return $cout;
+        return $count;
     }
 
-    public function max(Closure $predecate = null)
+    public function max(Closure $predicate = null)
     {
         $value = null;
         foreach ($this->enumerable as $element) {
-            if ($predecate) {
-                $element = $predecate($element);
+            if ($predicate) {
+                $element = $predicate($element);
             }
 
             if ($value == null || $element > $value) {
@@ -57,12 +59,12 @@ class CountEnumerable implements IEnumerable
         return $value;
     }
 
-    public function min(Closure $predecate = null)
+    public function min(Closure $predicate = null)
     {
         $value = null;
         foreach ($this->enumerable as $element) {
-            if ($predecate) {
-                $element = $predecate($element);
+            if ($predicate) {
+                $element = $predicate($element);
             }
 
             if ($value == null || $element < $value) {

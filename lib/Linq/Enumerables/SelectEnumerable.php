@@ -11,11 +11,13 @@ namespace DevNet\System\Linq\Enumerables;
 
 use DevNet\System\Collections\Enumerator;
 use DevNet\System\Collections\IEnumerable;
+use DevNet\System\MethodTrait;
 use DevNet\System\PropertyTrait;
 use Closure;
 
 class SelectEnumerable implements IEnumerable
 {
+    use MethodTrait;
     use PropertyTrait;
 
     private IEnumerable $enumerable;
@@ -26,11 +28,11 @@ class SelectEnumerable implements IEnumerable
         $this->enumerable = $enumerable;
     }
 
-    public function select(Closure $predecate): static
+    public function select(Closure $predicate): static
     {
         $elements = [];
         foreach ($this->enumerable as $element) {
-            $object = $predecate($element);
+            $object = $predicate($element);
             $elements[] = $object;
         }
 

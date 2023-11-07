@@ -11,11 +11,13 @@ namespace DevNet\System\Linq\Enumerables;
 
 use DevNet\System\Collections\Enumerator;
 use DevNet\System\Collections\IEnumerable;
+use DevNet\System\MethodTrait;
 use DevNet\System\PropertyTrait;
 use Closure;
 
 class WhereEnumerable implements IEnumerable
 {
+    use MethodTrait;
     use PropertyTrait;
 
     private IEnumerable $enumerable;
@@ -26,11 +28,11 @@ class WhereEnumerable implements IEnumerable
         $this->enumerable = $enumerable;
     }
 
-    public function where(Closure $predecate): static
+    public function where(Closure $predicate): static
     {
         $elements = [];
         foreach ($this->enumerable as $key => $element) {
-            if ($predecate($element) !== false) {
+            if ($predicate($element) !== false) {
                 $elements[$key] = $element;
             }
         }

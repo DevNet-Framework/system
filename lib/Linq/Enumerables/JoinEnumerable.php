@@ -11,11 +11,12 @@ namespace DevNet\System\Linq\Enumerables;
 
 use DevNet\System\Collections\Enumerator;
 use DevNet\System\Collections\IEnumerable;
+use DevNet\System\MethodTrait;
 use Closure;
 
 class JoinEnumerable implements IEnumerable
 {
-    use \DevNet\System\Extension\ExtensionTrait;
+    use MethodTrait;
 
     private IEnumerable $enumerable;
     private array $array = [];
