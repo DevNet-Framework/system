@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -21,7 +22,7 @@ class FileLogger implements ILogger
 {
     private string $category;
     private Trace $trace;
-    
+
     public function __construct(string $category, string $fileName)
     {
         $this->category = $category;
@@ -55,8 +56,10 @@ class FileLogger implements ILogger
                 break;
         }
 
-        $dateTime = DateTime::createFromFormat('U.u', microtime(TRUE));
-        $date = '[' . $dateTime->format('Y-M-d H:i:s.v') . '] ';
+        $category = '';
+        if ($this->category) {
+            $category = $this->category . ': ';
+        }
 
         $replace = [];
         foreach ($args as $key => $value) {
@@ -66,9 +69,9 @@ class FileLogger implements ILogger
             }
         }
 
-        // interpolate replacement values into the string format
+        // Interpolate replacement values into the string format
         $message = strtr($message, $replace);
 
-        $this->trace->writeLine($date . $severity. $message);
+        $this->trace->writeLine($severity . $category . $message);
     }
 }

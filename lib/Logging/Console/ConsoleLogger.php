@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author      Mohammed Moussaoui
  * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
@@ -8,7 +9,6 @@
 
 namespace DevNet\System\Logging\Console;
 
-use DateTime;
 use DevNet\System\IO\Console;
 use DevNet\System\IO\ConsoleColor;
 use DevNet\System\Logging\ILogger;
@@ -17,7 +17,7 @@ use DevNet\System\Logging\LogLevel;
 class ConsoleLogger implements ILogger
 {
     private string $category;
-    
+
     public function __construct(string $category)
     {
         $this->category = $category;
@@ -28,25 +28,26 @@ class ConsoleLogger implements ILogger
         switch ($level) {
             case LogLevel::Trace:
                 $severity = 'Trace: ';
+                Console::$ForegroundColor = ConsoleColor::Blue;
                 break;
             case LogLevel::Debug:
-                Console::$ForegroundColor = ConsoleColor::Blue;
                 $severity = 'Debug: ';
+                Console::$ForegroundColor = ConsoleColor::Cyan;
                 break;
             case LogLevel::Information:
-                Console::$ForegroundColor = ConsoleColor::Green;
                 $severity = 'Info : ';
+                Console::$ForegroundColor = ConsoleColor::Green;
                 break;
             case LogLevel::Warning:
-                Console::$ForegroundColor = ConsoleColor::Yellow;
                 $severity = 'Warn : ';
+                Console::$ForegroundColor = ConsoleColor::Yellow;
                 break;
             case LogLevel::Error:
-                Console::$ForegroundColor = ConsoleColor::Red;
                 $severity = 'Error: ';
+                Console::$ForegroundColor = ConsoleColor::Red;
                 break;
             case LogLevel::Fatal:
-                Console::$ForegroundColor =ConsoleColor::White;
+                Console::$ForegroundColor = ConsoleColor::White;
                 Console::$BackgroundColor = ConsoleColor::Red;
                 $severity = 'Fatal: ';
                 break;
@@ -55,8 +56,10 @@ class ConsoleLogger implements ILogger
                 break;
         }
 
-        $dateTime = DateTime::createFromFormat('U.u', microtime(TRUE));
-        $date = '[' . $dateTime->format('Y-M-d H:i:s.v') . '] ';
+        $category = '';
+        if ($this->category) {
+            $category = $this->category . ': ';
+        }
 
         $replace = [];
         foreach ($args as $key => $value) {
@@ -66,10 +69,10 @@ class ConsoleLogger implements ILogger
             }
         }
 
-        // interpolate replacement values into the string format
+        // Interpolate replacement values into the string format
         $message = strtr($message, $replace);
 
-        Console::writeLine($date . $severity. $message);
+        Console::writeLine($severity . $category . $message);
         Console::resetColor();
     }
 }
