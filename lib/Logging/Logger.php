@@ -9,24 +9,27 @@
 
 namespace DevNet\System\Logging;
 
-use DevNet\System\PropertyTrait;
-
 class Logger implements ILogger
 {
-    use PropertyTrait;
-
     private LogLevel $minimumLevel;
-    private array $loggers;
+    private array $loggers = [];
 
-    public function __construct(array $loggers, LogLevel $minimumLevel = LogLevel::None)
+    public function __construct(string $category, array $providers, array $filters = [])
     {
-        $this->minimumLevel = $minimumLevel;
-        $this->loggers = $loggers;
-    }
+        foreach ($providers as $provider) {
+            $this->loggers[] = $provider->createLogger($category);
+        }
 
-    public function get_MinimumLevel(): LogLevel
-    {
-        return $this->minimumLevel;
+        $longestPrefix = '';
+        foreach ($filters as $prefix => $level) {
+            if (str_starts_with($category, $prefix)) {
+                if (strlen($prefix) > strlen($longestPrefix)) {
+                    $longestPrefix = $prefix;
+                }
+            }
+        }
+
+        $this->minimumLevel = $filters[$longestPrefix] ?? LogLevel::None;
     }
 
     public function log(LogLevel $level, string $message, array $args = []): void

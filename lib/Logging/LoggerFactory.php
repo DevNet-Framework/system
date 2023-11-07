@@ -33,22 +33,7 @@ class LoggerFactory implements ILoggerFactory
 
     public function createLogger(string $category): Logger
     {
-        $loggers = [];
-        foreach ($this->providers as $provider) {
-            $loggers[] = $provider->createLogger($category);
-        }
-
-        $longestPrefix = '';
-        foreach ($this->filters as $prefix => $level) {
-            if (str_starts_with($category, $prefix)) {
-                if (strlen($prefix) > strlen($longestPrefix)) {
-                    $longestPrefix = $prefix;
-                }
-            }
-        }
-
-        $minimumLevel = $this->filters[$longestPrefix] ?? 0;
-        return new Logger($loggers, $minimumLevel);
+        return new Logger($category, $this->providers, $this->filters);
     }
 
     public static function create(?Closure $configure = null): LoggerFactory
