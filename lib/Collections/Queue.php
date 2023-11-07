@@ -9,6 +9,7 @@
 
 namespace DevNet\System\Collections;
 
+use DevNet\System\MethodTrait;
 use DevNet\System\Template;
 use DevNet\System\Type;
 use DevNet\System\TypeTrait;
@@ -16,6 +17,7 @@ use DevNet\System\TypeTrait;
 #[Template('T')]
 class Queue implements IEnumerable
 {
+    use MethodTrait;
     use TypeTrait;
 
     private array $array = [];
