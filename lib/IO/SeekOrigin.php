@@ -11,7 +11,7 @@ namespace DevNet\System\IO;
 
 enum SeekOrigin: int
 {
-    case Begin   = SEEK_SET;
-    case Current = SEEK_CUR;
-    case End     = SEEK_END;
+    case Begin   = 0;
+    case Current = 1;
+    case End     = 2;
 }
