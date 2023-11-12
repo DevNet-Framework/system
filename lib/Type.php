@@ -21,7 +21,7 @@ class Type
 {
     public readonly string $Name;
     private array $parameters = [];
-    private array $arguments = [];
+    private array $arguments  = [];
 
     private static array $properties = [];
     private static array $methods    = [];
@@ -65,7 +65,7 @@ class Type
                 break;
         }
 
-        // set the type parameters and arguments
+        // Set the type parameters and arguments
         if ($this->isClass()) {
             $class = new ReflectionClass($this->Name);
             foreach ($class->getAttributes(Template::class) as $attribute) {
@@ -85,20 +85,24 @@ class Type
                 // No need to look for other attributes.
                 break;
             }
+
+            // Convert associative array to indexed array
+            $this->parameters = array_values($this->parameters);
         }
 
-        if (count($this->parameters) != count($arguments)) {
-            throw new ArrayException("The number of generic arguments must be the same as the number of generic parameters.", 1);
+        if (!$this->isGenericType() && $arguments) {
+            throw new TypeException("The type {$this->Name} is not a generic type, and cannot have generic type arguments!", 0, 1);
         }
 
-        $index = 0;
-        foreach ($this->parameters as $parameter) {
-            $argument = $arguments[$index] ?? null;
-            if (!$argument || !is_string($argument)) {
+        if ($this->parameters && count($this->parameters) != count($arguments)) {
+            throw new ArrayException("The number of generic type arguments must be equal to the number of generic type parameters.", 0, 1);
+        }
+
+        foreach ($arguments as $argument) {
+            if (!is_string($argument)) {
                 throw new ArrayException("Type arguments must be of type array<int, string>", 0, 1);
             }
-            $this->arguments[$parameter->Name] = new Type($argument);
-            $index++;
+            $this->arguments[] = new Type($argument);
         }
     }
 
@@ -210,8 +214,7 @@ class Type
         if ($type->isEquivalentTo($this)) return true;
 
         if ($type->isSubclassOf($this)) {
-            if ($this->parameters != $type->getGenericArguments()) return false;
-            return true;
+            return $this->arguments == $type->getGenericArguments() ? true : false;
         }
 
         if ($this->isInterface()) {
@@ -226,8 +229,7 @@ class Type
         if ($this->isEquivalentTo($type)) return true;
 
         if ($this->isSubclassOf($type)) {
-            if ($this->parameters != $type->getGenericArguments()) return false;
-            return true;
+            return $this->arguments == $type->getGenericArguments() ? true : false;
         }
 
         if ($type->isInterface()) {
@@ -246,8 +248,7 @@ class Type
     public function __toString(): string
     {
         $name = $this->Name;
-        if ($this->isGenericType()) $name .= '<' . implode(',', $this->parameters) . '>';
-
+        $name = $this->isGenericType() ? $name  . '<' . implode(',', $this->arguments) . '>' : $name;
         return $name;
     }
 

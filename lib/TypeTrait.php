@@ -31,29 +31,30 @@ trait TypeTrait
      */
     protected function checkArgumentTypes(array $args): void
     {
-        $trace = debug_backtrace();
-        $methodName = $trace[1]['function'];
-        $genericArgs = $this->getType()->getGenericArguments();
-        if ($genericArgs) {
-            $methodInfo = $this->getType()->getMethod($methodName);
-            foreach ($methodInfo->getParameters() as $index => $param) {
-                $typeAttribute = $param->getAttributes(Type::class)[0] ?? null;
-                if ($typeAttribute) {
-                    $argument = $args[$index];
-                    $argumentType = Type::getType($argument);
-                    $parameterType = $typeAttribute->newInstance();
-                    if ($parameterType->isGenericParameter()) {
-                        $genericArgument = $genericArgs[$parameterType->Name] ?? null;
-                        if ($genericArgument) {
-                            // Replace the generic type parameter with the generic type argument.
-                            $parameterType = $genericArgument;
-                        }
-                    }
+        $trace         = debug_backtrace();
+        $methodName    = $trace[1]['function'];
+        $methodInfo    = $this->getType()->getMethod($methodName);
+        $genericArgs   = $this->getType()->getGenericArguments();
+        $genericParams = $this->getType()->getGenericParameters();
 
-                    if (!$argumentType->isAssignableTo($parameterType)) {
-                        $index++;
-                        throw new TypeException(static::class . "::{$methodName}(): Argument #{$index} must be of type {$parameterType}", $index, 2);
+        foreach ($methodInfo->getParameters() as $index => $param) {
+            $typeAttribute = $param->getAttributes(Type::class)[0] ?? null;
+            if ($typeAttribute) {
+                $argument = $args[$index];
+                $argumentType = Type::getType($argument);
+                $parameterType = $typeAttribute->newInstance();
+                if ($parameterType->isGenericParameter()) {
+                    $key = array_search($parameterType, $genericParams);
+                    $genericArgument = $genericArgs[$key] ?? null;
+                    if ($genericArgument) {
+                        // Replace the generic type parameter with the generic type argument.
+                        $parameterType = $genericArgument;
                     }
+                }
+
+                if (!$argumentType->isAssignableTo($parameterType)) {
+                    $index++;
+                    throw new TypeException(static::class . "::{$methodName}(): Argument #{$index} must be of type {$parameterType}", $index, 2);
                 }
             }
         }
