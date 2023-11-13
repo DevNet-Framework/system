@@ -11,6 +11,7 @@ namespace DevNet\System\Runtime;
 
 use DevNet\System\Exceptions\ClassException;
 use DevNet\System\Exceptions\MethodException;
+use DOMDocument;
 use ReflectionMethod;
 
 class Launcher extends LauncherProperties
@@ -23,7 +24,7 @@ class Launcher extends LauncherProperties
     public function launch(array $args = [], ?string $mainClass = null): void
     {
         static::$classLoader->map(static::$rootNamespace, '/');
-        
+
         $root = scandir(static::$rootDirectory);
         foreach ($root as $dir) {
             if (!is_dir(static::$rootDirectory . '/' . $dir) || str_starts_with($dir, '.')) continue;
@@ -50,25 +51,30 @@ class Launcher extends LauncherProperties
 
     public static function initialize(string $projectPath): ?static
     {
-        if (!file_exists($projectPath)) {
+        if (!is_file($projectPath)) {
             return null;
         }
 
-        $projectFile = simplexml_load_file($projectPath);
-        if (!$projectFile) {
+        $dom = new DOMDocument();
+        $result = $dom->load($projectPath);
+        if (!$result) {
             return null;
         }
 
-        static::$rootDirectory = $root = dirname($projectPath);
-        static::$rootNamespace = $projectFile->Properties->RootNamespace ?? 'Application';
-        static::$startupObject = $projectFile->Properties->StartupObject ?? 'Application\\Program';
-        $codeFiles = $projectFile->Items->CodeFile ?? [];
+        static::$rootDirectory = dirname($projectPath);
 
-        // load local packages including composer
+        $rootNamespace = $dom->getElementsByTagName('RootNamespace')->item(0);
+        static::$rootNamespace = $rootNamespace ? $rootNamespace->textContent : 'Application';
+
+        $startupObject = $dom->getElementsByTagName('StartupObject')->item(0);
+        static::$startupObject = $startupObject ? $startupObject->textContent : 'Application\\Program';
+
+        // Loads external php files if they exist.
+        $codeFiles = $dom->getElementsByTagName('CodeFile');
         foreach ($codeFiles as $codeFile) {
-            $file = (string)$codeFile->attributes()->include;
-            if (is_file($root . '/' . $file)) {
-                require $root . '/' . $file;
+            $file = $codeFile->getAttribute('include');
+            if (is_file(static::$rootDirectory . '/' . $file)) {
+                @include_once static::$rootDirectory . '/' . $file;
             }
         }
 
