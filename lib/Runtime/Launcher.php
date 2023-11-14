@@ -23,15 +23,9 @@ class Launcher extends LauncherProperties
 
     public function launch(array $args = [], ?string $mainClass = null): void
     {
-        static::$classLoader->map(static::$rootNamespace, '/');
-
-        $root = scandir(static::$rootDirectory);
-        foreach ($root as $dir) {
-            if (!is_dir(static::$rootDirectory . '/' . $dir) || str_starts_with($dir, '.')) continue;
-            static::$classLoader->map(static::$rootNamespace, '/' . $dir);
-        }
-
+        static::$classLoader->map('/');
         static::$classLoader->register();
+
         self::$arguments = $args;
         if ($mainClass) {
             static::$startupObject = $mainClass;
@@ -78,6 +72,6 @@ class Launcher extends LauncherProperties
             }
         }
 
-        return new static(new ClassLoader($root));
+        return new static(new ClassLoader(static::$rootDirectory));
     }
 }

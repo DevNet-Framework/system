@@ -9,53 +9,60 @@
 
 namespace DevNet\System\Runtime;
 
+use DirectoryIterator;
+
 class ClassLoader
 {
     private string $root;
-    private array $map;
+    private array $codeFiles = [];
 
-    public function __construct(string $root, array $map = [])
+    public function __construct(string $root)
     {
         $this->root = $root;
-        $this->map = $map;
     }
 
-    public function getRoot(): string
+    public function map(string $path): void
     {
-        return $this->root;
+        $this->codeFiles += $this->scanForCodeFiles($this->root . $path);
     }
 
-    public function map(string $namespacePrefix, string $baseDirectory): void
+    public function scanForCodeFiles(string $directory): array
     {
-        $this->map[$baseDirectory] = $namespacePrefix;
+        $files = [];
+        foreach (new DirectoryIterator($directory) as $path) {
+            if ($path->isDir() && !str_starts_with($path->getFilename(), '.')) {
+                $result = $this->scanForCodeFiles($directory . '/' . $path->getFilename());
+                $files = array_merge($files, $result);
+            } else if ($path->isFile() && strtolower($path->getExtension()) == 'php') {
+                $content = file_get_contents($path->getRealPath());
+                preg_match_all('%namespace\s+([a-z][a-z0-9_\\\]*)\s*;|class\s+([a-z][a-z0-9_]*)|/\*(.|\n)*?\*/|//.*%i', $content, $matches);
+
+                $namespace = null;
+                $namespaces = $matches[1] ?? [];
+                foreach ($namespaces as $namespace) {
+                    if ($namespace) {
+                        $namespace .= '\\';
+                        break;
+                    }
+                }
+
+                $classes = $matches[2] ?? [];
+                foreach ($classes as $class) {
+                    if ($class) {
+                        $files[$namespace . $class] = $path->getRealPath();
+                    }
+                }
+            }
+        }
+
+        return $files;
     }
 
     public function load(string $class): void
     {
-        $segments  = explode("\\", $class);
-        $name      = array_pop($segments);
-        $namespace = implode("\\", $segments);
-
-        foreach ($this->map as $baseDirectory => $namespacePrefix) {
-            $position = strpos($namespace, $namespacePrefix);
-
-            if ($position !== false) {
-                $subDirectory = substr_replace($namespace, "", $position, strlen($namespacePrefix));
-                $subDirectory = str_replace("\\", "/", $subDirectory);
-                $subDirectory = trim($subDirectory, "/");
-                $path         = $this->root . $baseDirectory . "/" . $subDirectory . "/" . $name . ".php";
-                
-                if (is_file($path)) {
-                    $content = file_get_contents($path);
-                    $tokens = \PhpToken::tokenize($content);
-                    foreach ($tokens as $token) {
-                        if ($token->getTokenName() == 'T_CLASS') {
-                            @include_once $path;
-                            return;
-                        }
-                    }
-                }
-            }
+        $file = $this->codeFiles[$class] ?? null;
+        if ($file) {
+            @include_once $file;
         }
     }
 
