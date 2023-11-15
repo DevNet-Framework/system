@@ -54,7 +54,7 @@ class Lexer implements ILexer
 
     public function reset(): void
     {
-        $this->definition = [];
+        $this->definitions = [];
         $this->input = '';
         $this->token = null;
     }
