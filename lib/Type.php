@@ -90,10 +90,6 @@ class Type
             $this->parameters = array_values($this->parameters);
         }
 
-        if (!$this->isGenericType() && $arguments) {
-            throw new TypeException("The type {$this->Name} is not a generic type, and cannot have generic type arguments!", 0, 1);
-        }
-
         if ($this->parameters && count($this->parameters) != count($arguments)) {
             throw new ArrayException("The number of generic type arguments must be equal to the number of generic type parameters.", 0, 1);
         }
@@ -181,7 +177,7 @@ class Type
 
     public function isGenericType(): bool
     {
-        return $this->isClass() && $this->parameters ? true : false;
+        return ($this->isClass() || $this->interface()) && $this->arguments ? true : false;
     }
 
     public function isGenericParameter(): bool
