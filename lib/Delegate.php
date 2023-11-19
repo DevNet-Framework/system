@@ -14,15 +14,13 @@ use DevNet\System\Collections\IEnumerable;
 use DevNet\System\Exceptions\MethodException;
 use DevNet\System\Exceptions\TypeException;
 use ArrayAccess;
-use Closure;
 use ReflectionClass;
-use ReflectionFunction;
 use ReflectionMethod;
 
 abstract class Delegate implements ArrayAccess, IEnumerable
 {
     protected ReflectionMethod $signature;
-    protected array $functions = [];
+    protected array $actions = [];
 
     public function __construct(?callable $target = null)
     {
@@ -42,33 +40,24 @@ abstract class Delegate implements ArrayAccess, IEnumerable
         }
     }
 
-    public function offsetSet($key, $action): void
+    public function offsetSet($key, $function): void
     {
-        if (!is_callable($action)) {
+        if (!is_callable($function)) {
             throw new TypeException("Illegal value type, the value must be of type callable", 0, 1);
         }
 
-        if (is_array($action)) {
-            $reflection = new ReflectionMethod($action[0], $action[1]);
-            $action = $reflection->getClosure($action[0]);
-        } else if (is_object($action) && !$action instanceof Closure) {
-            $reflection = new ReflectionMethod($action, '__invoke');
-            $action = $reflection->getClosure($action);
-        }
-
-        $function = new ReflectionFunction($action);
+        $action = new Action($function);
 
         if (is_null($key)) {
-            $this->functions[] = $function;
+            $this->actions[] = $action;
         } else {
             if (!is_int($key)) {
                 throw new TypeException("Illegal key type, the key must be of type integer or null", 1, 0);
             }
-            $this->functions[$key] = $function;
+            $this->actions[$key] = $action;
         }
 
-
-        foreach ($function->getParameters() as $index => $parameter) {
+        foreach ($action->Reflection->getParameters() as $index => $parameter) {
             if ($parameter->hasType()) {
                 $parameterTypeName = $parameter->getType()->getName();
                 $signatureParameter = $this->signature->getParameters()[$index] ?? null;
@@ -84,7 +73,7 @@ abstract class Delegate implements ArrayAccess, IEnumerable
             }
         }
 
-        if ($this->signature->hasReturnType() && $this->signature->getReturnType() != $function->getReturnType()) {
+        if ($this->signature->hasReturnType() && $this->signature->getReturnType() != $action->Reflection->getReturnType()) {
             throw new TypeException("The return type of the associated function not compatible with the delegate " . $this::class, 0, 1);
         }
     }
@@ -95,7 +84,7 @@ abstract class Delegate implements ArrayAccess, IEnumerable
             throw new TypeException("Illegal key type, the key must be of type integer", 0, 1);
         }
 
-        return $this->functions[$key] ?? null;
+        return $this->actions[$key] ?? null;
     }
 
     public function offsetUnset($key): void
@@ -104,7 +93,7 @@ abstract class Delegate implements ArrayAccess, IEnumerable
             throw new TypeException("Illegal key type, the key must be of type integer", 0, 1);
         }
 
-        unset($this->functions[$key]);
+        unset($this->actions[$key]);
     }
 
     public function offsetExists($key): bool
@@ -113,19 +102,18 @@ abstract class Delegate implements ArrayAccess, IEnumerable
             throw new TypeException("Illegal key type, the key must be of type integer", 0, 1);
         }
 
-        return isset($this->functions[$key]);
+        return isset($this->actions[$key]);
     }
 
     public function getIterator(): Enumerator
     {
-        return new Enumerator($this->functions);
+        return new Enumerator($this->actions);
     }
-
 
     public function invoke(...$args)
     {
-        foreach ($this->functions as $function) {
-            $result = $function->invoke(...$args);
+        foreach ($this->actions as $action) {
+            $result = $action->invoke(...$args);
         }
 
         if (isset($result)) {
