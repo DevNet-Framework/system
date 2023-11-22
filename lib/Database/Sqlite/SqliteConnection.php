@@ -14,23 +14,11 @@ use PDO;
 
 class SqliteConnection extends DbConnection
 {
-    private string $datasource;
-    private ?PDO $connector;
-
-    public function __construct(string $connection)
-    {
-        $this->datasource = "sqlite:" . $connection;
-    }
-
-    public function get_Connector(): PDO
-    {
-        return $this->connector;
-    }
-
     public function open(): void
     {
         if ($this->state == 0) {
-            $this->connector = new PDO($this->datasource);
+            $dsn = "sqlite:" . $this->ConnectionString;
+            $this->connector = new PDO($dsn);
             $this->state = 1;
         }
     }

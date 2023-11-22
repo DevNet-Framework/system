@@ -14,41 +14,25 @@ use PDO;
 
 class PgSqlConnection extends DbConnection
 {
-    private string $datasource;
-    private string $username;
-    private string $password;
-    private ?PDO $connector;
-
-    public function __construct(string $connection)
-    {
-        $username = parse_url($connection, PHP_URL_USER);
-        $password = parse_url($connection, PHP_URL_PASS);
-        $host     = parse_url($connection, PHP_URL_HOST);
-        $port     = parse_url($connection, PHP_URL_PORT);
-        $path     = parse_url($connection, PHP_URL_PATH);
-        $query    = parse_url($connection, PHP_URL_QUERY);
-
-        $username = $username ? $username : "";
-        $password = $password ? $password : "";
-        $host     = $host ? "host=" . $host : "";
-        $port     = $port ? "," . $port : "";
-        $database = $path ? substr(strrchr($path, "/"), 1) : "";
-        $options  = $query ? str_replace("&", ";", $query) . ";" : "";
-
-        $this->datasource = "pgsql:" . $host . $port . ";" . "dbname=" . $database . ";" . $options;
-        $this->username   = $username;
-        $this->password   = $password;
-    }
-
-    public function get_Connector(): PDO
-    {
-        return $this->connector;
-    }
-
     public function open(): void
     {
         if ($this->state == 0) {
-            $this->connector = new PDO($this->datasource, $this->username, $this->password);
+            $username = parse_url($this->connectionString, PHP_URL_USER);
+            $password = parse_url($this->connectionString, PHP_URL_PASS);
+            $host     = parse_url($this->connectionString, PHP_URL_HOST);
+            $port     = parse_url($this->connectionString, PHP_URL_PORT);
+            $path     = parse_url($this->connectionString, PHP_URL_PATH);
+            $query    = parse_url($this->connectionString, PHP_URL_QUERY);
+
+            $username = $username ? $username : "";
+            $password = $password ? $password : "";
+            $host     = $host ? "host=" . $host : "";
+            $port     = $port ? "," . $port : "";
+            $database = $path ? substr(strrchr($path, "/"), 1) : "";
+            $options  = $query ? str_replace("&", ";", $query) . ";" : "";
+
+            $dsn = "pgsql:" . $host . $port . ";" . "dbname=" . $database . ";" . $options;
+            $this->connector = new PDO($dsn, $username, $password);
             $this->state = 1;
         }
     }

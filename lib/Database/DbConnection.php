@@ -10,12 +10,30 @@
 namespace DevNet\System\Database;
 
 use DevNet\System\PropertyTrait;
+use PDO;
 
 abstract class DbConnection
 {
     use PropertyTrait;
 
+    protected string $connectionString;
+    protected ?PDO $connector = null;
     protected int $state = 0;
+
+    public function __construct(string $connectionString)
+    {
+        $this->connectionString = $connectionString;
+    }
+
+    public function get_ConnectionString(): string
+    {
+        return $this->connectionString;
+    }
+
+    public function get_Connector(): ?PDO
+    {
+        return $this->connector;
+    }
 
     public function get_State(): int
     {
