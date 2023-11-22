@@ -10,6 +10,7 @@
 namespace DevNet\System\Database\MySql;
 
 use DevNet\System\Database\DbConnection;
+use DevNet\System\Database\DbConnectionStringBuilder;
 use PDO;
 
 class MySqlConnection extends DbConnection
@@ -17,22 +18,35 @@ class MySqlConnection extends DbConnection
     public function open(): void
     {
         if ($this->state == 0) {
-            $username = parse_url($this->connectionString, PHP_URL_USER);
-            $password = parse_url($this->connectionString, PHP_URL_PASS);
-            $host     = parse_url($this->connectionString, PHP_URL_HOST);
-            $port     = parse_url($this->connectionString, PHP_URL_PORT);
-            $path     = parse_url($this->connectionString, PHP_URL_PATH);
-            $query    = parse_url($this->connectionString, PHP_URL_QUERY);
+            $parser = new DbConnectionStringBuilder();
+            $parser->ConnectionString = $this->connectionString;
+            $dsn = new DbConnectionStringBuilder();
 
-            $username = $username ? $username : "";
-            $password = $password ? $password : "";
-            $host     = $host ? "host=" . $host : "";
-            $port     = $port ? ":" . $port : "";
-            $database = $path ? substr(strrchr($path, "/"), 1) : "";
-            $options  = $query ? str_replace("&", ";", $query) . ";" : "";
+            foreach ($parser as $key => $value) {
+                switch (strtolower($key)) {
+                    case 'hostname':
+                    case 'host':
+                        $dsn['host'] = $value;
+                        break;
+                    case 'schema':
+                    case 'database':
+                    case 'dbname':
+                        $dsn['dbname'] = $value;
+                        break;
+                    case 'username':
+                    case 'user':
+                        $username = $value;
+                        break;
+                    case 'password':
+                        $password = $value;
+                        break;
+                    default:
+                        $dsn[$key] = $value;
+                        break;
+                }
+            }
 
-            $dsn = "mysql:" . $host . $port . ";" . "dbname=" . $database . ";" . $options;
-            $this->connector = new PDO($dsn, $username, $password);
+            $this->connector = new PDO('mysql:' . $dsn, $username ?? null, $password ?? null);
             $this->state = 1;
         }
     }
