@@ -42,8 +42,8 @@ class HelpResult
                         if ($this->secondaryColor) {
                             Console::$ForegroundColor = $this->secondaryColor;
                         }
-                        $lenth = strlen($name);
-                        $space = str_repeat(" ", $this->maxWidth - $lenth + 4);
+                        $length = strlen($name);
+                        $space = str_repeat(" ", $this->maxWidth - $length + 4);
                         Console::write($name . $space);
                         Console::resetColor();
                         Console::writeLine($description);

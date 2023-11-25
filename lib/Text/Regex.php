@@ -18,14 +18,14 @@ class Regex
         return $matches;
     }
 
-    public static function replace(string $pattern, string $replacement, string $subject, int $limite = -1): ?string
+    public static function replace(string $pattern, string $replacement, string $subject, int $limit = -1): ?string
     {
-        return preg_replace($pattern, $replacement, $subject, $limite);
+        return preg_replace($pattern, $replacement, $subject, $limit);
     }
 
-    public static function split(string $pattern, string $subject, int $limite = -1, int $flags = 0): ?array
+    public static function split(string $pattern, string $subject, int $limit = -1, int $flags = 0): ?array
     {
-        $chunks = preg_split($pattern, $subject, $limite, $flags);
+        $chunks = preg_split($pattern, $subject, $limit, $flags);
         if (!$chunks) {
             $chunks = null;
         }

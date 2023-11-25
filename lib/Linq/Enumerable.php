@@ -21,34 +21,34 @@ use Closure;
 
 abstract class Enumerable
 {
-    public static function select(IEnumerable $enumerable, Closure $predecate): SelectEnumerable
+    public static function select(IEnumerable $enumerable, Closure $predicate): SelectEnumerable
     {
         $selectEnumerable = new SelectEnumerable($enumerable);
-        return $selectEnumerable->select($predecate);
+        return $selectEnumerable->select($predicate);
     }
 
-    public static function where(IEnumerable $enumerable, Closure $predecate): WhereEnumerable
+    public static function where(IEnumerable $enumerable, Closure $predicate): WhereEnumerable
     {
         $whereEnumerable = new WhereEnumerable($enumerable);
-        return $whereEnumerable->where($predecate);
+        return $whereEnumerable->where($predicate);
     }
 
-    public static function orderBy(IEnumerable $enumerable, Closure $predecate): OrderEnumerable
+    public static function orderBy(IEnumerable $enumerable, Closure $predicate): OrderEnumerable
     {
         $orderEnumerable = new OrderEnumerable($enumerable);
-        return $orderEnumerable->orderBy($predecate);
+        return $orderEnumerable->orderBy($predicate);
     }
 
-    public static function orderByDescending(IEnumerable $enumerable, Closure $predecate): OrderEnumerable
+    public static function orderByDescending(IEnumerable $enumerable, Closure $predicate): OrderEnumerable
     {
         $orderEnumerable = new OrderEnumerable($enumerable);
-        return $orderEnumerable->orderByDescending($predecate);
+        return $orderEnumerable->orderByDescending($predicate);
     }
 
-    public static function groupBy(IEnumerable $enumerable, Closure $predecate): GroupEnumerable
+    public static function groupBy(IEnumerable $enumerable, Closure $predicate): GroupEnumerable
     {
         $group = new GroupEnumerable($enumerable);
-        return $group->groupBy($predecate);
+        return $group->groupBy($predicate);
     }
 
     public static function join(IEnumerable $enumerable, $innerCollection, Closure $outerSelector, Closure $innerSelector, Closure $resultSelector): JoinEnumerable
@@ -69,22 +69,22 @@ abstract class Enumerable
         return $take->skip($offset);
     }
 
-    public static function count(IEnumerable $enumerable, Closure $predecate = null): int
+    public static function count(IEnumerable $enumerable, Closure $predicate = null): int
     {
         $count = new CountEnumerable($enumerable);
-        return $count->count($predecate);
+        return $count->count($predicate);
     }
 
-    public static function max(IEnumerable $enumerable, Closure $predecate = null)
+    public static function max(IEnumerable $enumerable, Closure $predicate = null)
     {
         $count = new CountEnumerable($enumerable);
-        return $count->max($predecate);
+        return $count->max($predicate);
     }
 
-    public static function min(IEnumerable $enumerable, Closure $predecate = null)
+    public static function min(IEnumerable $enumerable, Closure $predicate = null)
     {
         $count = new CountEnumerable($enumerable);
-        return $count->min($predecate);
+        return $count->min($predicate);
     }
 
     public static function first(IEnumerable $enumerable)

@@ -56,9 +56,9 @@ class HelpBuilder
         ksort($rows);
         foreach ($rows as $label => $description) {
             $lines[$this->indent . $label] = $description;
-            $lenth = strlen($label);
-            if ($lenth > $this->maxWidth) {
-                $this->maxWidth = $lenth;
+            $length = strlen($label);
+            if ($length > $this->maxWidth) {
+                $this->maxWidth = $length;
             }
         }
 
@@ -109,8 +109,8 @@ class HelpBuilder
             $usage .= '[options]';
         }
 
-        $this->writeline($usage);
-        $this->writeline();
+        $this->writeLine($usage);
+        $this->writeLine();
     }
 
     public function writeArguments(): void
@@ -122,7 +122,7 @@ class HelpBuilder
                 $rows[$argument->Name] = $argument->Description;
             }
             $this->writeRows($rows);
-            $this->writeline();
+            $this->writeLine();
         }
     }
 
@@ -139,7 +139,7 @@ class HelpBuilder
                 $rows[$name] = $option->Description;
             }
             $this->writeRows($rows);
-            $this->writeline();
+            $this->writeLine();
         }
     }
 
@@ -152,7 +152,7 @@ class HelpBuilder
                 $rows[$command->Name] = $command->Description;
             }
             $this->writeRows($rows);
-            $this->writeline();
+            $this->writeLine();
         }
     }
 

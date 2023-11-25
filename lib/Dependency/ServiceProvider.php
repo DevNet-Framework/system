@@ -12,7 +12,7 @@ namespace DevNet\System\Dependency;
 class ServiceProvider implements IServiceProvider
 {
     private array $instanceServices = [];
-    private IserviceCollection $serviceCollection;
+    private IServiceCollection $serviceCollection;
 
     public function __construct(IServiceCollection $serviceCollection)
     {
@@ -40,7 +40,7 @@ class ServiceProvider implements IServiceProvider
                     return $serviceDescriptor->ImplementationInstance;
                 }
 
-                if ($serviceDescriptor->ImplimentationType) {
+                if ($serviceDescriptor->ImplementationType) {
                     if (isset($this->instanceServices[$serviceType])) {
                         if ($serviceDescriptor->Lifetime == 1) {
                             return $this->instanceServices[$serviceType];
@@ -51,12 +51,12 @@ class ServiceProvider implements IServiceProvider
                         }
                     }
 
-                    $instance = Activator::CreateInstance($serviceDescriptor->ImplimentationType, $this);
+                    $instance = Activator::CreateInstance($serviceDescriptor->ImplementationType, $this);
                     $this->instanceServices[$serviceType] = $instance;
                     return $instance;
                 }
 
-                if ($serviceDescriptor->ImplimentationFactory) {
+                if ($serviceDescriptor->ImplementationFactory) {
                     if (isset($this->instanceServices[$serviceType])) {
                         if ($serviceDescriptor->Lifetime == 1) {
                             return $this->instanceServices[$serviceType];
@@ -66,7 +66,7 @@ class ServiceProvider implements IServiceProvider
                             return clone $this->instanceServices[$serviceType];
                         }
                     }
-                    $factory = $serviceDescriptor->ImplimentationFactory;
+                    $factory = $serviceDescriptor->ImplementationFactory;
                     $instance = $factory($this);
 
                     $this->instanceServices[$serviceType] = $instance;

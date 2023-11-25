@@ -26,9 +26,9 @@ class ServiceDescriptor
 
     private int $lifetime;
     private string $serviceType;
-    private ?string $implimentationType = null;
+    private ?string $implementationType = null;
     private ?object $implementationInstance = null;
-    private ?Closure $implimentationFactory = null;
+    private ?Closure $implementationFactory = null;
 
     public function __construct(int $lifetime, string $serviceType, $service = null)
     {
@@ -50,7 +50,7 @@ class ServiceDescriptor
                 if (!$serviceType->isAssignableFrom(new Type($service))) {
                     throw new TypeException("The registered service is not compatible with the declared type {$serviceType}", 0, 1);
                 }
-                $this->implimentationType = $service;
+                $this->implementationType = $service;
                 break;
             case is_object($service):
                 if ($service instanceof Closure) {
@@ -59,14 +59,14 @@ class ServiceDescriptor
                         throw new TypeException("The service factory must have a return type", 0, 1);
                     }
 
-                    // The registered service must be assignable to the factory returne type and to the declared service type
-                    // and the declared service type must be assignable to and from the factory returne type
-                    // becasue both can be concrete or abstract type of the registed service.
+                    // The registered service must be assignable to the factory retune type and to the declared service type
+                    // and the declared service type must be assignable to and from the factory return type
+                    // because both can be concrete or abstract type of the registered service.
                     $type = new Type($reflector->getReturnType()->getName());
                     if (!$serviceType->isAssignableFrom($type) && !$serviceType->isAssignableTo($type)) {
                         throw new TypeException("The registered service is not compatible with the declared type {$serviceType}", 0, 1);
                     }
-                    $this->implimentationFactory = $service;
+                    $this->implementationFactory = $service;
                 } else {
                     // The registered service must be assignable to the declared service type
                     if (!$serviceType->isTypeOf($service)) {
@@ -91,9 +91,9 @@ class ServiceDescriptor
         return $this->serviceType;
     }
 
-    public function get_ImplimentationType(): ?string
+    public function get_ImplementationType(): ?string
     {
-        return $this->implimentationType;
+        return $this->implementationType;
     }
 
     public function get_ImplementationInstance(): ?object
@@ -101,8 +101,8 @@ class ServiceDescriptor
         return $this->implementationInstance;
     }
 
-    public function get_ImplimentationFactory(): ?Closure
+    public function get_ImplementationFactory(): ?Closure
     {
-        return $this->implimentationFactory;
+        return $this->implementationFactory;
     }
 }

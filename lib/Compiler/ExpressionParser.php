@@ -186,7 +186,7 @@ class ExpressionParser
                         $variableName  = ltrim($items[2]->getValue(), '$');
 
                         if (!array_key_exists($variableName, $this->outerVariables)) {
-                            throw new ParserException("Undefined property variable \${$parameterName}::${$variableName}");
+                            throw new ParserException("Undefined property variable \${$parameterName}::\${$variableName}");
                         }
 
                         if (!is_string($this->outerVariables[$variableName])) {

@@ -42,8 +42,8 @@ class Grammar
         $this->state = $state;
         $matchedRules = [];
         foreach ($state as $rule) {
-            if (isset($rule->Predecates[$position])) {
-                if ($rule->Predecates[$position] == $itemName) {
+            if (isset($rule->Predicates[$position])) {
+                if ($rule->Predicates[$position] == $itemName) {
                     $matchedRules[$rule->Index] = $rule;
                 }
             }
@@ -56,8 +56,8 @@ class Grammar
     {
         $nextRules = [];
         foreach ($this->rules as $rule) {
-            if (isset($rule->Predecates[0])) {
-                if ($rule->Predecates[0] == $item && count($rule->Predecates) > 1) {
+            if (isset($rule->Predicates[0])) {
+                if ($rule->Predicates[0] == $item && count($rule->Predicates) > 1) {
                     $nextRules[$rule->Index] = $rule;
                 }
             }

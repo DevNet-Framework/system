@@ -14,7 +14,7 @@ use DevNet\System\Collections\IEnumerable;
 interface IQueryable extends IEnumerable
 {
     /**
-     * This method must retun the value of following properites
+     * This method must return the value of following properties
      * @return object $EntityType
      * @return IQueryProvider $Provider
      * @return Expression $Expression

@@ -9,7 +9,7 @@
 
 namespace DevNet\System\Compiler\Lexing;
 
-class TokenDefenition
+class TokenDefinition
 {
     public string $Name;
     public string $Pattern;

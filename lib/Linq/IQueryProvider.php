@@ -9,7 +9,6 @@
 
 namespace DevNet\System\Linq;
 
-use DevNet\System\Collections\Enumerator;
 use DevNet\System\Compiler\Expressions\Expression;
 use DevNet\System\Linq\IQueryable;
 

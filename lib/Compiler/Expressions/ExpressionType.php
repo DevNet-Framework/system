@@ -11,8 +11,8 @@ namespace DevNet\System\Compiler\Expressions;
 
 class ExpressionType
 {
-    const Constant = 'DevNet\System\Linq\Expressions\ConstantExpression';
-    const Parameter = 'DevNet\System\Linq\Expressions\ParameterExpression';
-    const Property = 'DevNet\System\Linq\Expressions\PropertyExpression';
-    const Binary = 'DevNet\System\Linq\Expressions\BinaryExpression';
+    const Constant  = ConstantExpression::class;
+    const Parameter = ParameterExpression::class;
+    const Property  = PropertyExpression::class;
+    const Binary    = BinaryExpression::class;
 }

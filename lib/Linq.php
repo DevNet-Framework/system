@@ -17,39 +17,39 @@ use Closure;
 
 class Linq
 {
-    public static function select(IEnumerable $enumerable, Closure $predecate): IEnumerable
+    public static function select(IEnumerable $enumerable, Closure $predicate): IEnumerable
     {
-        return Enumerable::select($enumerable, $predecate);
+        return Enumerable::select($enumerable, $predicate);
     }
 
-    public static function where(IEnumerable $enumerable, Closure $predecate): IEnumerable
+    public static function where(IEnumerable $enumerable, Closure $predicate): IEnumerable
     {
         $interfaces = class_implements($enumerable);
         if (in_array(IQueryable::class, $interfaces)) {
-            return Queryable::where($enumerable, $predecate);
+            return Queryable::where($enumerable, $predicate);
         }
 
-        return Enumerable::where($enumerable, $predecate);
+        return Enumerable::where($enumerable, $predicate);
     }
 
-    public static function orderBy(IEnumerable $enumerable, Closure $predecate): IEnumerable
+    public static function orderBy(IEnumerable $enumerable, Closure $predicate): IEnumerable
     {
         $interfaces = class_implements($enumerable);
         if (in_array(IQueryable::class, $interfaces)) {
-            return Queryable::orderBy($enumerable, $predecate);
+            return Queryable::orderBy($enumerable, $predicate);
         }
 
-        return Enumerable::orderBy($enumerable, $predecate);
+        return Enumerable::orderBy($enumerable, $predicate);
     }
 
-    public static function orderByDescending(IEnumerable $enumerable, Closure $predecate): IEnumerable
+    public static function orderByDescending(IEnumerable $enumerable, Closure $predicate): IEnumerable
     {
         $interfaces = class_implements($enumerable);
         if (in_array(IQueryable::class, $interfaces)) {
-            return Queryable::orderByDescending($enumerable, $predecate);
+            return Queryable::orderByDescending($enumerable, $predicate);
         }
 
-        return Enumerable::orderByDescending($enumerable, $predecate);
+        return Enumerable::orderByDescending($enumerable, $predicate);
     }
 
     public static function skip(IEnumerable $enumerable, int $offset): IEnumerable
@@ -72,54 +72,54 @@ class Linq
         return Enumerable::take($enumerable, $limit);
     }
 
-    public static function groupBy(IEnumerable $enumerable, Closure $predecate): IEnumerable
+    public static function groupBy(IEnumerable $enumerable, Closure $predicate): IEnumerable
     {
         $interfaces = class_implements($enumerable);
         if (in_array(IQueryable::class, $interfaces)) {
-            throw new \Exception("Queriable method not implemented yet, try it as Enumerable");
+            throw new \Exception("Queryable method not implemented yet, try it as Enumerable");
         }
 
-        return Enumerable::groupBy($enumerable, $predecate);
+        return Enumerable::groupBy($enumerable, $predicate);
     }
 
     public static function join(IEnumerable $enumerable, $innerCollection, Closure $outerSelector, Closure $innerSelector, Closure $resultSelector): IEnumerable
     {
         $interfaces = class_implements($enumerable);
         if (in_array(IQueryable::class, $interfaces)) {
-            throw new \Exception("Queriable method not implemented yet, try it as Enumerable");
+            throw new \Exception("Queryable method not implemented yet, try it as Enumerable");
         }
 
         return Enumerable::join($enumerable, $innerCollection, $outerSelector, $innerSelector, $resultSelector);
     }
 
-    public static function count(IEnumerable $enumerable, Closure $predecate = null): int
+    public static function count(IEnumerable $enumerable, Closure $predicate = null): int
     {
         $interfaces = class_implements($enumerable);
         if (in_array(IQueryable::class, $interfaces)) {
-            throw new \Exception("Queriable method not implemented yet, try it as Enumerable");
+            throw new \Exception("Queryable method not implemented yet, try it as Enumerable");
         }
 
-        return Enumerable::count($enumerable, $predecate);
+        return Enumerable::count($enumerable, $predicate);
     }
 
-    public static function max(IEnumerable $enumerable, Closure $predecate = null)
+    public static function max(IEnumerable $enumerable, Closure $predicate = null)
     {
         $interfaces = class_implements($enumerable);
         if (in_array(IQueryable::class, $interfaces)) {
-            throw new \Exception("Queriable method not implemented yet, try it as Enumerable");
+            throw new \Exception("Queryable method not implemented yet, try it as Enumerable");
         }
 
-        return Enumerable::max($enumerable, $predecate);
+        return Enumerable::max($enumerable, $predicate);
     }
 
-    public static function min(IEnumerable $enumerable, Closure $predecate = null)
+    public static function min(IEnumerable $enumerable, Closure $predicate = null)
     {
         $interfaces = class_implements($enumerable);
         if (in_array(IQueryable::class, $interfaces)) {
-            throw new \Exception("Queriable method not implemented yet, try it as Enumerable");
+            throw new \Exception("Queryable method not implemented yet, try it as Enumerable");
         }
 
-        return Enumerable::min($enumerable, $predecate);
+        return Enumerable::min($enumerable, $predicate);
     }
 
     public static function first(IEnumerable $enumerable)

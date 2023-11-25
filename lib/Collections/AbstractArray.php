@@ -90,7 +90,7 @@ abstract class AbstractArray implements ArrayAccess
     }
 
     /**
-     * Unsets the value with the specified key from the array.
+     * Unset the value with the specified key from the array.
      */
     public function offsetUnset($key): void
     {

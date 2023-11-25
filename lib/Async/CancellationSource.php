@@ -15,15 +15,15 @@ class CancellationSource
 {
     use PropertyTrait;
 
-    private CancelationToken $token;
+    private CancellationToken $token;
     private bool $isCancellationRequested = false;
 
     public function __construct()
     {
-        $this->token = new CancelationToken($this);
+        $this->token = new CancellationToken($this);
     }
 
-    public function get_Token(): CancelationToken
+    public function get_Token(): CancellationToken
     {
         return $this->token;
     }

@@ -15,13 +15,13 @@ class LexerBuilder
 
     public function define(string $name, string $pattern): void
     {
-        $this->definitions[] = new TokenDefenition($name, $pattern);
+        $this->definitions[] = new TokenDefinition($name, $pattern);
     }
 
     public function build(): Lexer
     {
-        $this->definitions[] = new TokenDefenition(Token::SKIPPED, "\s+");
-        $this->definitions[] = new TokenDefenition(Token::UNKNOWN, "[^\s]+");
+        $this->definitions[] = new TokenDefinition(Token::SKIPPED, "\s+");
+        $this->definitions[] = new TokenDefinition(Token::UNKNOWN, "[^\s]+");
         return new Lexer($this->definitions);
     }
 }
