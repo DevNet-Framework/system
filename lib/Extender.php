@@ -44,17 +44,19 @@ class Extender
         $count = 0;
         $trace = debug_backtrace();
         foreach ($trace as $info) {
-            $class = $info['class'] ?? null;
-            $function = $info['function'] ?? null;
-            // Looking for the file where the target calls the method __call().
-            if ($class == get_class($target) && $function == '__call') {
-                $file = $info['file'] ?? '';
-                break;
+            $object = $info['object'] ?? null;
+            if ($object) {
+                // Looking for the file where the target object calls the method __call().
+                $function = $info['function'] ?? null;
+                if ($object::class == $target::class && $function == '__call') {
+                    $file = $info['file'] ?? '';
+                    break;
+                }
             }
             $count++;
         }
 
-        $classes = self::$classes[$file] ?? [];
+        $classes = static::$classes[$file] ?? [];
         // Return the imports if they are already stored.
         if ($classes) return $classes;
 
@@ -62,7 +64,7 @@ class Extender
         $callerClass = $trace[$count + 1]['class'] ?? null;
         if ($callerClass) {
             $classes[] = $callerClass;
-            self::$classes[$file] = $classes;
+            static::$classes[$file] = $classes;
         }
 
         // Looking for all the imports in the file.
@@ -71,7 +73,7 @@ class Extender
             preg_match_all("%(?i)use\s+([A-Za-z_\\\]+);%", $contents, $matches);
             if (isset($matches[1])) {
                 $classes = array_merge($classes, $matches[1]);
-                self::$classes[$file] = $classes;
+                static::$classes[$file] = $classes;
             }
         }
 
