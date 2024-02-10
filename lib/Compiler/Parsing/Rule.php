@@ -12,13 +12,13 @@ class Rule
 {
     public int $Index;
     public string $Name;
-    public array $Predecates;
+    public array $Predicates;
 
-    public function __construct(int $index, string $name, array $predecates)
+    public function __construct(int $index, string $name, array $predicates)
     {
         $this->Index = $index;
         $this->Name = $name;
-        $this->Predecates = $predecates;
+        $this->Predicates = $predicates;
     }
 
     public function getIndex(): int
