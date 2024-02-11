@@ -134,17 +134,4 @@ class Parser
     {
         return $this->node->peek();
     }
-
-    public function dump(): array
-    {
-        $dump = [
-            'nodes'     => $this->node,
-            'action'    => $this->Action,
-            'position'  => $this->pointer->peek(),
-            'reducedId' => $this->reduceId,
-            //'state'     => $this->state->peek()
-        ];
-
-        return $dump;
-    }
 }
