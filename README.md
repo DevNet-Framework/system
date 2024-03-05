@@ -6,9 +6,6 @@ This dependency is the core library of **DevNet Framework**, which includes the 
 - Linq Methods
 - Generic Types
 - Asynchronous Operations
-- Delegates & Events
-- Dependency Injection
-- Event Logging
 - IO Stream
 - Database Connector
 - Generic compiler
