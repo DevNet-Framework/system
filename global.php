@@ -6,7 +6,7 @@
  * @link        https://github.com/DevNet-Framework
  */
 
-namespace Devnet\System {
+namespace DevNet\System {
 
     use DevNet\System\Async\AsyncFunction;
     use DevNet\System\Async\IAwaitable;

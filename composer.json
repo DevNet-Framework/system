@@ -17,7 +17,7 @@
             "DevNet\\System\\": "lib/"
         },
         "files": [
-            "lib/Functions.php"
+            "global.php"
         ]
     }
 }
