@@ -2,8 +2,7 @@
 
 /**
  * @author      Mohammed Moussaoui
- * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
- * @license     MIT License. For full license information see LICENSE file in the project root.
+ * @license     MIT license. For more license information, see the LICENSE file in the root directory.
  * @link        https://github.com/DevNet-Framework
  */
 
@@ -13,13 +12,13 @@ class Rule
 {
     public int $Index;
     public string $Name;
-    public array $Predecates;
+    public array $Predicates;
 
-    public function __construct(int $index, string $name, array $predecates)
+    public function __construct(int $index, string $name, array $predicates)
     {
         $this->Index = $index;
         $this->Name = $name;
-        $this->Predecates = $predecates;
+        $this->Predicates = $predicates;
     }
 
     public function getIndex(): int

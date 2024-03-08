@@ -2,12 +2,11 @@
 
 /**
  * @author      Mohammed Moussaoui
- * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
- * @license     MIT License. For full license information see LICENSE file in the project root.
+ * @license     MIT license. For more license information, see the LICENSE file in the root directory.
  * @link        https://github.com/DevNet-Framework
  */
 
-namespace Devnet\System {
+namespace DevNet\System {
 
     use DevNet\System\Async\AsyncFunction;
     use DevNet\System\Async\IAwaitable;

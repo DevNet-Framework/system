@@ -2,8 +2,7 @@
 
 /**
  * @author      Mohammed Moussaoui
- * @copyright   Copyright (c) Mohammed Moussaoui. All rights reserved.
- * @license     MIT License. For full license information see LICENSE file in the project root.
+ * @license     MIT license. For more license information, see the LICENSE file in the root directory.
  * @link        https://github.com/DevNet-Framework
  */
 
@@ -134,18 +133,5 @@ class Parser
     public function getNode(): ?Node
     {
         return $this->node->peek();
-    }
-
-    public function dump(): array
-    {
-        $dump = [
-            'nodes'     => $this->node,
-            'action'    => $this->Action,
-            'position'  => $this->pointer->peek(),
-            'reducedId' => $this->reduceId,
-            //'state'     => $this->state->peek()
-        ];
-
-        return $dump;
     }
 }
