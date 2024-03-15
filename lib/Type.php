@@ -176,7 +176,7 @@ class Type
 
     public function isGenericType(): bool
     {
-        return ($this->isClass() || $this->interface()) && $this->arguments ? true : false;
+        return ($this->isClass() || $this->isInterface()) && $this->arguments ? true : false;
     }
 
     public function isGenericParameter(): bool
