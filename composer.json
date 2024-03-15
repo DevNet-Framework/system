@@ -1,6 +1,6 @@
 {
-    "name": "devnet/core",
-    "description": "The DevNet Core Library",
+    "name": "devnet/system",
+    "description": "The DevNet System Library",
     "type": "library",
     "license": "MIT",
     "authors": [

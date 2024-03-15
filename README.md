@@ -1,5 +1,5 @@
-# DevNet Core
-This dependency is the core library of **DevNet Framework**, which includes the following Base Class Library:
+# DevNet System
+This dependency is the low-level library of **DevNet Framework**, which includes the following Base Class Library:
 
 - Accessor Properties
 - Extension Methods
@@ -7,7 +7,7 @@ This dependency is the core library of **DevNet Framework**, which includes the 
 - Generic Types
 - Asynchronous Operations
 - IO Stream
-- Database Connector
+- Database Access
 - Generic compiler
 - Boot Loader
 
@@ -16,14 +16,14 @@ This dependency is the core library of **DevNet Framework**, which includes the 
 - [Composer](https://getcomposer.org/) version 2.0 or higher
 
 ## Installation
-You can install DevNet Core as a third-party library to work with any PHP project, by running the following command in the terminal:
+You can install DevNet System as a third-party library to any PHP project, by running the following command in the terminal:
 
 ```bash
-composer require devnet/core
+composer require devnet/system
 ```
 
 ## Documentation
 Full documentation on how to use **DevNet Framework** is available at [devnet-framework.github.io](https://devnet-framework.github.io)
 
 ## License
-This library is licensed under the MIT license. See [License File](https://github.com/DevNet-Framework/core/blob/master/LICENSE) in the root folder for more information.
+This library is licensed under the MIT license. See [License File](https://github.com/DevNet-Framework/system/blob/master/LICENSE) in the root folder for more information.
