@@ -179,8 +179,9 @@ abstract class Stream
     {
         return Task::run(function () use ($value) {
             do {
+                yield;
                 stream_set_blocking($this->resource, false);
-                $result = yield fwrite($this->resource, $value);
+                $result = fwrite($this->resource, $value);
                 if ($result === false) {
                     throw new StreamException('Unable to write to resource', 0, 1);
                 }
