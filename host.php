@@ -6,22 +6,19 @@
  * @link        https://github.com/DevNet-Framework
  */
 
-use DevNet\System\Runtime\ClassLoader;
+use DevNet\System\Runtime\Launcher;
 
-require_once __DIR__ . '/lib/Runtime/ClassLoader.php';
+require_once dirname(__FILE__, 3) . '/autoload.php';
 
-$loader = new ClassLoader(dirname(__DIR__));
+// Load the local composer autoload if exit.
+if (is_file($root . '/vendor/autoload.php')) {
+    require_once $root . '/vendor/autoload.php';
+}
 
-$loader->mapNamespace('DevNet\\System', 'system/lib/');
-$loader->mapNamespace('DevNet\\Core', 'core/lib/');
-$loader->mapNamespace('DevNet\\Common', 'common/lib/');
-$loader->mapNamespace('DevNet\\Http', 'http/lib/');
-$loader->mapNamespace('DevNet\\Security', 'security/lib/');
-$loader->mapNamespace('DevNet\\ORM', 'orm/lib/');
-$loader->mapNamespace('DevNet\\ORM\\MySql', 'orm/lib/Providers/MySql/');
-$loader->mapNamespace('DevNet\\ORM\\PgSql', 'orm/lib/Providers/PgSql/');
-$loader->mapNamespace('DevNet\\ORM\\Sqlite', 'orm/lib/Providers/Sqlite/');
-$loader->include(__DIR__ . '/global.php');
+// Get the console arguments without command name
+$args = $GLOBALS['argv'] ?? [];
+array_shift($args);
 
-$loader->register();
-
+// Initialize and launch the application
+$launcher = Launcher::initialize($root . '/devnet.proj');
+$launcher->launch($args);
