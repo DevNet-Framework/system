@@ -42,7 +42,7 @@ class DbConnectionStringBuilder implements IEnumerable, ArrayAccess
 
     public function get_Items(): array
     {
-        return $this->Items;
+        return $this->items;
     }
 
     public function offsetSet($key, $value): void
