@@ -9,15 +9,16 @@
 namespace DevNet\System\Command\Help;
 
 use DevNet\System\IO\Console;
+use DevNet\System\IO\ConsoleColor;
 
 class HelpResult
 {
     private array $layouts = [];
-    private int $primaryColor = 0;
-    private int $secondaryColor = 0;
+    private ?ConsoleColor $primaryColor = null;
+    private ?ConsoleColor $secondaryColor = null;
     private int $maxWidth = 0;
 
-    public function __construct(array $layouts, int $maxWidth, int $primaryColor = 0, int $secondaryColor = 0)
+    public function __construct(array $layouts, int $maxWidth, ?ConsoleColor $primaryColor = null, ?ConsoleColor $secondaryColor = null)
     {
         $this->layouts = $layouts;
         $this->maxWidth = $maxWidth;

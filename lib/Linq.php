@@ -91,7 +91,7 @@ class Linq
         return Enumerable::join($enumerable, $innerCollection, $outerSelector, $innerSelector, $resultSelector);
     }
 
-    public static function count(IEnumerable $enumerable, Closure $predicate = null): int
+    public static function count(IEnumerable $enumerable, ?Closure $predicate = null): int
     {
         $interfaces = class_implements($enumerable);
         if (in_array(IQueryable::class, $interfaces)) {
@@ -101,7 +101,7 @@ class Linq
         return Enumerable::count($enumerable, $predicate);
     }
 
-    public static function max(IEnumerable $enumerable, Closure $predicate = null)
+    public static function max(IEnumerable $enumerable, ?Closure $predicate = null)
     {
         $interfaces = class_implements($enumerable);
         if (in_array(IQueryable::class, $interfaces)) {
@@ -111,7 +111,7 @@ class Linq
         return Enumerable::max($enumerable, $predicate);
     }
 
-    public static function min(IEnumerable $enumerable, Closure $predicate = null)
+    public static function min(IEnumerable $enumerable, ?Closure $predicate = null)
     {
         $interfaces = class_implements($enumerable);
         if (in_array(IQueryable::class, $interfaces)) {

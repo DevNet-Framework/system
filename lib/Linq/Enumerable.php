@@ -68,19 +68,19 @@ abstract class Enumerable
         return $take->skip($offset);
     }
 
-    public static function count(IEnumerable $enumerable, Closure $predicate = null): int
+    public static function count(IEnumerable $enumerable, ?Closure $predicate = null): int
     {
         $count = new CountEnumerable($enumerable);
         return $count->count($predicate);
     }
 
-    public static function max(IEnumerable $enumerable, Closure $predicate = null)
+    public static function max(IEnumerable $enumerable, ?Closure $predicate = null)
     {
         $count = new CountEnumerable($enumerable);
         return $count->max($predicate);
     }
 
-    public static function min(IEnumerable $enumerable, Closure $predicate = null)
+    public static function min(IEnumerable $enumerable, ?Closure $predicate = null)
     {
         $count = new CountEnumerable($enumerable);
         return $count->min($predicate);

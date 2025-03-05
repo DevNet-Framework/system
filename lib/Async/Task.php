@@ -106,7 +106,7 @@ class Task implements IAwaitable
         return !$this->generator->valid();
     }
 
-    public function start(TaskScheduler $taskScheduler = null): void
+    public function start(?TaskScheduler $taskScheduler = null): void
     {
         if ($this->status == TaskStatus::Running) {
             return;

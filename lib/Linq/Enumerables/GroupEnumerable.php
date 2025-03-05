@@ -23,7 +23,7 @@ class GroupEnumerable implements IEnumerable
     private array $array = [];
     private ?string $key;
 
-    public function __construct(IEnumerable $enumerable, string $key = null)
+    public function __construct(IEnumerable $enumerable, ?string $key = null)
     {
         $this->enumerable = $enumerable;
         $this->key = $key;

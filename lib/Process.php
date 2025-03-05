@@ -16,7 +16,7 @@ class Process
     private ?array $env;
     private $process;
 
-    public function __construct(?string $cwd = null, array $env = null)
+    public function __construct(?string $cwd = null, ?array $env = null)
     {
         $this->descriptors = [
             ["pipe", "r"],

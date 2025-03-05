@@ -28,7 +28,7 @@ class StringBuilder
         return $this;
     }
 
-    public function appendLine(string $value = null): StringBuilder
+    public function appendLine(?string $value = null): StringBuilder
     {
         $this->text .= $value . PHP_EOL;
         return $this;

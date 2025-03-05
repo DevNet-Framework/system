@@ -26,7 +26,7 @@ class CountEnumerable implements IEnumerable
         $this->enumerable = $enumerable;
     }
 
-    public function count(Closure $predicate = null): int
+    public function count(?Closure $predicate = null): int
     {
         $count = 0;
         foreach ($this->enumerable as $element) {
@@ -42,7 +42,7 @@ class CountEnumerable implements IEnumerable
         return $count;
     }
 
-    public function max(Closure $predicate = null)
+    public function max(?Closure $predicate = null)
     {
         $value = null;
         foreach ($this->enumerable as $element) {
@@ -58,7 +58,7 @@ class CountEnumerable implements IEnumerable
         return $value;
     }
 
-    public function min(Closure $predicate = null)
+    public function min(?Closure $predicate = null)
     {
         $value = null;
         foreach ($this->enumerable as $element) {
