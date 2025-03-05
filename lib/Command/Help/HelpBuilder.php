@@ -9,12 +9,13 @@
 namespace DevNet\System\Command\Help;
 
 use DevNet\System\Command\CommandLine;
+use DevNet\System\IO\ConsoleColor;
 
 class HelpBuilder
 {
     private CommandLine $command;
-    private int $primaryColor = 0;
-    private int $secondaryColor = 0;
+    private ?ConsoleColor $primaryColor = null;
+    private ?ConsoleColor $secondaryColor = null;
     private array $layouts = [];
     private int $maxWidth = 0;
     private string $indent = '  ';
@@ -24,7 +25,7 @@ class HelpBuilder
         $this->command = $command;
     }
 
-    public function setColor(int $primaryColor, int $secondaryColor): void
+    public function setColor(ConsoleColor $primaryColor, ?ConsoleColor $secondaryColor = null): void
     {
         $this->primaryColor = $primaryColor;
         $this->secondaryColor = $secondaryColor;
