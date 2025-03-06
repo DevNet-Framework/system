@@ -13,7 +13,7 @@ class Token implements IToken
     public string $Name;
     public ?string $Value;
 
-    public function __construct(string $name, string $value = null)
+    public function __construct(string $name, ?string $value = null)
     {
         $this->Name  = $name;
         $this->Value = $value;

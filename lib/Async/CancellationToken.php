@@ -21,7 +21,7 @@ class CancellationToken
 
     public function __construct($source)
     {
-        $this->Source = $source;
+        $this->source = $source;
     }
 
     public function get_Source(): CancellationSource

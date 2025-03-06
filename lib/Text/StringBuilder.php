@@ -14,12 +14,11 @@ class StringBuilder
 {
     use PropertyTrait;
 
-    private int $capacity = 0;
     private string $text  = '';
 
-    public function __construct(int $capacity = 0)
+    public function __construct(?string $value = null)
     {
-        $this->capacity = $capacity;
+        $this->text = (string) $value;
     }
 
     public function append(string $value): StringBuilder

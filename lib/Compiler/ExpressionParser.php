@@ -121,7 +121,7 @@ class ExpressionParser
         $this->outerVariables =  $this->function->getStaticVariables();
 
         $fileName = $this->function->getFileName();
-        $startLine = $this->function->getStartLine() - 1; // adjustment by - 1, because line 1 is in inedx 0
+        $startLine = $this->function->getStartLine() - 1; // adjustment by - 1, because line 1 is in index 0
         $endLine = $this->function->getEndLine();
         $length = $endLine - $startLine;
 
