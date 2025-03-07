@@ -15,10 +15,10 @@ use ReflectionMethod;
 
 class Action
 {
-    use PropertyTrait;
-
     public ReflectionFunctionAbstract $reflection;
-    public $target;
+    public mixed $target;
+
+    public ReflectionFunctionAbstract $Reflection { get => $this->reflection; }
 
     public function __construct(callable $target)
     {
@@ -33,11 +33,6 @@ class Action
                 $this->target = [$target, '__invoke'];
             }
         }
-    }
-
-    public function get_Reflection(): ReflectionFunctionAbstract
-    {
-        return $this->reflection;
     }
 
     public function invoke(...$args)

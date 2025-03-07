@@ -12,37 +12,29 @@ use ArrayAccess;
 use DevNet\System\Collections\Enumerator;
 use DevNet\System\Collections\IEnumerable;
 use DevNet\System\Exceptions\TypeException;
-use DevNet\System\PropertyTrait;
 
 class DbConnectionStringBuilder implements IEnumerable, ArrayAccess
 {
-    use PropertyTrait;
-
     protected array $items = [];
 
-    public function set_ConnectionString(string $connectionString): void
-    {
-        preg_match_all('%;?([^=]+)\s*=\s*([^;]+)%', $connectionString, $matches);
-        if ($matches) {
-            foreach ($matches[1] as $index => $key) {
-                $this->items[strtolower($key)] = $matches[2][$index];
+    public array $Items { get => $this->items; }
+    public string $ConnectionString {
+        get {
+            $items = [];
+            foreach ($this->items as $key => $value) {
+                $items[] =  $key . '=' . $value;
+            }
+
+            return implode(';', $items);
+        }
+        set {
+            preg_match_all('%;?([^=]+)\s*=\s*([^;]+)%', $value, $matches);
+            if ($matches) {
+                foreach ($matches[1] as $index => $key) {
+                    $this->items[strtolower($key)] = $matches[2][$index];
+                }
             }
         }
-    }
-
-    public function get_ConnectionString(): string
-    {
-        $items = [];
-        foreach ($this->items as $key => $value) {
-            $items[] =  $key . '=' . $value;
-        }
-
-        return implode(';', $items);
-    }
-
-    public function get_Items(): array
-    {
-        return $this->items;
     }
 
     public function offsetSet($key, $value): void
@@ -90,7 +82,7 @@ class DbConnectionStringBuilder implements IEnumerable, ArrayAccess
         return new Enumerator($this->items);
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->ConnectionString;
     }

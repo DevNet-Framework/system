@@ -8,24 +8,18 @@
 
 namespace DevNet\System\Async;
 
-use DevNet\System\PropertyTrait;
 use Closure;
 
 class TaskAwaiter implements IAwaiter
 {
-    use PropertyTrait;
-
     private Task $task;
     private ?Closure $onCompleted = null;
+
+    public ?Closure $OnCompleted { get => $this->onCompleted; }
 
     public function __construct(Task $task)
     {
         $this->task = $task;
-    }
-
-    public function get_OnCompleted(): ?Closure
-    {
-        return $this->onCompleted;
     }
 
     public function isCompleted(): bool

@@ -8,25 +8,14 @@
 
 namespace DevNet\System\Diagnostics;
 
-use DevNet\System\PropertyTrait;
-
 class Stopwatch
 {
-    use PropertyTrait;
-
     private float $elapsed = 0;
     private float $startTimeStamp = 0;
     private bool $isRunning = false;
 
-    public function get_Elapsed(): float
-    {
-        return $this->elapsed;
-    }
-
-    public function get_IsRunning(): bool
-    {
-        return $this->isRunning;
-    }
+    public float $Elapsed { get => $this->elapsed; }
+    public bool $IsRunning { get => $this->isRunning; }
 
     public function start(): void
     {

@@ -10,90 +10,26 @@ namespace DevNet\System;
 
 class TimeSpan
 {
-    use PropertyTrait;
-
     private float $seconds = 0;
+
+    public int $Days { get => (int) $this->seconds / 86400; }
+    public int $Hours { get => (int) $this->seconds % 86400 / 3600; }
+    public int $Minutes { get => (int) $this->seconds % 3600 / 60; }
+    public int $Seconds { get => (int) $this->seconds % 60; }
+    public float $TotalDays { get => $this->seconds / 86400; }
+    public float $TotalHours { get => $this->seconds / 3600; }
+    public float $TotalMinutes { get => $this->seconds / 60; }
+    public float $TotalSeconds { get => $this->seconds; }
+    public float $TotalMilliSeconds { get => $this->seconds * 1000; }
 
     public function __construct(int $days = 0, int $hours = 0, int $minutes = 0, float $seconds = 0)
     {
+        $days    = $days < 0 ? 0 : $days;
+        $hours   = $hours < 0 ? 0 : $hours;
+        $minutes = $minutes < 0 ? 0 : $minutes;
+        $seconds = $seconds < 0 ? 0 : $seconds;
+
         $this->seconds = $days * 86400 + $hours * 3600 + $minutes * 60 + $seconds;
-    }
-
-    public function get_Days(): int
-    {
-        if ($this->seconds < 0) {
-            return 0;
-        }
-
-        return (int) ($this->seconds / 86400);
-    }
-
-    public function get_Hours(): int
-    {
-        if ($this->seconds < 0) {
-            return 0;
-        }
-
-        return (int) ($this->seconds % 86400 / 3600);
-    }
-
-    public function get_Minutes(): int
-    {
-        if ($this->seconds < 0) {
-            return 0;
-        }
-
-        return (int) ($this->seconds % 3600 / 60);
-    }
-
-    public function get_Seconds(): int
-    {
-        if ($this->seconds < 0) {
-            return 0;
-        }
-
-        return (int) ($this->seconds % 60);
-    }
-
-    public function get_TotalDays(): float
-    {
-        if ($this->seconds < 0) {
-            return 0;
-        }
-
-        return $this->seconds / 86400;
-    }
-
-    public function get_TotalHours(): float
-    {
-        if ($this->seconds < 0) {
-            return 0;
-        }
-
-        return $this->seconds / 3600;
-    }
-
-    public function get_TotalMinutes(): float
-    {
-        if ($this->seconds < 0) {
-            return 0;
-        }
-
-        return $this->seconds / 60;
-    }
-
-    public function get_TotalSeconds(): float
-    {
-        if ($this->seconds < 0) {
-            return 0;
-        }
-
-        return $this->seconds;
-    }
-
-    public function get_TotalMilliSeconds(): float
-    {
-        return $this->seconds * 1000;
     }
 
     public static function fromDays(float $days): TimeSpan

@@ -8,40 +8,20 @@
 
 namespace DevNet\System\Command;
 
-use DevNet\System\PropertyTrait;
-
 class CommandArgument
 {
-    use PropertyTrait;
-
     protected string $name;
     protected string $description;
     protected string $value;
+
+    public string $Name { get => $this->name; }
+    public string $Description { get => $this->description; }
+    public string $Value { get => $this->value; set => $this->value = $value; }
 
     public function __construct(string $name, string $description = '', string $value = '')
     {
         $this->name = strtolower($name);
         $this->description = $description;
-        $this->value = $value;
-    }
-
-    public function get_Name(): string
-    {
-        return $this->name;
-    }
-
-    public function get_Description(): string
-    {
-        return $this->description;
-    }
-
-    public function get_Value(): string
-    {
-        return $this->value;
-    }
-
-    public function setValue(string $value): void
-    {
         $this->value = $value;
     }
 }

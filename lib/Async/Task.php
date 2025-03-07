@@ -9,7 +9,6 @@
 namespace DevNet\System\Async;
 
 use DevNet\System\Exceptions\ArrayException;
-use DevNet\System\PropertyTrait;
 use Closure;
 use Exception;
 use Generator;
@@ -17,16 +16,17 @@ use Throwable;
 
 class Task implements IAwaitable
 {
-    use PropertyTrait;
 
     private int $id;
     private TaskStatus $status;
     private TaskAwaiter $awaiter;
     private TaskScheduler $scheduler;
     private Generator $generator;
-    private ?Task $continuationTask = null;
     private ?CancellationToken $token = null;
     private ?Throwable $exception = null;
+
+    public int $Id { get => $this->id; }
+    public TaskStatus $Status { get => $this->status; }
 
     public function __construct(Closure $action, ?CancellationToken $token = null)
     {
@@ -48,62 +48,54 @@ class Task implements IAwaitable
         }
     }
 
-    public function get_Id(): int
-    {
-        return $this->id;
-    }
+    public mixed $Result {
+        get {
+            $this->wait();
 
-    public function get_Status(): TaskStatus
-    {
-        return $this->status;
-    }
-
-    public function get_Result(): mixed
-    {
-        $this->wait();
-
-        try {
-            return $this->generator->getReturn();
-        } catch (\Throwable $error) {
-            return null;
+            try {
+                return $this->generator->getReturn();
+            } catch (\Throwable $error) {
+                return null;
+            }
         }
     }
 
-    public function get_IsCompleted(): bool
-    {
-        if ($this->status == TaskStatus::Canceled || $this->status == TaskStatus::Failed || $this->status == TaskStatus::Succeeded) {
-            return true;
-        }
+    public bool $IsCompleted {
+        get {
+            if ($this->status == TaskStatus::Canceled || $this->status == TaskStatus::Failed || $this->status == TaskStatus::Succeeded) {
+                return true;
+            }
 
-        if ($this->status == TaskStatus::Created || $this->status == TaskStatus::Pending) {
-            return false;
-        }
+            if ($this->status == TaskStatus::Created || $this->status == TaskStatus::Pending) {
+                return false;
+            }
 
-        if ($this->generator->valid()) {
-            if ($this->token && $this->token->IsCancellationRequested) {
-                try {
-                    $this->generator->throw(new CancellationException("The task with Id: {$this->id} was canceled!"));
-                } catch (\Throwable $exception) {
-                    $this->exception = $exception;
-                    $this->status = TaskStatus::Canceled;
+            if ($this->generator->valid()) {
+                if ($this->token && $this->token->IsCancellationRequested) {
+                    try {
+                        $this->generator->throw(new CancellationException("The task with Id: {$this->id} was canceled!"));
+                    } catch (\Throwable $exception) {
+                        $this->exception = $exception;
+                        $this->status = TaskStatus::Canceled;
+                    }
+                } else {
+                    try {
+                        $value = $this->generator->current();
+                        $this->generator->send($value);
+                    } catch (\Throwable $exception) {
+                        $this->exception = $exception;
+                        $this->status = TaskStatus::Failed;
+                    }
                 }
             } else {
-                try {
-                    $value = $this->generator->current();
-                    $this->generator->send($value);
-                } catch (\Throwable $exception) {
-                    $this->exception = $exception;
-                    $this->status = TaskStatus::Failed;
+                if (!$this->exception) {
+                    $this->status = TaskStatus::Succeeded;
                 }
+                $this->scheduler->dequeue($this);
             }
-        } else {
-            if (!$this->exception) {
-                $this->status = TaskStatus::Succeeded;
-            }
-            $this->scheduler->dequeue($this);
-        }
 
-        return !$this->generator->valid();
+            return !$this->generator->valid();
+        }
     }
 
     public function start(?TaskScheduler $taskScheduler = null): void

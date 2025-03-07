@@ -8,30 +8,19 @@
 
 namespace DevNet\System\Async;
 
-use DevNet\System\PropertyTrait;
-
 class TaskScheduler
 {
-    use PropertyTrait;
-
     private static TaskScheduler $scheduler;
 
     protected int $maxConcurrency = 0;
     protected array $tasks = [];
 
+    public int $MaxConcurrency { get => $this->maxConcurrency; }
+    public array $Tasks { get => $this->tasks; }
+
     public function __construct(int $maxConcurrency = 0)
     {
         $this->maxConcurrency = $maxConcurrency;
-    }
-
-    public function get_MaxConcurrency(): int
-    {
-        return $this->maxConcurrency;
-    }
-
-    public function get_Tasks(): array
-    {
-        return $this->tasks;
     }
 
     public function enqueue(Task $task): void

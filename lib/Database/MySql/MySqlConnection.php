@@ -18,7 +18,7 @@ class MySqlConnection extends DbConnection
     {
         if ($this->state == 0) {
             $parser = new DbConnectionStringBuilder();
-            $parser->ConnectionString = $this->connectionString;
+            $parser->ConnectionString = $this->ConnectionString;
             $dsn = new DbConnectionStringBuilder();
 
             foreach ($parser as $key => $value) {

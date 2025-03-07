@@ -10,70 +10,56 @@ namespace DevNet\System\IO;
 
 use DevNet\System\Async\CancellationToken;
 use DevNet\System\Async\Task;
-use DevNet\System\PropertyTrait;
 
 abstract class Stream
 {
-    use PropertyTrait;
-
     protected $resource;
 
-    public function get_IsSeekable(): bool
-    {
-        $meta = stream_get_meta_data($this->resource);
-        return $meta['seekable'];
-    }
+    public bool $EndOfStream { get => feof($this->resource); }
+    public bool $IsSeekable { get => stream_get_meta_data($this->resource)['seekable']; }
+    public ?int $Position {
+        get {
+            $position = ftell($this->resource);
+            if ($position === false) {
+                return null;
+            }
 
-    public function get_IsReadable(): bool
-    {
-        $meta = stream_get_meta_data($this->resource);
-        $mode = $meta['mode'];
-
-        return (strstr($mode, 'r') || strstr($mode, '+'));
-    }
-
-    public function get_IsWritable(): bool
-    {
-        $meta = stream_get_meta_data($this->resource);
-        $mode = $meta['mode'];
-
-        return (strstr($mode, 'x')
-            || strstr($mode, 'w')
-            || strstr($mode, 'c')
-            || strstr($mode, 'a')
-            || strstr($mode, '+'));
-    }
-
-    public function get_EndOfStream(): bool
-    {
-        return feof($this->resource);
-    }
-
-    public function get_Length(): ?int
-    {
-        $stats = fstat($this->resource);
-
-        if ($stats !== false) {
-            return $stats['size'];
+            return $position;
         }
-
-        return null;
+        set => $this->seek($value);
     }
 
-    public function get_Position(): ?int
-    {
-        $position = ftell($this->resource);
+    public ?int $Length {
+        get {
+            $stats = fstat($this->resource);
 
-        if ($position === false) {
+            if ($stats !== false) {
+                return $stats['size'];
+            }
+
             return null;
         }
-
-        return $position;
     }
 
-    public function set_Position(int $offset): void
-    {
-        $this->seek($offset);
+    public bool $IsReadable {
+        get {
+            $meta = stream_get_meta_data($this->resource);
+            $mode = $meta['mode'];
+            return (strstr($mode, 'r') || strstr($mode, '+'));
+        }
+    }
+
+    public bool $IsWritable {
+        get {
+            $meta = stream_get_meta_data($this->resource);
+            $mode = $meta['mode'];
+
+            return (strstr($mode, 'x')
+                || strstr($mode, 'w')
+                || strstr($mode, 'c')
+                || strstr($mode, 'a')
+                || strstr($mode, '+'));
+        }
     }
 
     public function seek(int $offset, SeekOrigin $origin = SeekOrigin::Begin): int

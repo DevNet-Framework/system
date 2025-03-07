@@ -8,18 +8,11 @@
 
 namespace DevNet\System\Database;
 
-use DevNet\System\PropertyTrait;
-
 abstract class DbTransaction
 {
-    use PropertyTrait;
-
     protected DbConnection $connection;
 
-    public function get_Connection(): ?DbConnection
-    {
-        return $this->connection ?? null;
-    }
+    public ?DbConnection $Connection { get => $this->connection ?? null; }
 
     public abstract function commit(): void;
 

@@ -8,35 +8,21 @@
 
 namespace DevNet\System\Async;
 
-use DevNet\System\PropertyTrait;
 use Closure;
 
 class CancellationToken
 {
-    use PropertyTrait;
-
     private CancellationSource $source;
     private bool $isCancellationRequested = false;
     private ?Closure $action = null;
 
+    public CancellationSource $Source { get => $this->source; }
+    public Closure $Action { get => $this->action; }
+    public bool $IsCancellationRequested { get => $this->isCancellationRequested; }
+
     public function __construct($source)
     {
-        $this->Source = $source;
-    }
-
-    public function get_Source(): CancellationSource
-    {
-        return $this->source;
-    }
-
-    public function get_Action(): Closure
-    {
-        return $this->action;
-    }
-
-    public function get_IsCancellationRequested(): bool
-    {
-        return $this->isCancellationRequested;
+        $this->source = $source;
     }
 
     public function register(Closure $action): void

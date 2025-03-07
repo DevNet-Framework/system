@@ -13,13 +13,10 @@ use DevNet\System\Command\Parsing\Parser;
 use DevNet\System\Event\EventHandler;
 use DevNet\System\IO\Console;
 use DevNet\System\IO\ConsoleColor;
-use DevNet\System\PropertyTrait;
 use Closure;
 
 class CommandLine
 {
-    use PropertyTrait;
-
     private string $name;
     private string $description;
     private array $arguments = [];
@@ -28,6 +25,13 @@ class CommandLine
     private ?CommandLine $parent = null;
     private ?EventHandler $handler = null;
     private ?Closure $customize = null;
+
+    public string $Name { get => $this->name; }
+    public string $Description { get => $this->description; }
+    public array $Options { get => $this->options; }
+    public array $Arguments { get => $this->arguments; }
+    public array $Commands { get => $this->commands; }
+    public ?CommandLine $Parent { get => $this->parent; }
 
     public function __construct(string $name, string $description = '')
     {
@@ -39,36 +43,6 @@ class CommandLine
         if (in_array(ICommandHandler::class, $interfaces)) {
             $this->handler = new EventHandler([$this, 'onExecute']);
         }
-    }
-
-    public function get_Name(): string
-    {
-        return $this->name;
-    }
-
-    public function get_Description(): string
-    {
-        return $this->description;
-    }
-
-    public function get_Options(): array
-    {
-        return $this->options;
-    }
-
-    public function get_Arguments(): array
-    {
-        return $this->arguments;
-    }
-
-    public function get_Commands(): array
-    {
-        return $this->commands;
-    }
-
-    public function get_Parent(): ?CommandLine
-    {
-        return $this->parent;
     }
 
     public function addArgument(string $name, string $description = '', string $value = ''): void

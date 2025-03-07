@@ -8,24 +8,13 @@
 
 namespace DevNet\System\Database;
 
-use DevNet\System\PropertyTrait;
-
 abstract class DbCommand
 {
-    use PropertyTrait;
-
     protected DbConnection $connection;
     protected string $sql = '';
 
-    public function get_Connection(): ?DbConnection
-    {
-        return $this->connection ?? null;
-    }
-
-    public function get_Sql(): string
-    {
-        return $this->sql;
-    }
+    public ?DbConnection $Connection { get => $this->connection; }
+    public string $Sql { get => $this->sql; }
 
     public abstract function execute(array $parameters = []): int;
 

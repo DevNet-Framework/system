@@ -9,14 +9,11 @@
 namespace DevNet\System\Linq;
 
 use DevNet\System\Collections\IEnumerable;
+use DevNet\System\Compiler\Expressions\Expression;
 
 interface IQueryable extends IEnumerable
 {
-    /**
-     * This method must return the value of following properties
-     * @return object $EntityType
-     * @return IQueryProvider $Provider
-     * @return Expression $Expression
-     */
-    public function __get(string $name);
+    public object $EntityType { get; }
+    public IQueryProvider $Provider { get; }
+    public Expression $Expression { get; }
 }

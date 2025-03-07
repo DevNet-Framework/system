@@ -8,36 +8,25 @@
 
 namespace DevNet\System\Diagnostics;
 
-use DevNet\System\PropertyTrait;
-
 class Trace
 {
-    use PropertyTrait;
-
     protected TraceListenerCollection $listeners;
     protected int $indentSize = 4;
+
+    public TraceListenerCollection $Listeners { get => $this->listeners; }
+    public int $IndentSize {
+        get => $this->indentSize;
+        set {
+            $this->indentSize = $value;
+            foreach ($this->listeners as $listener) {
+                $listener->IndentSize = $value;
+            }
+        }
+    }
 
     public function __construct()
     {
         $this->listeners = new TraceListenerCollection();
-    }
-
-    public function get_Listeners(): TraceListenerCollection
-    {
-        return $this->listeners;
-    }
-
-    public function get_IndentSize(): int
-    {
-        return $this->indentSize;
-    }
-
-    public function set_IndentSize(int $value): void
-    {
-        $this->indentSize = $value;
-        foreach ($this->listeners as $listener) {
-            $listener->IndentSize = $value;
-        }
     }
 
     public function indent(): void

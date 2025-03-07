@@ -8,22 +8,15 @@
 
 namespace DevNet\System\Event;
 
-use DevNet\System\PropertyTrait;
-
 class EventArgs
 {
-    use PropertyTrait;
-
     protected array $parameters = [];
+
+    public array $Parameters { get => $this->parameters; }
 
     public function __construct(array $parameters = [])
     {
         $this->parameters = $parameters;
-    }
-
-    public function get_Parameters(): array
-    {
-        return $this->parameters;
     }
 
     public function set(string $name, mixed $value): void

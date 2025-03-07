@@ -12,15 +12,12 @@ class CommandOption extends CommandArgument
 {
     protected string $alias;
 
+    public string $Alias { get => $this->alias; }
+
     public function __construct(string $name, string $description = '', string $alias = '', string $value = '')
     {
         parent::__construct($name, $description, $value);
 
         $this->alias = strtolower($alias);
-    }
-
-    public function get_Alias(): string
-    {
-        return $this->alias;
     }
 }

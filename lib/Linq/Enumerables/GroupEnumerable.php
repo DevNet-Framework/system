@@ -11,27 +11,22 @@ namespace DevNet\System\Linq\Enumerables;
 use DevNet\System\Collections\Enumerator;
 use DevNet\System\Collections\IEnumerable;
 use DevNet\System\MethodTrait;
-use DevNet\System\PropertyTrait;
 use Closure;
 
 class GroupEnumerable implements IEnumerable
 {
     use MethodTrait;
-    use PropertyTrait;
 
     private IEnumerable $enumerable;
     private array $array = [];
     private ?string $key;
 
+    public ?string $Key { get => $this->key; }
+
     public function __construct(IEnumerable $enumerable, ?string $key = null)
     {
         $this->enumerable = $enumerable;
         $this->key = $key;
-    }
-
-    public function get_Key(): ?string
-    {
-        return $this->key;
     }
 
     public function groupBy(Closure $function): static

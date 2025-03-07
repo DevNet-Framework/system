@@ -12,10 +12,20 @@ use DevNet\System\Exceptions\TypeException;
 
 abstract class Parameter
 {
-    use PropertyTrait;
-
     protected Type $type;
     protected mixed $value;
+
+    public mixed $Value {
+        get => $this->value;
+        set {
+            if (!$this->type->isTypeOf($value)) {
+                $type = new Type($value);
+                throw new TypeException("Cannot assign {$type} to a property of type {$this->type}", 0, 1);
+            }
+
+            $this->value = $value;
+        }
+    }
 
     public function __construct(Type $type)
     {
@@ -24,21 +34,6 @@ abstract class Parameter
         }
 
         $this->type = $type;
-    }
-
-    public function get_Value(): mixed
-    {
-        return $this->value;
-    }
-
-    public function set_Value(mixed $value): void
-    {
-        if (!$this->type->isTypeOf($value)) {
-            $type = new Type($value);
-            throw new TypeException("Cannot assign {$type} to a property of type {$this->type}", 0, 1);
-        }
-
-        $this->value = $value;
     }
 
     public function __invoke(): mixed
