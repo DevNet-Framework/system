@@ -13,6 +13,9 @@ use DevNet\System\Exceptions\TypeException;
 use ReflectionMethod;
 use ReflectionProperty;
 
+/**
+ * @deprecated This feature is no longer supported and will be removed in the future, use property hooks instead.
+ */
 trait PropertyTrait
 {
     public function &__get(string $name)
