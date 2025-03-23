@@ -243,7 +243,7 @@ class Type
     public function __toString(): string
     {
         $name = $this->Name;
-        $name = $this->isGenericType() ? $name  . '<' . implode(',', $this->arguments) . '>' : $name;
+        $name = $this->isGenericType() ? $name  . '[' . implode(',', $this->arguments) . ']' : $name;
         return $name;
     }
 
