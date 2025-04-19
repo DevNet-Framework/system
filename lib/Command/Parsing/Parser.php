@@ -13,8 +13,8 @@ use DevNet\System\Command\CommandOption;
 
 class Parser
 {
-    private array $options   = [];
     private array $arguments = [];
+    private array $options   = [];
 
     public function addArgument(CommandArgument $argument): void
     {
@@ -39,7 +39,7 @@ class Parser
             foreach ($options as $index => $option) {
                 if ($token == $option->Name || $token == $option->Alias) {
                     if ($option->Value !== null) {
-                        $option->setValue($args[1] ?? '');
+                        $option->Value = $args[1] ?? '';
                         array_shift($args);
                     }
                     $parsedOptions[$option->Name] = $option;
@@ -53,7 +53,7 @@ class Parser
             if (!$match) {
                 if ($arguments) {
                     foreach ($arguments as $index => $argument) {
-                        $argument->setValue($token);
+                        $argument->Value = $token;
                         $parsedArguments[$argument->Name] = $argument;
                         unset($arguments[$index]);
                         array_shift($args);
